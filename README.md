@@ -59,3 +59,4 @@ This is an independent browser arcade, not EA Sports production quality or a rep
 Scene thumbnails render from the actual 3D scenes on first load of this release, then stay in a local IndexedDB cache. The cache contains only scene JPEGs. Local `?generate-previews` remains available for manual asset authoring. No screenshots from the preceding release should be mistaken for validation of this expansion.
 
 The expanded project is independent of the previous account's hosted site. The user authorized use of the currently connected account; `.openai/hosting.json` holds its newly registered identity.
+# ghanastreetgames
