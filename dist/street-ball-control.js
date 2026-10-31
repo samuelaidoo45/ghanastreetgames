@@ -6,15 +6,32 @@ export function closestChallenger(players,carrier,ball,manualPlayer=null){
  return best;
 }
 
-// Resolve even exact overlaps; two relaxed passes avoid shoving the whole group.
+// Iterative contacts include the compound boundary, so corner crowds cannot collapse.
 export function separatePlayers(players,gap=.9,bounds=8){
- for(let pass=0;pass<2;pass++)for(let i=0;i<players.length;i++)for(let j=i+1;j<players.length;j++){
-  const a=players[i].position,b=players[j].position;let dx=a.x-b.x,dz=a.z-b.z,d=Math.hypot(dx,dz);if(d>=gap)continue;
-  if(d<.0001){const angle=(i*2.4+j)*2.399;dx=Math.cos(angle);dz=Math.sin(angle);d=1;const push=gap*.5;a.x+=dx*push;a.z+=dz*push;b.x-=dx*push;b.z-=dz*push;}
-  else{const push=(gap-d)*.5/d;a.x+=dx*push;a.z+=dz*push;b.x-=dx*push;b.z-=dz*push;}
- }
  const bx=typeof bounds==='number'?bounds:bounds.x,bz=typeof bounds==='number'?bounds:bounds.z;
- for(const p of players){p.position.x=THREE.MathUtils.clamp(p.position.x,-bx,bx);p.position.z=THREE.MathUtils.clamp(p.position.z,-bz,bz);}
+ for(let pass=0;pass<10;pass++){
+  let overlap=0;
+  for(let i=0;i<players.length;i++)for(let j=i+1;j<players.length;j++){
+   const a=players[i].position,b=players[j].position;let dx=a.x-b.x,dz=a.z-b.z,d=Math.hypot(dx,dz);if(d>=gap)continue;
+   overlap=Math.max(overlap,gap-d);
+   if(d<.0001){const angle=(i*2.4+j)*2.399;dx=Math.cos(angle);dz=Math.sin(angle);d=1;const push=gap*.5;a.x+=dx*push;a.z+=dz*push;b.x-=dx*push;b.z-=dz*push;}
+   else{const push=(gap-d)*.5/d;a.x+=dx*push;a.z+=dz*push;b.x-=dx*push;b.z-=dz*push;}
+  }
+  for(const p of players){p.position.x=THREE.MathUtils.clamp(p.position.x,-bx,bx);p.position.z=THREE.MathUtils.clamp(p.position.z,-bz,bz);}
+  if(overlap<.005)break;
+ }
+}
+
+// Steer around another body before contact, without changing the destination.
+export function avoidPlayers(player,target,players,radius=1.5){
+ let dx=target.x-player.position.x,dz=target.z-player.position.z;const length=Math.hypot(dx,dz);if(length<.05)return target;
+ dx=dx/length*2;dz=dz/length*2;
+ for(const other of players){if(other===player)continue;let x=player.position.x-other.position.x,z=player.position.z-other.position.z,d=Math.hypot(x,z);if(d>=radius)continue;
+  if(d<.001){const angle=(player.userData.id||0)*2.399;x=Math.cos(angle);z=Math.sin(angle);d=1;}
+  const weight=(radius-d)/radius*2.8;dx+=x/d*weight;dz+=z/d*weight;
+  if(x*dx+z*dz<0){const side=(player.userData.id||0)%2?1:-1;dx+=-z/d*.8*side;dz+=x/d*.8*side;}
+ }
+ return {x:player.position.x+dx,z:player.position.z+dz};
 }
 
 // Short alternating touches keep the ball visibly rolling in front of the feet.
@@ -36,7 +53,7 @@ export function supportPosition(player,carrier,ball,index,attack=false){
  const angle=index*2.399+(attack?0:.5),radius=attack?3.1:3.6;
  const target={x:THREE.MathUtils.clamp(focus.x+Math.sin(angle)*radius,-7,7),z:THREE.MathUtils.clamp(focus.z+(attack?-1.5:0)+Math.cos(angle)*radius,-6.6,7.5)};
  // Go around the carrier rather than cutting through the contested ball.
- const dx=player.position.x-focus.x,dz=player.position.z-focus.z,current=Math.atan2(dx,dz),desired=Math.atan2(target.x-focus.x,target.z-focus.z);
+ const dx=player.position.x-focus.x,dz=player.position.z-focus.z,current=Math.hypot(dx,dz)<.1?angle:Math.atan2(dx,dz),desired=Math.atan2(target.x-focus.x,target.z-focus.z);
  const difference=Math.atan2(Math.sin(desired-current),Math.cos(desired-current));
  if(Math.hypot(dx,dz)<2.5||Math.abs(difference)>.65){const waypoint=current+(Math.hypot(dx,dz)<2.2?0:Math.sign(difference)*.55);return {x:THREE.MathUtils.clamp(focus.x+Math.sin(waypoint)*3.2,-7.5,7.5),z:THREE.MathUtils.clamp(focus.z+Math.cos(waypoint)*3.2,-7,8)};}
  return target;

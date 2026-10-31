@@ -74,8 +74,8 @@ export function neighbourhoodDetails(parent,solids){
  for(let i=0;i<6;i++)detailedHome(parent,-16+i*6.4,-23,6,4,3.6+i%3*.35,wallColors[i%5],30+i);
  groundWear(parent,30,30);decor.finish();
 }
-export function streetCourtDetails(parent,wide=false){
- const edge=wide?10.25:4.8,decor=batch(parent);
+export function streetCourtDetails(parent,wide=false,edgeOverride){
+ const edge=edgeOverride??(wide?10.25:4.8),decor=batch(parent);
  for(const side of [-1,1]){
   const x=side*edge;
   // Shallow open drains and segmented concrete edges stay beyond the players' bounds.

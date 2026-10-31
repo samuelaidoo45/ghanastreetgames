@@ -3,7 +3,7 @@ import {THREE,box,cylinder,sphere} from './world.js';
 import {surface} from './surfaces.js';
 import {detailedHome,neighbourhoodDetails,streetCourtDetails,compactVenueGeometry,footballStreetscape,venueTree} from './venue-details.js';
 
-export const venueFor=id=>['pampanaa','shooting','pilolo'].includes(id)?'neighbourhood':id==='rubberband'?'wall':id==='onepole'?'lane':id==='laski'?'streetcourt':['fourcorners','penalties','football','sulia'].includes(id)?'pitch':['oware','dame','ludo','counters','chempe','pretend'].includes(id)?'veranda':['alikoto','kpitinge','alasa'].includes(id)?'sand':id==='tyre'?'lane':'schoolyard';
+export const venueFor=id=>['pampanaa','shooting','pilolo'].includes(id)?'neighbourhood':id==='rubberband'?'wall':id==='onepole'?'lane':['laski','stay'].includes(id)?'streetcourt':['fourcorners','penalties','football','sulia'].includes(id)?'pitch':['oware','dame','ludo','counters','chempe','pretend'].includes(id)?'veranda':['alikoto','kpitinge','alasa'].includes(id)?'sand':id==='tyre'?'lane':'schoolyard';
 export function clearVenue(world){
  if(world.venue){world.venue.traverse(o=>{if(o.isInstancedMesh)o.dispose();o.geometry?.dispose();for(const m of Array.isArray(o.material)?o.material:[o.material]){if(!m)continue;for(const k of ['map','normalMap','roughnessMap'])if(m[k]&&!m[k].userData.sharedAsset)m[k].dispose();m.dispose();}});world.scene?.remove(world.venue);}
  world.venue=null;if(world.environment)world.environment.visible=true;
@@ -43,9 +43,9 @@ export function buildVenue(world,game,settings={}){
   solid(-9,0,3,14,3.4);solid(9,0,3,14,3.4,0x87978a);solid(0,-11,18,4,4);
   for(const x of [-4,4]){box(1.8,.1,.5,0x78634d,x,.48,4,g);for(const dx of [-.6,.6])box(.08,.45,.35,0x685743,x+dx,.225,4,g);}
  }else if(kind==='lane'||kind==='streetcourt'){
-  const offset=kind==='streetcourt'?13.2:7.6;
+  const offset=game.id==='stay'?14.5:kind==='streetcourt'?13.2:7.6;
   for(const x of [-offset,offset])for(let i=0;i<5;i++)solid(x,-14+i*7,4,6.8,3.2+i%2*.8,[0x9caa96,0xc2ab88,0xad7b62][i%3],x<0?Math.PI/2:-Math.PI/2);
-  streetCourtDetails(g,kind==='streetcourt');
+  streetCourtDetails(g,kind==='streetcourt',game.id==='stay'?12:undefined);
  }else if(kind==='sand'){
   solid(0,-11,23,4,3,0xcbb28f);solid(-13,0,4,22,3.4,0x9eaa94);solid(13,-1,4,21,3.5,0xb9957c);
   for(const x of [-7,7]){box(3,.14,.65,0x796148,x,.5,0,g);for(const dx of [-1,1])box(.12,.45,.5,0x6c5b42,x+dx,.23,0,g);}

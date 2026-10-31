@@ -1,4 +1,4 @@
-import {closestChallenger,separatePlayers,dribbleBall,supportPosition} from './street-ball-control.js';
+import {closestChallenger,separatePlayers,dribbleBall,supportPosition,avoidPlayers} from './street-ball-control.js';
 import {pitchSurface,pitchType} from './football-assets.js';
 import {Mode} from './mode-base.js';
 import {THREE,moveActor,distance} from './world.js';
@@ -16,7 +16,20 @@ export class Sulia extends Mode{
  hit({point}){this.input.target=point;}
  cycleCamera(){this.wide=!this.wide;this.world.setCamera(this.wide?[0,18,8,0,0,0]:[0,10,13,0,.5,0]);}
  update(dt){this.cool=Math.max(0,this.cool-dt);this.playTime+=dt;this.status(`YOU ${this.points[0]} · BEST RIVAL ${Math.max(...this.points.slice(1))}`,this.phase==='chase'?`${names[this.victim]} WAS NUTMEGGED`:`${Math.max(0,Math.ceil(this.limit-this.playTime))}s · NUTMEG ${names[this.target]}`);this.move(this.you,dt,this.input.sprint?6.5:4.6,8.5);this.you.position.z=clamp(this.you.position.z,-8.5,8.5);this.marker.position.set(this.players[this.target].position.x,.025,this.players[this.target].position.z);
- if(this.phase==='chase'){this.chaseAge+=dt;const victim=this.players[this.victim];for(let i=1;i<5;i++){const p=this.players[i];if(i===this.victim){const away=p.position.clone().sub(this.players.find((_,j)=>j!==i).position).normalize().multiplyScalar(3).add(p.position);p.userData.run=moveActor(p,away,4.8,dt);}else p.userData.run=moveActor(p,victim.position,5.3,dt);p.position.x=clamp(p.position.x,-8,8);p.position.z=clamp(p.position.z,-8,8);}for(let i=0;i<5;i++)if(i!==this.victim&&distance(this.players[i],victim)<.8){this.players[i].userData.pose='reach';if(!this.tagged){this.tagged=true;this.ui.sound('clap');}victim.userData.pose='head';}if(this.chaseAge>2.8){this.players.forEach(p=>p.userData.pose='idle');this.phase='play';this.carrier=this.victim;const centre=this.players[this.victim].position.clone();this.players.forEach((p,i)=>{if(i!==this.victim){const a=i*2.399;p.position.set(clamp(centre.x+Math.sin(a)*2.6,-8,8),0,clamp(centre.z+Math.cos(a)*2.6,-8,8));}});separatePlayers(this.players,.9,8.5);this.cool=.8;this.placeBall();this.note(`${names[this.carrier]} restarts with the ball.`);}return;}
+ if(this.phase==='chase'){
+  this.chaseAge+=dt;const victim=this.players[this.victim],chasers=this.players.filter(p=>p!==victim).sort((a,b)=>distance(a,victim)-distance(b,victim)),tagger=chasers[0];
+  for(let i=1;i<5;i++){const p=this.players[i];let target;
+   if(p===victim){const nearest=chasers[0],dx=p.position.x-nearest.position.x,dz=p.position.z-nearest.position.z,n=Math.hypot(dx,dz)||1;target={x:clamp(p.position.x+dx/n*3-p.position.x*.25,-7.7,7.7),z:clamp(p.position.z+dz/n*3-p.position.z*.25,-7.7,7.7)};}
+   else if(p===tagger&&!this.tagged)target=victim.position;
+   else{const a=i*2.399;target={x:clamp(victim.position.x+Math.sin(a)*2.6,-7.5,7.5),z:clamp(victim.position.z+Math.cos(a)*2.6,-7.5,7.5)};}
+   p.userData.run=moveActor(p,avoidPlayers(p,target,this.players),p===victim?4.8:5.3,dt);
+  }
+  if(!this.tagged&&distance(tagger,victim)<1.1){this.tagged=true;this.tagAt=this.chaseAge;tagger.userData.pose='reach';victim.userData.pose='head';this.ui.sound('clap');}
+  separatePlayers(this.players,1.02,8.5);
+  if(this.chaseAge>2.8||this.tagged&&this.chaseAge-this.tagAt>.65){this.players.forEach(p=>{p.userData.pose='idle';p.userData.run=0;});this.phase='play';this.carrier=this.victim;this.cool=1;this.placeBall();this.note(`${names[this.carrier]} restarts with the ball.`);}
+  return;
+ }
+
  const carrier=this.carrier===null?null:this.players[this.carrier];
  const challenger=closestChallenger(this.players,carrier,this.b,this.you);for(const p of this.players)if(p!==carrier)p.userData.dribble=0;
  for(let i=1;i<5;i++){
@@ -29,9 +42,9 @@ export class Sulia extends Mode{
    else if(d<1.4)target={x:p.position.x+away.z*2,z:p.position.z-away.x*2};
   }else if(p===challenger){target=carrier?{x:carrier.position.x+Math.sin(carrier.rotation.y)*.65,z:carrier.position.z+Math.cos(carrier.rotation.y)*.65}:this.b.position;speed=4.2;}
   else target=supportPosition(p,carrier,this.b,i);
-  p.userData.run=moveActor(p,target,speed,dt);
+  p.userData.run=moveActor(p,avoidPlayers(p,target,this.players,1.25),speed,dt);
  }
- separatePlayers(this.players,.9,8.5);
+ separatePlayers(this.players,1.02,8.5);
  // Only the closest defender challenges, with a recovery interval after a win.
  if(carrier&&challenger&&challenger!==this.you&&this.carrier!==null&&this.cool<=0&&distance(challenger,this.b)<.72&&!(this.carrier===0&&this.age<this.shieldUntil)){
   this.carrier=challenger.userData.id;this.lastKicker=-1;this.cool=.75;this.ui.sound('kick');

@@ -1,6 +1,6 @@
 import {Stay} from './stay.js';
 import {Mode,makeStool} from './mode-base.js';
-import {THREE,actor,animateActor,box,cylinder,sphere,ball,ring,distance,palette} from './world.js';
+import {THREE,actor,animateActor,box,cylinder,sphere,ball,ring,distance,palette,moveActor} from './world.js';
 export function createMotionMode(ctx){const id=ctx.game.id;if(id==='antoakyire')return new CircleChase(ctx);if(id==='ampe')return new Ampe(ctx);if(id==='chaskele')return new Chaskele(ctx);if(id==='stay')return new Stay(ctx);if(['alikoto','kpitinge','alasa'].includes(id))return new Aim(ctx);if(['tumatu','zanzama','numbers'].includes(id))return new Steps(ctx);return new Rhythm(ctx);}
 class Ampe extends Mode{
  constructor(ctx){super(ctx);this.world.setCamera('close');this.you=this.player(-1.3,0);this.other=this.player(1.3,0,0x4e9b80);this.you.rotation.y=Math.PI/2;this.other.rotation.y=-Math.PI/2;this.circle(0,0,3);this.scores=[0,0];this.phase='choose';this.round=0;this.choice=0;this.rivalChoice=Math.random()<.5?0:1;this.setActions([{id:'left',label:'Left foot',key:'Space'},{id:'right',label:'Right foot',key:'E'}]);this.note('Clap, jump… choose your foot! Matching feet score for you.');}
@@ -8,11 +8,45 @@ class Ampe extends Mode{
  update(dt,t){this.status(`YOU ${this.scores[0]} — ${this.scores[1]} THEM`,'FIRST TO 5');if(this.phase==='choose'){this.you.userData.pose=this.other.userData.pose='clap';return;}if(this.phase==='jump'){this.you.userData.jump=this.other.userData.jump=Math.sin(Math.min(1,this.time/.7)*Math.PI)*.8;if(this.time>.7){this.you.userData.pose=this.choice?'right':'left';this.other.userData.pose=this.rivalChoice?'right':'left';this.you.userData.jump=this.other.userData.jump=0;this.scores[this.choice===this.rivalChoice?0:1]++;this.phase='show';this.time=0;this.note(this.choice===this.rivalChoice?'Same foot! A point for you.':'Opposite feet. Their point.');this.ui.sound('point');}}else if(this.time>1.3){if(Math.max(...this.scores)>=5){this.score=this.scores[0];return this.finish(this.scores[0]>=5?'AMPE CHAMPION!':'THEY HAVE THE RHYTHM',`${this.scores[0]} – ${this.scores[1]}`,this.scores[0]>=5);}this.phase='choose';this.rivalChoice=Math.random()<.5?0:1;this.note('Clap, jump… choose again!');}}
 }
 class Chaskele extends Mode{
- constructor(ctx){super(ctx);this.world.setCamera('aim');this.you=this.player(0,4);this.you.rotation.y=Math.PI;this.thrower=this.player(0,-7,0x469d86);this.b=new THREE.Group();this.root.add(this.b);const can=cylinder(.12,.1,.21,0xa7a598,0,0,0,this.b,7);can.rotation.z=.32;can.scale.x=.75;this.tyre=new THREE.Mesh(new THREE.TorusGeometry(.9,.2,8,24),new THREE.MeshStandardMaterial({color:0x292d27}));this.tyre.rotation.x=Math.PI/2;this.tyre.position.set(0,.2,6);this.root.add(this.tyre);this.bat=cylinder(.07,.13,1.8,0x9c6a37,.6,1.1,4,this.root,9);this.swung=0;this.attempt=0;this.phase='ready';this.release=1;this.v=new THREE.Vector3();this.setActions([{id:'swing',label:'Swing',key:'Space'}]);this.note('Line up with the crushed can. Swing just before it passes you.');}
- serve(){this.phase='flight';this.time=0;this.b.position.set((Math.random()-.5)*3,1.5,-6.4);this.v.set(-this.b.position.x*.45,1,10);this.hitBall=false;this.thrower.userData.pose='cheer';}
- action(){if(this.swung>0||this.phase!=='flight')return;this.swung=.35;this.ui.sound('swing');}
- update(dt){const v=this.input.vector();this.you.position.x=THREE.MathUtils.clamp(this.you.position.x+v.x*dt*5,-4,4);this.you.userData.run=Math.abs(v.x);this.swung=Math.max(0,this.swung-dt);this.bat.position.set(this.you.position.x+.45,1.2,4);this.bat.rotation.set(.3,this.swung*10,this.swung*5-.3);this.status(`${this.score} DEFENDED`,`${Math.min(10,this.attempt+1)} / 10 THROWS`);if(this.phase==='ready'&&this.time>1)this.serve();if(this.phase==='flight'){if(this.swung>0&&!this.hitBall&&Math.abs(this.b.position.z-4)<.8&&Math.abs(this.b.position.x-this.you.position.x)<1.05&&this.b.position.y<1.8){this.v.set((this.b.position.x-this.you.position.x)*8,5,-14);this.hitBall=true;this.score++;this.note('Clean contact — away from the tyre.');this.ui.sound('kick');this.you.userData.kick=.38;}this.b.position.addScaledVector(this.v,dt);this.v.y-=7*dt;if(this.b.position.y<.11){this.b.position.y=.11;this.v.y=Math.abs(this.v.y)*.5;}if(this.b.position.z>6.5||this.b.position.z<-12||this.time>3){this.attempt++;if(!this.hitBall){this.note('Past the bat! Watch the next throw.');this.ui.sound('miss');}if(this.attempt>=10)return this.finish(this.score>=6?'THE TYRE IS SAFE':'GOOD PRACTICE',`${this.score} of 10 throws defended.`,this.score>=6);this.phase='ready';this.time=0;this.b.position.set(0,1.4,-7);}}}
- hit({point}){this.you.position.x=THREE.MathUtils.clamp(point.x,-4,4);}
+ constructor(ctx){super(ctx);this.world.setCamera('aim');this.you=this.player(0,4);this.you.rotation.y=Math.PI;this.thrower=this.player(0,-7,0x469d86);this.b=new THREE.Group();this.root.add(this.b);const can=cylinder(.12,.1,.21,0xa7a598,0,0,0,this.b,7);can.rotation.z=.32;can.scale.x=.75;this.tyre=new THREE.Mesh(new THREE.TorusGeometry(.9,.2,8,24),new THREE.MeshStandardMaterial({color:0x292d27}));this.tyre.rotation.x=Math.PI/2;this.tyre.position.set(0,.2,6);this.root.add(this.tyre);this.bat=cylinder(.07,.13,1.8,0x9c6a37,.6,1.1,4,this.root,9);this.swung=0;this.attempt=0;this.conceded=0;this.phase='ready';this.v=new THREE.Vector3();this.setActions([{id:'swing',label:'Swing',key:'Space'}]);this.note('Protect the tyre. Move across, then time the stick through the can. The thrower retrieves it from where you strike it.');}
+ serve(){
+  this.phase='flight';this.time=0;this.b.position.set(this.thrower.position.x,1.3,this.thrower.position.z+.3);const duration=THREE.MathUtils.clamp(distance(this.thrower,{x:0,z:6})/(9+Math.random()*3),.65,1.55),x=(Math.random()-.5)*.7,z=6+(Math.random()-.5)*.3;
+  this.v.set((x-this.b.position.x)/duration,(.13-this.b.position.y+4*duration*duration)/duration,(z-this.b.position.z)/duration);this.hitBall=false;this.thrower.userData.pose='keeperThrow';this.thrower.userData.poseUntil=this.age+.45;
+ }
+ action(){if(this.swung>0||this.phase!=='flight')return;this.swung=.42;this.you.userData.pose='reach';this.ui.sound('swing');}
+ endThrow(scored=false){
+  this.attempt++;if(scored){this.conceded++;this.note('In the tyre! Line up earlier for the next throw.');this.ui.sound('miss');}
+  else if(!this.hitBall)this.note('The can missed the tyre. Get ready for the next throw.');
+  if(this.attempt>=10)return this.finish(this.conceded<4?'THE TYRE IS SAFE':'CHASKELE ROUND COMPLETE',`${this.score} struck away · ${this.conceded} in the tyre.`,this.conceded<4);
+  this.v.set(0,0,0);this.b.position.set(THREE.MathUtils.clamp(this.b.position.x,-9,9),.11,THREE.MathUtils.clamp(this.b.position.z,-11,8));this.phase='retrieve';this.time=0;
+ }
+ update(dt){
+  const input=this.input.vector(),old=this.you.position.x,target=Math.abs(input.x)>.01?this.you.position.x+input.x*3:this.aimX??this.you.position.x;this.you.position.x=THREE.MathUtils.clamp(this.you.position.x+THREE.MathUtils.clamp(target-this.you.position.x,-dt*5,dt*5),-4,4);this.you.userData.run=Math.abs(this.you.position.x-old)/Math.max(dt*5,.001);
+  this.you.userData.pose=this.swung>0?'reach':'idle';this.thrower.userData.pose=this.age<(this.thrower.userData.poseUntil||0)?'keeperThrow':this.phase==='ready'?'keeperHold':'idle';
+  this.status(`${this.score} STRUCK AWAY · ${this.conceded} IN TYRE`,`${Math.min(10,this.attempt+1)} / 10 THROWS`);
+  const steps=Math.max(1,Math.ceil(dt*120)),step=dt/steps;
+  for(let n=0;n<steps;n++){
+   this.swung=Math.max(0,this.swung-step);const progress=1-this.swung/.42;this.bat.position.set(this.you.position.x+.25,.8,4);this.bat.rotation.set(.2,-1.2+progress*2.4,this.swung>0?-1.2+Math.sin(progress*Math.PI)*1.9:-.5);
+   if(this.phase!=='flight')continue;
+   this.b.position.addScaledVector(this.v,step);this.v.y-=8*step;this.b.rotation.x+=this.v.z*step*2;this.b.rotation.z+=step*6;
+   if(this.swung>.15&&this.swung<.36&&!this.hitBall&&Math.abs(this.b.position.z-4)<.6&&Math.abs(this.b.position.x-this.you.position.x)<1&&this.b.position.y<1.9){
+    const offset=this.b.position.x-this.you.position.x,quality=1-Math.min(1,Math.abs(progress-.4)*2);this.v.set(offset*9,2.5+quality*2,-9-quality*8);this.hitBall=true;this.score++;this.note('Struck away! The thrower has to retrieve the can.');this.ui.sound('stone');
+   }
+   const radial=distance(this.b,{x:0,z:6});
+   if(this.b.position.y<.34&&radial<.61){this.endThrow(true);break;}
+   if(this.b.position.y<.4&&radial>.64&&radial<1.12){const nx=this.b.position.x/radial,nz=(this.b.position.z-6)/radial,speed=this.v.x*nx+this.v.z*nz;if(speed<0){this.v.x-=1.45*speed*nx;this.v.z-=1.45*speed*nz;this.v.y=Math.max(this.v.y,1.2);}}
+   if(this.b.position.y<.11){this.b.position.y=.11;this.v.y=Math.abs(this.v.y)>.55?Math.abs(this.v.y)*.28:0;this.v.x*=Math.exp(-step*3);this.v.z*=Math.exp(-step*3);}
+   if(this.b.position.z>8||this.b.position.z<-11||Math.abs(this.b.position.x)>9||this.time>4){this.endThrow();break;}
+  }
+  if(this.phase==='retrieve'){
+   this.thrower.userData.run=moveActor(this.thrower,this.b.position,5,dt);
+   if(distance(this.thrower,this.b)<.45){this.phase='return';this.returnTo={x:THREE.MathUtils.clamp(this.thrower.position.x,-5,5),z:Math.min(this.thrower.position.z,1)};this.thrower.userData.pose='knees';}
+  }else if(this.phase==='return'){
+   this.thrower.userData.run=moveActor(this.thrower,this.returnTo,4,dt);this.b.position.set(this.thrower.position.x,1.2,this.thrower.position.z+.2);
+   if(distance(this.thrower,this.returnTo)<.1){this.phase='ready';this.time=0;}
+  }else if(this.phase==='ready'){this.thrower.userData.run=0;this.b.position.set(this.thrower.position.x,1.2,this.thrower.position.z+.2);if(this.time>1)this.serve();}
+ }
+ hit({point}){if(point)this.aimX=THREE.MathUtils.clamp(point.x,-4,4);}
 }
 class Aim extends Mode{
  constructor(ctx){super(ctx);this.id=ctx.game.id;this.world.setCamera(this.id==='alikoto'?'close':'aim');this.you=this.player(-2,4);this.you.rotation.y=.6;this.attempt=0;this.phase='ready';this.aim=0;this.power=.5;this.good=false;this.v=new THREE.Vector3();this.max=this.id==='alasa'?6:5;this.prop=new THREE.Group();this.root.add(this.prop);if(this.id==='alikoto'){cylinder(.55,.05,.8,0xc44d36,0,.4,0,this.prop,16);cylinder(.55,.55,.07,0xf4cb58,0,.82,0,this.prop);cylinder(.05,.05,.6,0x3e6a59,0,1.12,0,this.prop);this.prop.position.set(0,.05,0);this.circle(0,0,2);this.setActions([{id:'spin',label:'Spin',key:'Space'},{id:'land',label:'Land',key:'E'}]);this.note('Spin the top, then Land when it is upright.');}else if(this.id==='kpitinge'){cylinder(.055,.1,1.3,0xe8c87f,0,0,0,this.prop,8);this.prop.position.set(0,1.1,4);const mound=sphere(1.7,0xcba875,0,.1,-3,this.root);mound.scale.y=.3;this.circle(0,-3,1.3);this.setActions([{id:'throw',label:'Throw peg',key:'Space'}]);this.note('Aim left/right. Throw when the peg points up.');}else{sphere(.16,0x9f4f24,0,0,0,this.prop,10);this.prop.position.set(0,.17,5);cylinder(.42,.42,.025,0x3c2d20,0,.012,-4,this.root);this.circle(0,-4,.65);this.aimLine=box(.035,.02,3,0xf0d090,0,.04,3.5,this.root);this.setActions([{id:'flick',label:'Flick seed',key:'Space'},{id:'power',label:'Power',key:'E'}]);this.note('Aim with left/right. Set power with E, then Flick.');}}
@@ -40,8 +74,55 @@ class Rhythm extends Mode{
 }
 
 class CircleChase extends Mode {
- constructor(ctx){super(ctx);this.world.setCamera([0,11,14,0,1,0]);this.circle(0,0,4);this.you=this.player(0,4);for(let i=1;i<8;i++){const a=i*Math.PI/4,p=this.player(Math.sin(a)*4,Math.cos(a)*4,i%2?0xc4a455:0x4d8b71);p.rotation.y=a+Math.PI;p.userData.pose='knees';}this.runner=this.player(0,-4,0x468d7a);this.cloth=box(.55,.04,.45,0xf6dfaa,0,.04,5,this.root);this.cloth.visible=false;this.round=0;this.angle=1;this.youAngle=0;this.phase='watch';this.setActions([{id:'chase',label:'Chase!',key:'Space'},{id:'sprint',label:'Sprint',key:'Shift',hold:true}]);this.note('Watch the runner. Chase when the cloth drops behind you.');}
- action(id){if(id!=='chase')return;if(this.phase==='dropped'){this.phase='chase';this.note('Chase! Hold Sprint to close the gap.');this.you.userData.pose='idle';this.ui.sound('call');}else if(this.phase==='watch')this.note('Wait until the cloth drops behind you.');}
- result(ok){if(ok)this.score++;this.round++;this.phase='result';this.time=0;this.runner.userData.run=this.you.userData.run=0;this.note(ok?'Caught! You were quick.':'The runner made it back to the seat.');this.ui.sound(ok?'point':'miss');}
- update(dt){this.status(`${this.score} CAUGHT`,`${Math.min(5,this.round+1)} / 5 ROUNDS`);if(this.phase==='result'){if(this.time>1.5){if(this.round>=5)return this.finish('CIRCLE COMPLETE',`${this.score} of 5 runners caught.`,this.score>=3);this.angle=1;this.youAngle=0;this.phase='watch';this.cloth.visible=false;this.you.position.set(0,0,4);this.you.rotation.y=Math.PI;this.note('Watch for the cloth again…');}return;}this.angle+=dt*1.1;this.runner.position.set(Math.sin(this.angle)*4.8,0,Math.cos(this.angle)*4.8);this.runner.rotation.y=this.angle+Math.PI/2;this.runner.userData.run=1;if(this.phase==='watch'&&this.angle>=Math.PI*2){this.phase='dropped';this.youAngle=Math.PI*2;this.cloth.visible=true;this.note('THE CLOTH! Press Chase!');this.ui.sound('call');}if(this.phase==='chase'){this.youAngle+=dt*(this.input.sprint?1.8:1.23);this.you.position.set(Math.sin(this.youAngle)*4.8,0,Math.cos(this.youAngle)*4.8);this.you.rotation.y=this.youAngle+Math.PI/2;this.you.userData.run=1;if(this.youAngle>=this.angle-.13)return this.result(true);}if(this.angle>=Math.PI*4)this.result(false);}
+ constructor(ctx){
+  super(ctx);this.world.setCamera([0,11,14,0,1,0]);this.circle(0,0,4);this.seated=[];for(let i=0;i<8;i++){const a=i*Math.PI/4,p=this.player(Math.sin(a)*4,Math.cos(a)*4,i===0?this.settings.color:i%2?0xc4a455:0x4d8b71);p.rotation.y=a+Math.PI;p.userData.pose='knees';this.seated.push(p);}
+  this.you=this.seated[0];this.runner=this.player(0,-4.8,0x468d7a);this.cloth=box(.55,.04,.45,0xf6dfaa,0,.04,5,this.root);this.round=0;this.role='chaser';this.seatIndex=0;this.beginRound();
+ }
+ beginRound(){
+  this.angle=this.seatIndex*Math.PI/4+.5;this.youAngle=this.seatIndex*Math.PI/4;this.phase='watch';this.stamina=1;this.cloth.visible=true;this.dropAngle=null;this.chaser=null;this.time=0;this.runner.userData.pose='idle';this.runner.userData.run=1;
+  this.seated.forEach((p,i)=>{const a=i*Math.PI/4;p.position.set(Math.sin(a)*4,0,Math.cos(a)*4);p.rotation.y=a+Math.PI;p.userData.pose='knees';p.userData.run=0;});
+  this.setActions([{id:'chase',label:this.role==='runner'?'Drop cloth':'Pick up / chase',key:'Space'},{id:'sprint',label:'Sprint',key:'Shift',hold:true}]);
+  this.note(this.role==='runner'?'You carry the cloth. Drop it behind a seated player, then reach their empty place before they tag you.':'Stay seated and watch for the cloth. Pick it up, then chase before the runner reaches your place.');
+ }
+ action(id){
+  if(id!=='chase')return;
+  if(this.role==='runner'&&this.phase==='watch'){
+   const index=((Math.round(this.angle/(Math.PI/4))%8)+8)%8,seatAngle=index*Math.PI/4+Math.round((this.angle-index*Math.PI/4)/(Math.PI*2))*Math.PI*2;
+   if(Math.abs(this.angle-seatAngle)>.22)return this.note('Get directly behind a seated player, then drop the cloth.');
+   this.dropIndex=index;this.dropAngle=seatAngle;this.chaser=this.seated[index];this.chaserAngle=seatAngle;this.reaction=.45+Math.random()*.35;this.phase='dropped';this.time=0;this.cloth.position.set(Math.sin(seatAngle)*4.7,.04,Math.cos(seatAngle)*4.7);this.note('Cloth down. Pace your sprint and get back to the empty seat.');this.ui.sound('stone');
+  }else if(this.role==='chaser'&&this.phase==='dropped'){
+   this.phase='pickup';this.time=0;this.you.userData.pose='knees';this.ui.sound('stone');this.note('Cloth picked up. Sprint to catch the runner!');
+  }else if(this.phase==='watch')this.note('Wait for the cloth behind your place.');
+ }
+ result(ok){
+  if(this.phase==='result')return;if(ok)this.score++;this.round++;this.phase='result';this.time=0;this.cloth.visible=false;
+  const was=this.role;
+  if(was==='chaser'&&!ok){this.seated[this.seatIndex]=this.runner;this.runner=this.you;this.role='runner';}
+  else if(was==='runner'&&ok){this.seated[this.dropIndex]=this.you;this.runner=this.chaser;this.seatIndex=this.dropIndex;this.role='chaser';}
+  this.actors.forEach(p=>p.userData.run=0);this.note(was==='chaser'?(ok?'Tagged before the seat! You keep your place.':'The runner took your place. You now carry the cloth.'):(ok?'You reached the empty seat. The chosen player carries the cloth next.':'Tagged! Keep the cloth for the next round.'));this.ui.sound(ok?'point':'miss');
+ }
+ update(dt){
+  this.status(`${this.score} SUCCESSFUL ROUNDS`,`${Math.min(5,this.round+1)} / 5 · ${this.role==='runner'?'CARRY THE CLOTH':'WATCH YOUR PLACE'} · ENERGY ${Math.round(this.stamina*100)}%`);
+  if(this.phase==='result'){
+   this.seated.forEach((p,i)=>{const a=i*Math.PI/4;p.userData.run=moveActor(p,{x:Math.sin(a)*4,z:Math.cos(a)*4},5,dt);if(!p.userData.run){p.userData.pose='knees';p.rotation.y=a+Math.PI;}});
+   if(this.time>1.5){if(this.round>=5)return this.finish('CIRCLE COMPLETE',`${this.score} of 5 chases or escapes successful.`,this.score>=3);if(this.seated.every(p=>!p.userData.run))this.beginRound();}return;
+  }
+  const activeHuman=this.role==='runner'||this.phase==='chase',sprinting=activeHuman&&this.input.sprint&&this.stamina>.06;
+  this.stamina=THREE.MathUtils.clamp(this.stamina+(sprinting?-.32:.23)*dt,0,1);
+  const runnerPace=this.role==='runner'?(sprinting?1.65:1.16):1.07+Math.sin(this.age*1.7)*.055;
+  this.angle+=dt*runnerPace;this.runner.position.set(Math.sin(this.angle)*4.8,0,Math.cos(this.angle)*4.8);this.runner.rotation.y=this.angle+Math.PI/2;this.runner.userData.run=runnerPace/1.3;
+  if(this.phase==='watch'){
+   this.cloth.position.set(this.runner.position.x,1,this.runner.position.z);this.runner.userData.pose='point';
+   if(this.role==='chaser'&&this.angle>=this.seatIndex*Math.PI/4+Math.PI*2){this.phase='dropped';this.dropAngle=this.seatIndex*Math.PI/4+Math.PI*2;this.youAngle=this.dropAngle;this.time=0;this.cloth.position.set(Math.sin(this.dropAngle)*4.7,.04,Math.cos(this.dropAngle)*4.7);this.note('The cloth is behind you. Pick it up and chase!');this.ui.sound('call');}
+   if(this.role==='runner'&&this.time>18){this.result(false);return;}
+  }else this.runner.userData.pose='idle';
+  if(this.role==='chaser'){
+   if(this.phase==='pickup'&&this.time>.18){this.phase='chase';this.you.userData.pose='idle';}
+   if(this.phase==='chase'){this.youAngle+=dt*(sprinting?1.75:1.17);this.you.position.set(Math.sin(this.youAngle)*4.8,0,Math.cos(this.youAngle)*4.8);this.you.rotation.y=this.youAngle+Math.PI/2;this.you.userData.run=1;this.cloth.position.set(this.you.position.x,1,this.you.position.z);if(this.youAngle>=this.angle-.14)return this.result(true);}
+   if(this.dropAngle!==null&&this.angle>=this.dropAngle+Math.PI*2)this.result(false);
+  }else if(this.phase==='dropped'||this.phase==='chase'){
+   this.reaction-=dt;if(this.reaction<=0){this.phase='chase';this.chaser.userData.pose='idle';this.chaserAngle+=dt*1.34;this.chaser.position.set(Math.sin(this.chaserAngle)*4.8,0,Math.cos(this.chaserAngle)*4.8);this.chaser.rotation.y=this.chaserAngle+Math.PI/2;this.chaser.userData.run=1;this.cloth.position.set(this.chaser.position.x,1,this.chaser.position.z);if(this.chaserAngle>=this.angle-.14)return this.result(false);}
+   if(this.angle>=this.dropAngle+Math.PI*2)this.result(true);
+  }
+ }
 }

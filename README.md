@@ -103,3 +103,7 @@ Sulia and Laski now use visible rolling dribbles, one main challenger, off-ball 
 ### Version 4.11 — live Laski rallies and fluid football positioning
 
 Laski continues beyond the chalk lines: human and CPU players can retrieve missed shots and keep attacking, with the distant compound edge keeping balls reachable. Formations now provide recovery positions while players make attacking runs, mark opponents, support passes and challenge nearby carriers. Uncontrolled attackers on both teams can dribble, pass and shoot. Three-player Balanced uses 2–1 and Attacking uses 1–2; 1–1–1 is removed. Verification is recorded in `research/verification-v411.md`.
+
+### Version 4.12 — six playground games
+
+Stay uses a spread-out street court, individual roaming/dodging and one nearby loose-ball challenger. Body separation includes boundaries in Stay and Sulia; Sulia’s tag phase no longer sends every player into the same point. Stay’s glancing rebounds use impact direction rather than automatically returning toward the thrower. Chaskele adds physical tyre-entry scoring and can retrieval, Tumatu adds a landing preview and return-trip marker pickup, Counters Ball adds momentum-sharing cap collisions and touchline restarts, and Antoakyire adds cloth pickup and runner/seat exchanges. Details, sources and 209 passing tests are recorded in `research/verification-v412.md`.
