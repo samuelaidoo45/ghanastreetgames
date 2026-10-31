@@ -50,6 +50,8 @@ Previous saved notes/favourites are left untouched in local storage. The 2D prot
 
 ## Asset scope
 
+Menu music uses Michał Jałochowski’s licensed instrumental “The Soul is a Pulse” (CC BY 3.0). Ghana street and crowd atmosphere uses attributed GESMA recordings from Ayeduase and Kejetia (CC BY 4.0). The launch screen unlocks music on the first tap; music, venue ambience and effects have separate saved volume sliders. Hidden tabs are silent. See `research/verification-sound-style.md` for this release’s checks and limitations.
+
 The CC0 character output is derived from CharacterCreator/MakeHuman, with the author’s clothing coverage mask, fitted shirt/shorts/shoes, two hairstyles and embedded locomotion. No GPL generator/runtime code was copied. Poly Haven supplies photographic PBR maps and HDR sky lighting; Freesound, LaSonotheque, OpenGameArt and Kenney supply credited recordings. These are generic licensed materials and recordings, not Ghana location scans or authenticated traditional chants. See `research/assets-realism.md` and the two new rules research reports for provenance.
 
 This is an independent browser arcade, not EA Sports production quality or a replica of proprietary Four Corners assets. It has no motion capture, online multiplayer, commentary system, full-body collision solver or per-game studio animation set. Some rules are explicit digital presets: Tumatu begins with a marker already placed, Dame uses a declared one-piece-loss rule with conflicting source conventions, and Four Corners uses finite knockout rounds instead of a queue of replacement players.

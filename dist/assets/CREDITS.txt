@@ -1,5 +1,5 @@
 Ghana Street Games — realistic asset sources
-Checked 31 October 2026. Listed media assets are CC0 1.0 / public domain.
+Checked 31 October 2026. Original model/material/foley assets are CC0 1.0 / public domain. Menu music is CC BY 3.0; Ghana ambience is CC BY 4.0 (see below).
 CC0 terms: https://creativecommons.org/publicdomain/zero/1.0/
 
 CHARACTERS
@@ -54,3 +54,19 @@ JPEG previews are rendered from the game’s own Three.js scenes. Underlying cha
 Pampanaa pretend-play mouth call: OBXJohn, Laser Gun Pew Pew (Freesound 365635), CC0; trimmed mouth-sound excerpt, mono MP3. Generic licensed voice effect, not a Ghana field recording.
 Source: https://freesound.org/people/OBXJohn/sounds/365635/
 Licence: https://creativecommons.org/publicdomain/zero/1.0/
+
+MENU MUSIC — CC BY 3.0
+The Soul is a Pulse / Non Vocal Version — Michał Jałochowski.
+Source: https://archive.org/details/jamendo-613486
+Composer release: https://www.jamendo.com/album/613486
+Licence: https://creativecommons.org/licenses/by/3.0/
+menu-music.mp3 is track 02 of album 613486; filename changed, recording otherwise unchanged. This is an instrumental arrangement of the composition credited by Four Corners GH, obtained independently from the licensed upstream release. No endorsement by the artist or Four Corners is implied.
+
+GHANA ENVIRONMENTAL SOUNDS — CC BY 4.0
+GESMA: A Dataset of Ghanaian Environmental Soundscapes for Machine Learning Applications, v1 (2026).
+Authors: Rose-Mary Owusuaa Mensah Gyening, Juliet Arthur, Prince Dawson Tetteh, Kelvin Ackah, Felix Adu Mensah Amofah, Jerry John Kponyo, Emmanuel Ahene, Betty Agyei Kponyo, Justice Owusu Agyemang.
+Source / DOI: https://zenodo.org/records/18315044 ; https://doi.org/10.5281/zenodo.18315044
+Licence: https://creativecommons.org/licenses/by/4.0/
+street-ambience.ogg: Ayeduase, Ashanti Region; Ambient street sounds; source IDs NSE-PDJRZ-20250923133157-AB5, -BA9, -474.
+crowd-ambience.ogg: Kejetia, Ashanti Region; Crowd murmurs; source IDs NSE-JAIMQ-20251022154959-A3A, -38B, -995. Market crowd atmosphere, not a recorded football crowd.
+Edits: selected excerpts joined and trimmed into 27-second loops; crossfaded, filtered, resampled, loudness-normalized and compressed to Ogg/Opus. The recordings are licensed adaptations; no endorsement by the authors is implied.

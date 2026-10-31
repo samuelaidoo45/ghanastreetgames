@@ -1,16 +1,21 @@
 {
   "checked": "2026-10-31",
-  "license": "CC0-1.0 for listed media; see CREDITS.txt",
+  "license": "Mixed licences: original media CC0-1.0; menu music CC BY 3.0; Ghana ambience CC BY 4.0. See CREDITS.txt.",
   "assets": [
     {
       "path": "CREDITS.txt",
-      "bytes": 4289,
-      "sha256": "8f7545adbc1354c65e4154a114cbf5666cf68238f738fde876eaeeab260c036f"
+      "bytes": 5926,
+      "sha256": "6f00d0ab9ce6ab95cfd2d7ef65a9a58b96483535acfe4993b657a64746af56f0"
     },
     {
       "path": "audio/applause.mp3",
       "bytes": 232160,
       "sha256": "1e282390be352a2d0c5c0f0bb6c921af41ddb84654d7da16f3376106cea657ca"
+    },
+    {
+      "path": "audio/crowd-ambience.ogg",
+      "bytes": 162172,
+      "sha256": "8f94558c8ab9f01d01441df5b1b79e88fb3424c4a8d93e26b3fd6e16c40e7078"
     },
     {
       "path": "audio/football-kick.mp3",
@@ -73,6 +78,11 @@
       "sha256": "eb45e35b4bed784d3f120de4afec4b0d6ac09d9e143cce8cfcb7d739e1b1f3c3"
     },
     {
+      "path": "audio/menu-music.mp3",
+      "bytes": 5981349,
+      "sha256": "654defd1dd3d51c086e3e161c784d0f168d6bd765008ffa90f05d249050ec869"
+    },
+    {
       "path": "audio/outdoor-ambience.ogg",
       "bytes": 289001,
       "sha256": "5af2486b996457462cebb0f50beeb7014a9ca973b00605171c05b11671124fc6"
@@ -81,6 +91,11 @@
       "path": "audio/pampanaa-mouth.mp3",
       "bytes": 15717,
       "sha256": "0cfc2c2db185b7a8df6cf6847f5072232d5705698b1431fab36f6b274fcc76a1"
+    },
+    {
+      "path": "audio/street-ambience.ogg",
+      "bytes": 178728,
+      "sha256": "10ac8830c3c7b0c41639b806e88bfd51c8a5f95dd8037909f6914fbdc51a2ede"
     },
     {
       "path": "audio/whistle.mp3",
