@@ -40,7 +40,7 @@ class Chaskele extends Mode{
   }else if(this.phase==='return'){
    this.thrower.userData.run=moveActor(this.thrower,this.returnTo,4,dt);this.b.position.set(this.thrower.position.x,1.2,this.thrower.position.z+.2);
    if(distance(this.thrower,this.returnTo)<.1){this.phase='ready';this.time=0;}
-  }else if(this.phase==='ready'){this.thrower.userData.run=0;this.b.position.set(this.thrower.position.x,1.2,this.thrower.position.z+.2);if(this.time>1)this.serve();}
+  }else if(this.phase==='ready'){this.thrower.userData.run=0;this.b.position.set(this.thrower.position.x,1.2,this.thrower.position.z+.2);if(!this.networked&&this.time>1)this.serve();}
  }
  hit({point}){if(point)this.aimX=THREE.MathUtils.clamp(point.x,-4,4);}
 }

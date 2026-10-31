@@ -5,7 +5,7 @@ export class Mode{
  player(x=0,z=5,color=this.settings.color,appearance={}){const a=actor(this.root,{x,z,color:color||palette.red,...appearance});this.actors.push(a);return a;}
  text(text,x,y,z,color='#f8df9d',size=.55){const l=label(text,color,size,this.root);l.position.set(x,y,z);return l;}
  circle(x,z,r=1,color=palette.gold){return ring(r,color,x,z,this.root,.07);}
- move(a,dt,speed=6,bounds=12){const v=this.world.movementVector?.(this.input.vector())||this.input.vector();let target={x:a.position.x+v.x*3,z:a.position.z+v.z*3};if(!v.x&&!v.z&&this.input.target)target=this.input.target;const moving=moveActor(a,target,speed,dt);a.position.x=THREE.MathUtils.clamp(a.position.x,-bounds,bounds);a.position.z=THREE.MathUtils.clamp(a.position.z,-9,10);a.userData.run=moving;return moving;}
+ move(a,dt,speed=6,bounds=12){if(a.userData.networkControlled)return a.userData.run||0;const v=this.world.movementVector?.(this.input.vector())||this.input.vector();let target={x:a.position.x+v.x*3,z:a.position.z+v.z*3};if(!v.x&&!v.z&&this.input.target)target=this.input.target;const moving=moveActor(a,target,speed,dt);a.position.x=THREE.MathUtils.clamp(a.position.x,-bounds,bounds);a.position.z=THREE.MathUtils.clamp(a.position.z,-9,10);a.userData.run=moving;return moving;}
  setActions(actions){this.actions=actions;this.ui.actions(actions);}
  note(text){if(text!==this.lastNote){this.lastNote=text;this.ui.note(text);}}
  status(a,b=''){this.ui.status(a,b);}

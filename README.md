@@ -116,8 +116,14 @@ Phone setup instructions cover every game. Small pieces get a 24 CSS-pixel near-
 
 The 3D engine loads only after Play, with loading progress. Menus, paused games and hidden tabs do not schedule continuous render frames. Phone graphics use the smaller existing assets, a pixel budget and sustained-load resolution adjustment. Physics retains 60 Hz substeps while character skeletons update once per displayed frame; the hidden phone radar is not drawn. Identical sounds share decoded audio buffers and compressed copies are released. Validation and remaining device checks: `research/verification-v413.md`.
 
-## Private friend rooms and saved progress (4.14)
+## Private friend rooms and saved progress (4.15)
 
-Open **Play with friends**, create a public nickname, and save the private recovery key to use the same player on another device. Create a room, share its eight-character code, and start once a friend joins. Ampe, Oware, Dame and Ludo are live head-to-head games. Other games offer private score challenges with separate rounds.
+All 33 games have private rooms and completion points. A player profile is created automatically on the first round. Open **Play with friends** to rename it, save the private recovery key, create a room, or join with an eight-character code. The host starts after the game's minimum human count joins. No computer opponents fill vacant seats.
 
-Cloudflare Workers + Durable Objects run private rooms, and D1 persists players and results. Server-validated friend matches have a leaderboard; personal practice XP is kept separately. The deployment, rules research, security boundaries and verification are documented in [research/ampe-online-v414.md](research/ampe-online-v414.md). No Cloudflare credentials are included in the client.
+Football, chase and group games share one live simulation. Counters Ball, One Pole and other alternating games share the same match. Individual skill games (including Tumatu, Alikoto, Kpitinge, Numbers, Skipping, Zanzama, Tyre and pretend play) give each friend a live turn while everyone watches the shared arena. Turn rounds last at most 90 seconds. Street football requires equal teams; four or more friends include human keepers. Four Corners requires four friends.
+
+Practice rounds earn 10–50 XP. Completed friend matches earn 100 for a win, 50 for a draw and 25 for participating in a loss. Points and per-game leaderboards persist in Cloudflare D1. Offline rounds keep device-local XP; interrupted cloud saves retry when the connection returns. Device-only offline points do not appear on the cloud leaderboard. Save a recovery key to use cloud progress on another device.
+
+Ampe and board moves are server-authoritative. Other live arenas use a human host's existing 3D simulation, with authenticated inputs, bounded scene deltas, and durable, idempotent awards through Cloudflare Workers + Durable Objects. Their results are host-reported, not independently verified competitive results. Keep the host's tab open; reloading the host ends the round. Guest connections can rejoin the current scene. No Cloudflare credentials are shipped to the client.
+
+See [research/multiplayer-v415.md](research/multiplayer-v415.md) for verification and limits.

@@ -24,7 +24,7 @@ export function gameActionCamera(mode,aspect,mobile=false){
  // Four-way defence needs every side goal visible on landscape displays.
  if(mode.game.id==='fourcorners'&&aspect>=1.2&&!mobile)return {position:new THREE.Vector3(0,13.8,16.5),look:new THREE.Vector3(0,.4,0)};
  const offset=aspect<.85?[0,11,8]:[1.5,10,12];
- return frameAction(mode.you,mode.b,aspect,offset);
+ return frameAction(mode.liveFocus||mode.you,mode.b,aspect,offset);
 }
 
 // Bounds describe equipment and play, not decorative buildings. This keeps tiny
@@ -45,7 +45,7 @@ export function mobileSceneBounds(mode){
  const id=mode.game.id;
  if(phoneBounds[id])return phoneBounds[id];
  if(['football','fourcorners','laski','sulia','stay'].includes(id)){
-  const p=(mode.teams?.[0]?.[mode.selected]||mode.you)?.position,b=mode.b?.position;
+  const p=(mode.liveFocus||mode.teams?.[0]?.[mode.selected]||mode.you)?.position,b=mode.b?.position;
   if(p&&b)return [Math.min(p.x-1,b.x-.4),0,Math.min(p.z-1,b.z-.4),Math.max(p.x+1,b.x+.4),Math.max(2.6,b.y+.3),Math.max(p.z+1,b.z+.4)];
  }
  return null;

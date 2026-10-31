@@ -34,7 +34,7 @@ export class Stay extends Mode {
   const kicker=this.phase==='loose'?kickers.sort((a,b)=>distance(a,this.b)-distance(b,this.b))[0]:null;
   this.players.forEach((p,i)=>{
    p.userData.pose=i===this.throwerIndex&&this.phase==='held'?'keeperHold':this.age<(p.userData.poseUntil||0)?p.userData.pose:'idle';
-   if(i===0)return;let target,speed=2.5;p.userData.duty='Find space';
+   if(i===0||this.networked)return;let target,speed=2.5;p.userData.duty='Find space';
    if(i===this.throwerIndex){
     if(this.phase==='held'){target=this.players[this.targetIndex].position;speed=distance(p,target)>5.5?3.2:0;}
     else{target={x:this.b.position.x+this.v.x*.12,z:this.b.position.z+this.v.z*.12};speed=this.phase==='loose'?5.6:4.8;p.userData.duty='Retrieve';}
@@ -53,11 +53,12 @@ export class Stay extends Mode {
    const x=p.position.x,z=p.position.z;p.userData.run=speed>0?moveActor(p,avoidPlayers(p,target,this.players),speed,dt):0;if(speed===0)p.rotation.y=Math.atan2(target.x-p.position.x,target.z-p.position.z);p.userData.stayVelocity.set((p.position.x-x)/Math.max(dt,.001),0,(p.position.z-z)/Math.max(dt,.001));
   });
   separatePlayers(this.players,1.02,{x:11,z:9});
-  if(kicker&&kicker!==this.you)this.kickLoose(this.players.indexOf(kicker));
+  if(!this.networked&&kicker&&kicker!==this.you)this.kickLoose(this.players.indexOf(kicker));
   this.youMarker.position.set(this.you.position.x,.03,this.you.position.z);this.labels.forEach((l,i)=>l.position.set(this.players[i].position.x,2.45,this.players[i].position.z));
   this.marker.position.set(this.thrower.position.x,.025,this.thrower.position.z);this.targetMarker.visible=this.phase==='held'&&this.throwerIndex===0;this.targetMarker.position.set(this.players[this.targetIndex].position.x,.02,this.players[this.targetIndex].position.z);
   this.status(this.throwerIndex===0?'YOU HAVE THE THROW':`PLAYER ${this.throwerIndex+1} HAS THE THROW`,`${this.players.length} PLAYERS · ${this.transfers.reduce((a,b)=>a+b,0)} ROLE CHANGES · ${this.phase==='rebound'?'CATCH BEFORE IT LANDS':this.phase==='loose'?'CHASE THE BALL':'HIT + CATCH TO SWITCH'}`);
-  if(this.phase==='held'){this.attachBall();if(this.throwerIndex!==0&&this.roleTime>2){this.targetIndex=this.chooseTarget();this.launch();}return;}
+  if(this.time>=150||this.transfers.some(n=>n>=5)){this.score=this.transfers[0];this.finish('STAY ROUND COMPLETE',this.transfers.map((n,i)=>'Player '+(i+1)+': '+n+' successful transfers').join(' · '),this.score===Math.max(...this.transfers));return;}
+  if(this.phase==='held'){this.attachBall();if(!this.networked&&this.throwerIndex!==0&&this.roleTime>2){this.targetIndex=this.chooseTarget();this.launch();}return;}
   const steps=Math.max(1,Math.ceil(dt/(1/120))),step=dt/steps;
   for(let n=0;n<steps;n++){if(this.advanceBall(step))break;}
  }
@@ -65,7 +66,7 @@ export class Stay extends Mode {
   this.flightTime=(this.flightTime||0)+dt;this.b.position.addScaledVector(this.v,dt);this.v.y-=8*dt;
   for(const axis of ['x','z']){const bound=axis==='x'?11.5:9.5;if(Math.abs(this.b.position[axis])>bound){this.b.position[axis]=Math.sign(this.b.position[axis])*bound;this.v[axis]*=-.65;if(this.phase!=='loose')this.loose();this.ui.sound('bounce');}}
   if(this.phase==='flight'){const hit=this.players.findIndex((p,i)=>i!==this.throwerIndex&&distance(p,this.b)<.55&&this.b.position.y>.22&&this.b.position.y<1.7);if(hit>=0)this.rebound(hit);}
-  if(this.phase==='rebound'&&distance(this.b,this.thrower)<.9&&this.b.position.y>.3&&this.b.position.y<1.8&&(this.throwerIndex!==0||this.catchWindow>0)){this.catchRebound();return true;}
+  if(this.phase==='rebound'&&distance(this.b,this.thrower)<.9&&this.b.position.y>.3&&this.b.position.y<1.8&&((!this.networked&&this.throwerIndex!==0)||this.catchWindow>0)){this.catchRebound();return true;}
   if(this.b.position.y<=.13){this.b.position.y=.13;if(this.phase!=='loose')this.loose();if(Math.abs(this.v.y)>.5)this.ui.sound('bounce');this.v.y=Math.abs(this.v.y)>.5?Math.abs(this.v.y)*.35:0;this.v.x*=Math.exp(-dt*4);this.v.z*=Math.exp(-dt*4);}
   if(this.phase==='loose'){this.v.x*=Math.exp(-dt*.35);this.v.z*=Math.exp(-dt*.35);if(distance(this.b,this.thrower)<.8&&this.b.position.y<.65){this.phase='held';this.v.set(0,0,0);this.roleTime=0;this.targetIndex=this.chooseTarget();this.attachBall();this.ui.sound('catch');this.note(this.throwerIndex===0?'Collected. Aim, hit a player, and catch the rebound.':'The thrower collected it. Stay alert for the next throw.');return true;}}
  }

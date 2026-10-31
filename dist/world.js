@@ -89,5 +89,5 @@ export class World{
  async loadSky(){const hdr=await new HDRLoader().loadAsync('assets/lighting/daylight.hdr');hdr.mapping=THREE.EquirectangularReflectionMapping;this.scene.background=hdr;this.scene.backgroundIntensity=.7;this.scene.environment=hdr;this.scene.environmentIntensity=.35;}
  dispose(){this.clear();this.composer?.dispose();this.renderer.dispose();}
 }
-export function moveActor(a,target,speed,dt){const dx=target.x-a.position.x,dz=target.z-a.position.z,d=Math.hypot(dx,dz);if(d>.08){const step=Math.min(d,speed*dt);a.position.x+=dx/d*step;a.position.z+=dz/d*step;a.rotation.y=Math.atan2(dx,dz);return 1;}return 0;}
+export function moveActor(a,target,speed,dt){if(a.userData.networkControlled)return a.userData.run||0;const dx=target.x-a.position.x,dz=target.z-a.position.z,d=Math.hypot(dx,dz);if(d>.08){const step=Math.min(d,speed*dt);a.position.x+=dx/d*step;a.position.z+=dz/d*step;a.rotation.y=Math.atan2(dx,dz);return 1;}return 0;}
 export function distance(a,b){const p=a.position||a,q=b.position||b;return Math.hypot(p.x-q.x,p.z-q.z);}

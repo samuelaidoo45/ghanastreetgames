@@ -18,7 +18,7 @@ export class Sulia extends Mode{
  update(dt){this.cool=Math.max(0,this.cool-dt);this.playTime+=dt;this.status(`YOU ${this.points[0]} · BEST RIVAL ${Math.max(...this.points.slice(1))}`,this.phase==='chase'?`${names[this.victim]} WAS NUTMEGGED`:`${Math.max(0,Math.ceil(this.limit-this.playTime))}s · NUTMEG ${names[this.target]}`);this.move(this.you,dt,this.input.sprint?6.5:4.6,8.5);this.you.position.z=clamp(this.you.position.z,-8.5,8.5);this.marker.position.set(this.players[this.target].position.x,.025,this.players[this.target].position.z);
  if(this.phase==='chase'){
   this.chaseAge+=dt;const victim=this.players[this.victim],chasers=this.players.filter(p=>p!==victim).sort((a,b)=>distance(a,victim)-distance(b,victim)),tagger=chasers[0];
-  for(let i=1;i<5;i++){const p=this.players[i];let target;
+  for(let i=1;i<this.players.length;i++){const p=this.players[i];if(this.networked)continue;let target;
    if(p===victim){const nearest=chasers[0],dx=p.position.x-nearest.position.x,dz=p.position.z-nearest.position.z,n=Math.hypot(dx,dz)||1;target={x:clamp(p.position.x+dx/n*3-p.position.x*.25,-7.7,7.7),z:clamp(p.position.z+dz/n*3-p.position.z*.25,-7.7,7.7)};}
    else if(p===tagger&&!this.tagged)target=victim.position;
    else{const a=i*2.399;target={x:clamp(victim.position.x+Math.sin(a)*2.6,-7.5,7.5),z:clamp(victim.position.z+Math.cos(a)*2.6,-7.5,7.5)};}
@@ -32,8 +32,8 @@ export class Sulia extends Mode{
 
  const carrier=this.carrier===null?null:this.players[this.carrier];
  const challenger=closestChallenger(this.players,carrier,this.b,this.you);for(const p of this.players)if(p!==carrier)p.userData.dribble=0;
- for(let i=1;i<5;i++){
-  const p=this.players[i];p.userData.pose='idle';let target,speed=3.5;
+ for(let i=1;i<this.players.length;i++){
+  const p=this.players[i];if(this.networked)continue;p.userData.pose='idle';let target,speed=3.5;
   if(p===carrier){
    const rivals=this.players.filter(q=>q!==p).sort((a,b)=>distance(p,a)-distance(p,b)),q=rivals[0],d=distance(p,q);
    const away=p.position.clone().sub(q.position);away.y=0;if(away.lengthSq()<.01)away.set(1,0,0);away.normalize();
@@ -46,11 +46,11 @@ export class Sulia extends Mode{
  }
  separatePlayers(this.players,1.02,8.5);
  // Only the closest defender challenges, with a recovery interval after a win.
- if(carrier&&challenger&&challenger!==this.you&&this.carrier!==null&&this.cool<=0&&distance(challenger,this.b)<.72&&!(this.carrier===0&&this.age<this.shieldUntil)){
+ if(!this.networked&&carrier&&challenger&&challenger!==this.you&&this.carrier!==null&&this.cool<=0&&distance(challenger,this.b)<.72&&!(this.carrier===0&&this.age<this.shieldUntil)){
   this.carrier=challenger.userData.id;this.lastKicker=-1;this.cool=.75;this.ui.sound('kick');
  }
- if(this.carrier!==null){dribbleBall(this.b,this.players[this.carrier],dt,this.age);this.v.set(0,0,0);}else{const before=stepBall(this.b,this.v,dt,{drag:1.1,bounce:.25});for(let i=0;i<5;i++)if(i!==this.lastKicker&&this.lastKicker>=0&&crossedLegs(before,this.b.position,this.players[i])){this.nutmeg(this.lastKicker,i);return;}if(this.cool<=0&&this.b.position.y<.4){const nearest=this.players.slice().sort((a,b)=>distance(a,this.b)-distance(b,this.b))[0];if(distance(nearest,this.b)<.6){this.carrier=nearest.userData.id;this.lastKicker=-1;this.cool=.3;}}}
- if(Math.abs(this.b.position.x)>9||Math.abs(this.b.position.z)>9){this.carrier=this.lastKicker>=0?(this.lastKicker+1)%5:0;this.lastKicker=-1;this.placeBall();this.cool=.6;this.note('Out. The next player restarts.');}
+ if(this.carrier!==null){dribbleBall(this.b,this.players[this.carrier],dt,this.age);this.v.set(0,0,0);}else{const before=stepBall(this.b,this.v,dt,{drag:1.1,bounce:.25});for(let i=0;i<this.players.length;i++)if(i!==this.lastKicker&&this.lastKicker>=0&&crossedLegs(before,this.b.position,this.players[i])){this.nutmeg(this.lastKicker,i);return;}if(this.cool<=0&&this.b.position.y<.4){const nearest=this.players.slice().sort((a,b)=>distance(a,this.b)-distance(b,this.b))[0];if(distance(nearest,this.b)<.6){this.carrier=nearest.userData.id;this.lastKicker=-1;this.cool=.3;}}}
+ if(Math.abs(this.b.position.x)>9||Math.abs(this.b.position.z)>9){this.carrier=this.lastKicker>=0?(this.lastKicker+1)%this.players.length:0;this.lastKicker=-1;this.placeBall();this.cool=.6;this.note('Out. The next player restarts.');}
  this.ui.power?.(this.charge===null?0:clamp(this.age-this.charge,0,1));if(Math.max(...this.points)>=5||this.playTime>=this.limit){const best=Math.max(...this.points);this.score=this.points[0];this.finish(this.points[0]===best?'SULIA WINNER':'SULIA ROUND OVER',`${this.points[0]} nutmeg points. Highest score: ${best}.`,this.points[0]===best);}
  }
 }
