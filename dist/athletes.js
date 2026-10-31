@@ -1,3 +1,4 @@
+import {animateKeeperArms} from './keeper-arms.js';
 import * as THREE from './vendor/three.module.js';
 import {GLTFLoader} from './vendor/addons/loaders/GLTFLoader.js';
 import {clone as cloneRig} from './vendor/addons/utils/SkeletonUtils.js';
@@ -31,14 +32,14 @@ export function createAthlete(parent,{x=0,z=0,color=0xa93424,skin=0x895237,scale
 }
 export function animateAthlete(root,t,speed=0,pose='idle',jump=0){
  const u=root.userData,dt=u.lastT===null?1/60:THREE.MathUtils.clamp(t-u.lastT,0,.06);u.lastT=t;
- const moving=Math.min(1,Math.abs(speed));const action=moving>.12?'run':'idle';u.basePose??=Object.fromEntries(Object.entries(u.bones).map(([n,b])=>[n,b.quaternion.clone()]));u.gestures??={};for(const [name,q]of Object.entries(u.basePose))u.bones[name].quaternion.copy(q);
+ const moving=Math.min(1,Math.abs(speed)),shuffle=pose.startsWith('keeper')&&moving>.12&&Math.abs(u.lateral||0)>.00001?(u.lateral<0?'strafe_left':'strafe_right'):null;const action=moving>.12?(shuffle&&u.actions[shuffle]?shuffle:'run'):'idle';u.basePose??=Object.fromEntries(Object.entries(u.bones).map(([n,b])=>[n,b.quaternion.clone()]));u.gestures??={};for(const [name,q]of Object.entries(u.basePose))u.bones[name].quaternion.copy(q);
  for(const [name,a]of Object.entries(u.actions)){const target=action==='idle'&&u.actions.idle_breathe?(name==='idle'?.8:name==='idle_breathe'?.2:0):name===action?1:0;a.setEffectiveWeight(THREE.MathUtils.damp(a.getEffectiveWeight(),target,10,dt));if(name==='run')a.timeScale=.82+moving*.3;}
  u.mixer.update(dt);for(const [name,q]of Object.entries(u.basePose))q.copy(u.bones[name].quaternion);u.model.position.y=jump;const b=u.bones,offsets={};
  const rot=(name,x=0,y=0,z=0)=>{if(!b[name])return;const o=offsets[name]??={x:0,y:0,z:0};o.x+=x;o.y+=y;o.z+=z;};
  // Additive gestures preserve the imported rig and its natural gait.
  if(pose==='clap'){rot('upperarm_l',-.8,0,-.55);rot('upperarm_r',-.8,0,.55);rot('lowerarm_l',-1);rot('lowerarm_r',-1);}
- if(pose==='keeperReady'){rot('spine_01',.12);rot('upperarm_l',-.5,0,-.45);rot('upperarm_r',-.5,0,.45);rot('lowerarm_l',-.65);rot('lowerarm_r',-.65);rot('thigh_l',-.12);rot('thigh_r',-.12);}
- if(pose==='keeperDive'){rot('upperarm_l',-.35,0,-1.7);rot('upperarm_r',-.35,0,1.7);rot('lowerarm_l',-.12);rot('lowerarm_r',-.12);rot('thigh_l',-.25);rot('thigh_r',.15);rot('calf_r',.35);}
+ if(pose==='keeperReady'){rot('spine_01',.12);rot('thigh_l',-.12);rot('thigh_r',-.12);}
+ if(pose==='keeperDive'){rot('thigh_l',-.25);rot('thigh_r',.15);rot('calf_r',.35);}
  if(pose==='cheer'){rot('upperarm_l',-.35,0,-2.3);rot('upperarm_r',-.35,0,2.3);}
  if(pose==='left')rot('thigh_l',-.75);if(pose==='right')rot('thigh_r',-.75);
  if(pose==='head'){rot('upperarm_l',-.2,0,-1.8);rot('upperarm_r',-.2,0,1.8);rot('lowerarm_l',-1.4);rot('lowerarm_r',-1.4);}
@@ -48,9 +49,11 @@ export function animateAthlete(root,t,speed=0,pose='idle',jump=0){
  if(pose==='band'){rot('upperarm_l',-1.25,0,-.3);rot('lowerarm_l',-.15);rot('upperarm_r',-.9,0,.35);rot('lowerarm_r',-.4-(u.bandPull||0)*1.2);}
  if(pose==='point'){rot('upperarm_r',-1.3);rot('lowerarm_r',-.2);}
  if(pose==='reach'){rot('spine_01',.45);rot('upperarm_r',-.7);rot('thigh_l',-.3);rot('calf_l',.6);u.model.position.y-=.12;}
+ if(moving>.12&&u.dribble){rot('thigh_r',-.13*u.dribble);rot('lowerarm_l',-.05*u.dribble);}
  if(u.kick>0){u.kick=Math.max(0,u.kick-dt);const swing=Math.sin((1-u.kick/.38)*Math.PI);rot('thigh_r',-1.25*swing);rot('calf_r',.3*swing);rot('upperarm_l',.5*swing);}
  for(const name of new Set([...Object.keys(offsets),...Object.keys(u.gestures)])){const target=offsets[name]||{x:0,y:0,z:0},current=u.gestures[name]??={x:0,y:0,z:0};for(const axis of ['x','y','z']){current[axis]=THREE.MathUtils.damp(current[axis],target[axis],18,dt);b[name].rotation[axis]+=current[axis];}}
  if(['knees','fold-left','fold-right'].includes(pose)&&u.feet?.length){root.updateMatrixWorld(true);const lowest=Math.min(...u.feet.map(foot=>root.worldToLocal(foot.getWorldPosition(new THREE.Vector3())).y));u.model.position.y+=THREE.MathUtils.clamp(u.restFootY+jump-lowest,-.8,.8);}
  u.model.rotation.z=THREE.MathUtils.damp(u.model.rotation.z,u.lean||0,9,dt);
+ animateKeeperArms(root,pose,moving,dt);
 }
 export function disposeAthlete(root){root.userData.mixer?.stopAllAction();root.traverse(o=>{if(o.skeleton)o.skeleton.dispose();if(o.isMesh)for(const m of Array.isArray(o.material)?o.material:[o.material])m?.dispose();});}

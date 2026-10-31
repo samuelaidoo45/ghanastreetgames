@@ -95,3 +95,7 @@ Charged actions now retain one pointer or keyboard owner and cancel safely on in
 ### Version 4.9.2 — compact mobile controls
 
 Camera, zoom and fullscreen controls now sit inside one collapsible View menu. Game surfaces suppress accidental long-press text selection and Copy/Select All callouts, while search fields remain editable. See `research/verification-v492.md`.
+
+### Version 4.10 — active Sulia and Laski football
+
+Sulia and Laski now use visible rolling dribbles, one main challenger, off-ball spacing and recovery intervals between possession changes. Laski attackers advance and shoot into space; Sulia carriers approach and attempt nutmegs. Existing elimination and chase/tag rules remain. Keeper hands use blended reaches fitted to the character's arm lengths, and moving keepers use lateral shuffle animations. See `research/verification-v410.md` for the 168-test validation and visual-testing limits.

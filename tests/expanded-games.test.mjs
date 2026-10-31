@@ -102,3 +102,38 @@ test('penalty outcomes reward placed shots while keepers still make saves',()=>{
   assert.ok(goals>=32&&goals<=120,`${difficulty}: ${goals}/128 goals`);assert.ok(saves>=8,`${difficulty}: keepers must still save`);h.close();
  }}finally{Math.random=original;}
 });
+
+test('Sulia and Laski dribbling visibly rolls the ball ahead of a moving human',()=>{
+ for(const id of ['sulia','laski']){const h=harness(id),m=h.mode;m.phase='play';m.cool=10;m.you.position.set(0,0,4);m.you.rotation.y=Math.PI;
+  m.players.slice(1).forEach((p,i)=>p.position.set(6,0,4-i*3));m.b.position.set(0,.12,3.5);
+  if(id==='sulia')m.carrier=0;else m.possessor=m.you;h.input.vector=()=>({x:0,z:-1});
+  const initial=m.b.position.clone(),rotation=m.b.rotation.x;advance(m,.65);
+  assert.ok(m.b.position.distanceTo(initial)>2,'ball travels with the dribble');assert.ok(Math.abs(m.b.rotation.x-rotation)>8,'ball rolls instead of sliding');assert.ok(m.b.position.z<m.you.position.z,'ball stays in front');assert.ok(m.b.position.distanceTo(m.you.position)<1);assert.notEqual(m.you.userData.pose,'keeperReady');h.close();
+ }
+});
+test('Laski attacker advances and shoots instead of waiting in a pile around the ball',()=>{
+ const h=harness('laski'),m=h.mode,p=m.players[1];m.phase='play';m.cool=.5;m.possessor=p;p.position.set(0,0,3);p.rotation.y=Math.PI;m.b.position.set(0,.12,2.5);
+ for(const [i,q]of m.players.entries())if(q!==p)q.position.set(i%2?6:-6,0,7);
+ let shot=false;for(let frame=0;frame<240;frame++){m.tick(1/60,m.age+1/60);if(m.lastTouch===1&&!m.possessor&&m.v.z<-5){shot=true;break;}}
+ assert.ok(p.position.z<0,'attacker advances toward goal');assert.ok(shot,'attacker releases a goalward shot');h.close();
+});
+test('unpressing players keep space instead of all following the carrier',()=>{
+ for(const id of ['sulia','laski']){const h=harness(id),m=h.mode;m.phase='play';m.cool=10;m.you.position.set(0,0,2);m.you.rotation.y=Math.PI;m.b.position.set(0,.12,1.5);if(id==='sulia')m.carrier=0;else m.possessor=m.you;
+  m.players.slice(1).forEach((p,i)=>p.position.set(i%2?4:-4,0,4-i*2));advance(m,1.2);
+  const nearby=m.players.slice(1).filter(p=>p.position.distanceTo(m.you.position)<1.6);assert.ok(nearby.length<=1,`${id}: only one close challenger`);
+  assert.ok(m.players.slice(1).filter(p=>p.position.distanceTo(m.you.position)>2).length>=2);h.close();
+ }
+});
+test('Sulia CPU carries toward a rival and attempts an actual nutmeg',()=>{
+ const h=harness('sulia'),m=h.mode;m.carrier=1;m.cool=.3;m.players[1].position.set(0,0,0);m.you.position.set(0,0,3.8);m.you.rotation.y=Math.PI;m.players.slice(2).forEach((p,i)=>p.position.set(7,0,-5+i*3));m.placeBall();
+ let attempt=false;for(let frame=0;frame<180;frame++){m.tick(1/60,m.age+1/60);if(m.lastKicker===1||m.points[1]>0){attempt=true;break;}}
+ assert.ok(attempt);assert.ok(m.players[1].position.z>.5,'CPU dribbles into range first');h.close();
+});
+
+test('a normal Laski shoot action can beat the keeper with assisted placement',()=>{
+ const h=harness('laski'),m=h.mode;m.phase='play';m.cool=0;m.possessor=m.you;m.you.position.set(0,0,-1);m.you.rotation.y=Math.PI;m.b.position.set(0,.12,-1.5);m.players.slice(1).forEach((p,i)=>p.position.set(6,0,4+i));m.action('shoot');advance(m,.8);assert.equal(m.lastScorer,0);assert.equal(m.phase,'choose');h.close();
+});
+
+test('CPU players contest a loose ball even when an idle human is slightly closer',()=>{
+ for(const id of ['sulia','laski']){const h=harness(id),m=h.mode;m.phase='play';m.cool=0;m.carrier=null;m.possessor=null;m.you.position.set(0,0,1.2);m.you.userData.run=0;m.players[1].position.set(2,0,0);m.players.slice(2).forEach((p,i)=>p.position.set(6,0,-5+i*3));m.b.position.set(0,.12,0);m.v.set(0,0,0);advance(m,.4);assert.ok(m.players[1].position.x<1,'CPU goes to the ball instead of waiting for idle human');h.close();}
+});
