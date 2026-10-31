@@ -10,7 +10,7 @@ npm run vendor
 npm run dev
 ```
 
-Open http://localhost:4173 . `npm run check` validates module syntax; `npm test` exercises the rules engines and every 3D mode without WebGL. Current street-variant verification is recorded in `research/verification-street-variants-v43.md`; earlier football reconstruction checks are in `research/verification-football-reference.md`; the earlier expansion is recorded in `research/verification-expansion.md`. Earlier browser QA applies only to the preceding builds in `research/verification-realism.md` and `research/verification-3d.md`.
+Open http://localhost:4173 . `npm run check` validates module syntax; `npm test` exercises the rules engines and every 3D mode without WebGL. Current menu/counter-count verification is recorded in `research/verification-menu-v44.md`; street-variant checks are in `research/verification-street-variants-v43.md`; earlier football reconstruction checks are in `research/verification-football-reference.md`; the earlier expansion is recorded in `research/verification-expansion.md`. Earlier browser QA applies only to the preceding builds in `research/verification-realism.md` and `research/verification-3d.md`.
 
 The runtime and fonts are vendored in `dist`; the hosted game requires no external runtime downloads. Their upstream licences are included. Serving `dist` directly needs no build step.
 
@@ -18,7 +18,7 @@ The runtime and fonts are vendored in `dist`; the hosted game requires no extern
 
 - Move with WASD, arrow keys, the touch joystick, or a point on the ground. Use the labelled action buttons or their keyboard shortcuts. Escape pauses. The camera button changes view.
 - Football: a two-minute match with 1–7 players per side and selectable small/big goals with acceleration, sprint stamina, charged shots, tackling, directional passing, player switching, team AI, pitch radar and a player-following camera.
-- Oware, Ghana-inspired 10×10 Dame and Ludo: CPU or local two-player games on physical 3D boards. Counters Ball uses a concrete floor, folded-paper goals, Coke/Pepsi/water-bottle caps and a small paper ball. Dame includes mandatory/backward captures, flying kings, captured-piece blocking during chained jumps and end-of-turn crowning. Variant conventions are stated in Rules & stories.
+- Oware, Ghana-inspired 10×10 Dame and Ludo: CPU or local two-player games on physical 3D boards. Counters Ball uses a concrete floor, folded-paper goals, Coke/Pepsi/water-bottle caps and a small paper ball. Setup selects 1–11 counters per player, with spaced formations and cap collisions. Dame includes mandatory/backward captures, flying kings, captured-piece blocking during chained jumps and end-of-turn crowning. Variant conventions are stated in Rules & stories.
 - Four Corners places one goal at the midpoint of each side, with selectable 1/3/5 lives and dribbling or alternating touches. Football, Four Corners, penalties and Laski offer blocks, sticks, footwear or net goals; One Pole offers a single stick, block or shoe target per end. Penalties has timing/free-aim controls, a contact-timed run-up, keeper dives, attempt history and early-clinch scoring. One Pole has contact-timed run-ups, selectable starting positions, ball tracking and actual target collisions. Laski lets the scorer select the eliminated rival and the winner select their next role.
 - Pampanaa/Shooting is a neighbourhood free-for-all with sightlines blocked by buildings, mouth calls, and one-hit elimination. Tyre — rubber-band target is separate from tyre rolling.
 - Pilolo uses fourteen concealed-object hiding places throughout the neighbourhood and competing seekers who route around buildings; Stay uses planted-foot kick/header returns; Tumatu follows an out-and-back hop route; Alikoto and Kpitinge score actual landings; Pempenaa tracks individual legs; Mbobagor gives every player a stone; Chempε alternates food-holder and claimant roles.
@@ -63,3 +63,8 @@ Scene thumbnails render from the actual 3D scenes on first load of this release,
 
 The expanded project is independent of the previous account's hosted site. The user authorized use of the currently connected account; `.openai/hosting.json` holds its newly registered identity.
 # ghanastreetgames
+
+
+## Vercel
+
+The existing GitHub integration deploys main to the Ghana Street Games Vercel project. `vercel.json` sets the framework to Other, runs `npm run check` and serves `dist` as the static output directory, so the game opens at `/`. Source files and research are outside that served directory. HTML, JavaScript and CSS revalidate on subsequent visits; preview images are also versioned in the browser cache.
