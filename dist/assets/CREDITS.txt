@@ -97,3 +97,11 @@ from preload/playback to remove the continuous hissing bed. New Stay event cues
 reuse the credited Kenney impacts, with no synthesized background replacement.
 
 Mobile variants (v4.7): resized photographic surfaces and embedded character textures derived from the corresponding licensed assets above. Character meshes and animations are unchanged. Original licence terms apply.
+
+AMPE WOMEN CHARACTER SHAPES (v4.14)
+Female body, garment and hair morphs extracted from the existing CC0 generated
+kblood/CharacterCreator output. Source and generated-file licence:
+https://github.com/kblood/CharacterCreator/tree/master/output
+https://github.com/kblood/CharacterCreator/blob/master/LICENSE-NOTES.md#generated-files-owner-decision-2026-10-03
+The shape data reuses the existing character textures, skeleton and animations.
+Extraction: scripts/build-female-shape.py. Clap/jump choreography is original.

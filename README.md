@@ -115,3 +115,9 @@ Phone controls now use a compact two-thumb layout. Pushing the movement stick to
 Phone setup instructions cover every game. Small pieces get a 24 CSS-pixel near-touch selection allowance, keeping direct hits and mouse precision unchanged. Equipment and action cameras fit between the measured HUD and controls in portrait and landscape; zoom and alternate views remain available. The phone catalogue uses two columns.
 
 The 3D engine loads only after Play, with loading progress. Menus, paused games and hidden tabs do not schedule continuous render frames. Phone graphics use the smaller existing assets, a pixel budget and sustained-load resolution adjustment. Physics retains 60 Hz substeps while character skeletons update once per displayed frame; the hidden phone radar is not drawn. Identical sounds share decoded audio buffers and compressed copies are released. Validation and remaining device checks: `research/verification-v413.md`.
+
+## Private friend rooms and saved progress (4.14)
+
+Open **Play with friends**, create a public nickname, and save the private recovery key to use the same player on another device. Create a room, share its eight-character code, and start once a friend joins. Ampe, Oware, Dame and Ludo are live head-to-head games. Other games offer private score challenges with separate rounds.
+
+Cloudflare Workers + Durable Objects run private rooms, and D1 persists players and results. Server-validated friend matches have a leaderboard; personal practice XP is kept separately. The deployment, rules research, security boundaries and verification are documented in [research/ampe-online-v414.md](research/ampe-online-v414.md). No Cloudflare credentials are included in the client.

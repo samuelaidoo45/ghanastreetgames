@@ -2,7 +2,7 @@ import {buildVenue} from './venues.js';
 import {THREE,actor,animateActor,moveActor,box,ring,label,palette} from './world.js';
 export class Mode{
  constructor(ctx){Object.assign(this,ctx);this.age=0;this.time=0;this.score=0;this.done=false;this.actors=[];this.actions=[];this.limit=60;this.root=this.world.stage;this.world.clear();this.world.gameMode=this;this.venue=buildVenue(this.world,this.game,this.settings);this.world.setCamera('wide');this.lastNote='';this.delay=0;}
- player(x=0,z=5,color=this.settings.color){const a=actor(this.root,{x,z,color:color||palette.red});this.actors.push(a);return a;}
+ player(x=0,z=5,color=this.settings.color,appearance={}){const a=actor(this.root,{x,z,color:color||palette.red,...appearance});this.actors.push(a);return a;}
  text(text,x,y,z,color='#f8df9d',size=.55){const l=label(text,color,size,this.root);l.position.set(x,y,z);return l;}
  circle(x,z,r=1,color=palette.gold){return ring(r,color,x,z,this.root,.07);}
  move(a,dt,speed=6,bounds=12){const v=this.world.movementVector?.(this.input.vector())||this.input.vector();let target={x:a.position.x+v.x*3,z:a.position.z+v.z*3};if(!v.x&&!v.z&&this.input.target)target=this.input.target;const moving=moveActor(a,target,speed,dt);a.position.x=THREE.MathUtils.clamp(a.position.x,-bounds,bounds);a.position.z=THREE.MathUtils.clamp(a.position.z,-9,10);a.userData.run=moving;return moving;}

@@ -2,7 +2,7 @@ import * as THREE from './vendor/three.module.js';
 const v=()=>new THREE.Vector3();
 
 // Two-bone reach keeps the elbows bent and respects the imported limb lengths.
-function reach(root,upper,lower,hand,target,pole,weight){
+export function reach(root,upper,lower,hand,target,pole,weight){
  root.updateMatrixWorld(true);
  const shoulder=upper.getWorldPosition(v()),elbow=lower.getWorldPosition(v()),wrist=hand.getWorldPosition(v());
  const a=shoulder.distanceTo(elbow),b=elbow.distanceTo(wrist);if(a<.001||b<.001)return;
