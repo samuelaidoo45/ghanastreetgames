@@ -1,11 +1,11 @@
 import {pitchType,pitchSurface} from './football-assets.js';
 import {THREE,box,cylinder,sphere} from './world.js';
 import {surface} from './surfaces.js';
-import {detailedHome,neighbourhoodDetails,streetCourtDetails,compactVenueGeometry} from './venue-details.js';
+import {detailedHome,neighbourhoodDetails,streetCourtDetails,compactVenueGeometry,footballStreetscape,venueTree} from './venue-details.js';
 
 export const venueFor=id=>['pampanaa','shooting','pilolo'].includes(id)?'neighbourhood':id==='rubberband'?'wall':id==='onepole'?'lane':id==='laski'?'streetcourt':['fourcorners','penalties','football','sulia'].includes(id)?'pitch':['oware','dame','ludo','counters','chempe','pretend'].includes(id)?'veranda':['alikoto','kpitinge','alasa'].includes(id)?'sand':id==='tyre'?'lane':'schoolyard';
 export function clearVenue(world){
- if(world.venue){world.venue.traverse(o=>{o.geometry?.dispose();for(const m of Array.isArray(o.material)?o.material:[o.material]){if(!m)continue;for(const k of ['map','normalMap','roughnessMap'])if(m[k]&&!m[k].userData.sharedAsset)m[k].dispose();m.dispose();}});world.scene?.remove(world.venue);}
+ if(world.venue){world.venue.traverse(o=>{if(o.isInstancedMesh)o.dispose();o.geometry?.dispose();for(const m of Array.isArray(o.material)?o.material:[o.material]){if(!m)continue;for(const k of ['map','normalMap','roughnessMap'])if(m[k]&&!m[k].userData.sharedAsset)m[k].dispose();m.dispose();}});world.scene?.remove(world.venue);}
  world.venue=null;if(world.environment)world.environment.visible=true;
 }
 function textured(w,h,d,name,color,x,y,z,parent){const m=box(w,h,d,color,x,y,z,parent);m.material.dispose();m.material=surface(name,color,w/2,d/2);return m;}
@@ -76,15 +76,19 @@ export function routeTo(start,end,solids){
 function buildFootballVenue(world,game,settings,kind){
  const theme=pitchType(game.id,settings.pitchSurface),g=new THREE.Group();g.name='venue-'+theme;world.venue=g;world.scene?.add(g);if(world.environment)world.environment.visible=false;
  const teamSize=Math.max(1,Math.min(7,Number(settings.teamSize)||3));
- const halfX=game.id==='football'?11+teamSize*1.15:game.id==='onepole'?4.4:game.id==='penalties'?7.5:10;
- const halfZ=game.id==='football'?7+teamSize*.7:game.id==='fourcorners'?10:12.5;
+ const halfX=game.id==='football'?11+teamSize*1.15:game.id==='onepole'?4.4:game.id==='penalties'?7.5:['laski','sulia'].includes(game.id)?9:10;
+ const halfZ=game.id==='football'?7+teamSize*.7:game.id==='sulia'?9:game.id==='fourcorners'?10:['penalties','laski'].includes(game.id)?12:12.5;
  const edgeX=halfX+5,edgeZ=halfZ+5;
- const ground=new THREE.Mesh(new THREE.PlaneGeometry(180,180),surface('red_dirt_mud_01',theme==='grass'?0x72805c:0xd5b794,90));ground.rotation.x=-Math.PI/2;ground.position.y=-.015;ground.receiveShadow=true;g.add(ground);
- if(theme!=='dirt'){const base=new THREE.Group();base.position.y=-.012;g.add(base);pitchSurface(base,edgeX*2+2,edgeZ*2+2,theme);}
+ // Terrain has a real opening for the playable surface: no stacked planes or depth bias.
+ const outline=new THREE.Shape();outline.moveTo(-90,-90);outline.lineTo(90,-90);outline.lineTo(90,90);outline.lineTo(-90,90);outline.closePath();
+ if(theme!=='dirt'){const hole=new THREE.Path();hole.moveTo(-halfX,-halfZ);hole.lineTo(-halfX,halfZ);hole.lineTo(halfX,halfZ);hole.lineTo(halfX,-halfZ);hole.closePath();outline.holes.push(hole);}
+ const terrain=new THREE.ShapeGeometry(outline),uv=terrain.attributes.uv;
+ for(let i=0;i<uv.count;i++)uv.setXY(i,uv.getX(i)/2,uv.getY(i)/2);
+ const ground=new THREE.Mesh(terrain,surface('red_dirt_mud_01',theme==='grass'?0xabb496:0xdcc7ae,1));ground.name='surrounding-terrain';ground.rotation.x=-Math.PI/2;ground.position.y=0;ground.receiveShadow=true;g.add(ground);
  const solids=[];
  const building=(x,z,w,d,h,color,i,front=0)=>{detailedHome(g,x,z,w,d,h,color,i,front);solids.push({x,z,w,d,h});};
  const bench=(x,z)=>{textured(2.8,.12,.65,'wood_planks',0x7d6850,x,.52,z,g);for(const dx of [-1,1])box(.15,.46,.5,0x716b5d,x+dx,.23,z,g);};
- const tree=(x,z,palm=false)=>{cylinder(.16,.26,5,0x75644a,x,2.5,z,g,10);for(let i=0;i<7;i++){const a=i*Math.PI*2/7;const leaf=sphere(palm?1.5:1.3,i%2?0x516847:0x647953,x+Math.sin(a)*.9,4.5+Math.sin(i)*.3,z+Math.cos(a)*.9,g,10);leaf.scale.set(palm?1.4:1,palm?.14:.8,.6);leaf.rotation.y=-a;}};
+ const tree=(x,z,palm=false)=>venueTree(g,x,z,palm);
  if(theme==='dirt'){
   // Open school frontage, sheltered benches and sand shoulders.
   for(let i=-2;i<=2;i++)building(i*6.4,-edgeZ-2,6.2,4,4.1,i%2?0xc5b68c:0xe0cda8,i+2);
@@ -102,5 +106,6 @@ function buildFootballVenue(world,game,settings,kind){
   for(const z of [-edgeZ,edgeZ]){for(let x=-edgeX;x<=edgeX;x+=3)cylinder(.045,.045,1.3,0x9b9e8b,x,.65,z,g,8);for(const y of [.45,1.1])box(edgeX*2,.055,.055,0x9b9e8b,0,y,z,g);}
   building(0,-edgeZ-5,8,5,3.4,0xd6c6a2,3);for(const x of [-7,-3,3,7])bench(x,-halfZ-2.5);
  }
+ footballStreetscape(g,theme,halfX,halfZ,solids);
  compactVenueGeometry(g);world.venueSolids=solids;world.venueTheme=theme;return {kind,theme,surface:theme,solids};
 }

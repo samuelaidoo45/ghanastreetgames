@@ -49,3 +49,16 @@ test('Counters selected caps rebound from another cap',()=>{const h=harness('cou
 test('every football venue choice rebuilds its surrounding scene as well as its surface',()=>{for(const id of ['football','fourcorners','penalties','onepole','laski']){const signatures=new Set();for(const theme of ['dirt','concrete','grass']){const h=harness(id,{pitchSurface:theme});assert.equal(h.mode.surfaceType,theme);assert.equal(h.mode.venue.theme,theme);assert.equal(h.world.venue.name,'venue-'+theme);const colors=[];h.world.venue.traverse(o=>{if(o.material?.color)colors.push(o.material.color.getHex());});signatures.add(JSON.stringify(colors));h.close();}assert.equal(signatures.size,3,id);}});
 test('Counters close view keeps people out of the miniature play area and overview restores them',()=>{const h=harness('counters'),m=h.mode;assert.ok(m.actors.every(p=>!p.visible));m.cycleCamera();assert.ok(m.actors.every(p=>p.visible));assert.ok(m.actors.every(p=>Math.abs(p.position.x)>.6));m.cycleCamera();assert.ok(m.actors.every(p=>!p.visible));h.close();});
 test('Alikoto is pen-cap sized and upright landings are physically reachable',()=>{let landed=false;for(const power of [.3,.35,.4,.45,.5,.55,.6,.65,.7,.75,.8,.85,.9]){const h=harness('alikoto'),m=h.mode;const bounds=new THREE.Box3().setFromObject(m.prop),size=bounds.getSize(new THREE.Vector3());assert.ok(size.y<.15);assert.ok(size.x<.08);m.power=power;m.action('strike');advance(m,1);if(m.score)landed=true;h.close();}assert.ok(landed);});
+test('every selected court has one continuous ground surface without overlapping terrain',()=>{
+ for(const id of ['football','fourcorners','penalties','onepole','laski','sulia'])for(const theme of ['concrete','grass']){
+  const h=harness(id,{pitchSurface:theme}),surfaces=[];h.mode.root.traverse(o=>{if(o.name==='playable-surface')surfaces.push(o);});assert.equal(surfaces.length,1,id);
+  const floor=surfaces[0];assert.equal(floor.material.polygonOffset,false);assert.equal(floor.position.y,0);h.world.venue.updateMatrixWorld(true);h.world.stage.updateMatrixWorld(true);
+  const w=floor.geometry.parameters.width,d=floor.geometry.parameters.height;
+  for(const [x,z]of [[.43,.31],[-w*.47,d*.43],[w*.46,-d*.41]]){
+   const ray=new THREE.Raycaster(new THREE.Vector3(x,2,z),new THREE.Vector3(0,-1,0));assert.equal(ray.intersectObject(floor).length,1,id+' playable coverage');
+   const underneath=ray.intersectObject(h.world.venue,true).filter(hit=>Math.abs(hit.point.y)<.01);assert.equal(underneath.length,0,id+' terrain must have an actual opening');
+  }
+  const ray=new THREE.Raycaster(new THREE.Vector3(w/2+.2,2,.31),new THREE.Vector3(0,-1,0));assert.ok(ray.intersectObject(h.world.venue,true).some(hit=>Math.abs(hit.point.y)<.01),id+' shoulder coverage');h.close();
+ }
+});
+test('venue foliage retains per-leaf colours after geometry batching',()=>{const h=harness('football',{pitchSurface:'grass'});let foliage=0;h.world.venue.traverse(o=>{if(o.isInstancedMesh&&o.instanceColor){foliage++;assert.ok(o.count>=500);}});assert.ok(foliage>0);h.close();});

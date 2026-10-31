@@ -73,3 +73,10 @@ The existing GitHub integration deploys main to the Ghana Street Games Vercel pr
 Version 4.5 fixes miniature-game scale and camera framing, provides distinct sand-school / concrete-coastal / grass-park surroundings for every football venue choice, and replaces Stay with the user-specified neighbourhood rules. See `research/verification-v45.md`.
 
 The menu follows the supplied two-column landscape-card design, with compact category badges and a single column on narrow phones. Character materials preserve glossy eyes, softer skin highlights and textured matte clothing; subtle build/height/skin/hair variation and grounded, smoothed gestures improve the existing licensed models.
+
+
+### Version 4.6 — desktop shelf and venue rendering
+
+Large desktop windows show two rows of games: 6, 8 or 10 cards according to available CSS width and height. The category row, page arrows and footer fit inside the viewport. Left/right arrows and Page Up/Down navigate the catalogue; window resizing keeps the current first game on the appropriate page. Smaller and short windows retain scrolling.
+
+Concrete and grass courts now have a genuine opening in the surrounding terrain instead of several overlapping ground planes. School, coastal and park venues have additional architecture, verandas, planted edges, detailed trees and overhead wiring. Foliage remains instanced where possible. Football action labels use complete words. The original African music and Ghanaian street/crowd recordings are unchanged; the previously disabled continuous outdoor-noise layer remains disabled.

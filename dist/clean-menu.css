@@ -36,7 +36,37 @@ body.floor-game #announcement,body.board-game #announcement{top:auto;bottom:150p
 body.floor-game .score-panel,body.board-game .score-panel{max-width:min(520px,72vw)}
 @media(max-width:600px){#game-hud .action-buttons button{width:80px;height:80px;min-width:80px;font-size:11px}#game-hud .action-buttons button small{font-size:9px}body.floor-game #announcement,body.board-game #announcement{bottom:125px}#announcement{font-size:12px}#keyboard-hint{font-size:10px}}
 
-#game-hud .action-buttons button strong{font-size:12px;line-height:1.2;white-space:normal;overflow-wrap:anywhere}
+#game-hud .action-buttons button strong{font-size:12px;line-height:1.2;white-space:normal;overflow-wrap:normal;word-break:normal}
 #game-hud[data-game="stay"] .action-buttons{display:grid;grid-template-columns:repeat(2,76px);gap:8px}
 #game-hud[data-game="stay"] .action-buttons button{width:76px;height:76px;min-width:76px;padding:8px}
 @media(max-width:600px){#game-hud .action-buttons button strong{font-size:11px}#game-hud .score-panel{min-width:0;padding:8px 12px}#game-hud .score-panel small{font-size:10px}}
+
+/* On desktop the entire shelf, pager and footer share one viewport. */
+#lobby[data-layout="viewport"]{max-width:1920px;height:100dvh;padding:20px 3vw 12px;overflow:hidden;display:flex;flex-direction:column;box-sizing:border-box}
+#lobby[data-layout="viewport"] .lobby-header{min-height:80px;height:80px;flex:0 0 80px;margin:0 0 10px}
+#lobby[data-layout="viewport"] .lobby-header h1{font-size:42px}
+#lobby[data-layout="viewport"] .game-shelf{display:flex;flex-direction:column;flex:1;min-height:0;max-width:none}
+#lobby[data-layout="viewport"] .shelf-top{flex:0 0 42px;margin-bottom:10px}
+#lobby[data-layout="viewport"] .shelf-top p{max-width:none;font-size:14px;margin:0}
+#lobby[data-layout="viewport"] .search{min-height:38px;padding:7px 14px}
+#lobby[data-layout="viewport"] #categories{flex-wrap:nowrap;min-height:42px;margin-bottom:14px;gap:9px}
+#lobby[data-layout="viewport"] .category{min-height:38px;padding:8px 17px;font-size:10px}
+#lobby[data-layout="viewport"] .game-grid{flex:1;min-height:0;height:auto;grid-template-columns:repeat(var(--menu-columns),minmax(0,1fr));grid-template-rows:repeat(2,minmax(0,1fr));grid-auto-rows:0;gap:16px}
+#lobby[data-layout="viewport"] .game-card{aspect-ratio:auto;height:100%;min-height:0;border-radius:16px}
+#lobby[data-layout="viewport"] .card-copy{left:16px;right:12px;bottom:16px;padding-right:24px}
+#lobby[data-layout="viewport"] .game-name{font-size:clamp(18px,1.55vw,29px);line-height:1.15}
+#lobby[data-layout="viewport"] .card-copy small{font-size:12px;margin-top:6px}
+#lobby[data-layout="viewport"] .card-tag{left:13px;top:17px;font-size:8px;padding:4px 9px}
+#lobby[data-layout="viewport"] .card-play{right:14px;bottom:18px}
+#lobby[data-layout="viewport"] .shelf-controls{flex:0 0 44px;min-height:44px;margin-top:14px;gap:24px}
+#lobby[data-layout="viewport"] .shelf-controls p{margin:2px 0 0;font-size:11px}
+#lobby[data-layout="viewport"] .lobby-footer{flex:0 0 28px;min-height:28px;padding-top:6px;gap:26px}
+#lobby[data-layout="viewport"] .lobby-footer .quiet-button{font-size:11px}
+@media(max-height:700px){#lobby[data-layout="viewport"]{padding-top:12px;padding-bottom:8px}#lobby[data-layout="viewport"] .lobby-header{height:58px;min-height:58px;flex-basis:58px;margin-bottom:6px}#lobby[data-layout="viewport"] .lobby-header h1{font-size:30px}#lobby[data-layout="viewport"] .shelf-top{flex-basis:34px;margin-bottom:7px}#lobby[data-layout="viewport"] #categories{margin-bottom:10px;min-height:36px}#lobby[data-layout="viewport"] .category{min-height:34px;padding:5px 14px}#lobby[data-layout="viewport"] .game-grid{gap:12px}#lobby[data-layout="viewport"] .card-copy small{display:none}#lobby[data-layout="viewport"] .shelf-controls{margin-top:10px;flex-basis:38px;min-height:38px}#lobby[data-layout="viewport"] .shelf-controls .round-button{width:36px;height:36px;min-width:36px;min-height:36px}#lobby[data-layout="viewport"] .lobby-footer{flex-basis:23px;min-height:23px}}
+/* Keep complete words inside football controls at every screen width. */
+body.football-controls #game-hud .action-buttons{grid-template-columns:repeat(3,72px);gap:8px;max-width:none}
+body.football-controls #game-hud .action-buttons button{width:72px;height:72px;min-width:72px;min-height:72px;padding:5px}
+body.football-controls #game-hud .action-buttons button strong{font-size:10px;overflow-wrap:normal;word-break:normal}
+@media(max-width:600px){body.football-controls #game-hud .action-buttons{grid-template-columns:repeat(2,68px);gap:8px}body.football-controls #game-hud .action-buttons button{width:68px;height:68px;min-width:68px;min-height:68px;padding:4px}body.football-controls #game-hud .action-buttons button strong{font-size:9px}}
+
+#lobby[data-layout="viewport"] #no-results{flex:1;min-height:0}

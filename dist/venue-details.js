@@ -97,7 +97,74 @@ export function streetCourtDetails(parent,wide=false){
 // Textured meshes retain their own UV tiling; transparent ground marks remain separate.
 export function compactVenueGeometry(parent){
  parent.updateMatrixWorld(true);const inverse=parent.matrixWorld.clone().invert(),groups=new Map(),original=[];
- parent.traverse(o=>{const mat=o.material;if(!o.isMesh||Array.isArray(mat)||!mat||mat.map||mat.normalMap||mat.roughnessMap||mat.transparent)return;const key=[mat.color?.getHex(),mat.roughness,mat.metalness,mat.side,o.castShadow,o.receiveShadow].join(':');let group=groups.get(key);if(!group){group={material:mat,positions:[],normals:[],uvs:[],indices:[],castShadow:o.castShadow,receiveShadow:o.receiveShadow};groups.set(key,group);}const geo=o.geometry,position=geo.attributes.position,normal=geo.attributes.normal,uv=geo.attributes.uv,baseMatrix=inverse.clone().multiply(o.matrixWorld);for(let instance=0;instance<(o.isInstancedMesh?o.count:1);instance++){const matrix=baseMatrix.clone();if(o.isInstancedMesh){const local=new THREE.Matrix4();o.getMatrixAt(instance,local);matrix.multiply(local);}const normalMatrix=new THREE.Matrix3().getNormalMatrix(matrix),offset=group.positions.length/3,p=new THREE.Vector3(),n=new THREE.Vector3();for(let i=0;i<position.count;i++){p.fromBufferAttribute(position,i).applyMatrix4(matrix);group.positions.push(p.x,p.y,p.z);if(normal)n.fromBufferAttribute(normal,i).applyMatrix3(normalMatrix).normalize();else n.set(0,1,0);group.normals.push(n.x,n.y,n.z);group.uvs.push(uv?.getX(i)||0,uv?.getY(i)||0);}if(geo.index)for(let i=0;i<geo.index.count;i++)group.indices.push(offset+geo.index.getX(i));else for(let i=0;i<position.count;i++)group.indices.push(offset+i);}original.push(o);});
+ parent.traverse(o=>{const mat=o.material;if(!o.isMesh||Array.isArray(mat)||!mat||mat.map||mat.normalMap||mat.roughnessMap||mat.transparent||mat.vertexColors||o.instanceColor)return;const key=[mat.color?.getHex(),mat.roughness,mat.metalness,mat.side,o.castShadow,o.receiveShadow].join(':');let group=groups.get(key);if(!group){group={material:mat,positions:[],normals:[],uvs:[],indices:[],castShadow:o.castShadow,receiveShadow:o.receiveShadow};groups.set(key,group);}const geo=o.geometry,position=geo.attributes.position,normal=geo.attributes.normal,uv=geo.attributes.uv,baseMatrix=inverse.clone().multiply(o.matrixWorld);for(let instance=0;instance<(o.isInstancedMesh?o.count:1);instance++){const matrix=baseMatrix.clone();if(o.isInstancedMesh){const local=new THREE.Matrix4();o.getMatrixAt(instance,local);matrix.multiply(local);}const normalMatrix=new THREE.Matrix3().getNormalMatrix(matrix),offset=group.positions.length/3,p=new THREE.Vector3(),n=new THREE.Vector3();for(let i=0;i<position.count;i++){p.fromBufferAttribute(position,i).applyMatrix4(matrix);group.positions.push(p.x,p.y,p.z);if(normal)n.fromBufferAttribute(normal,i).applyMatrix3(normalMatrix).normalize();else n.set(0,1,0);group.normals.push(n.x,n.y,n.z);group.uvs.push(uv?.getX(i)||0,uv?.getY(i)||0);}if(geo.index)for(let i=0;i<geo.index.count;i++)group.indices.push(offset+geo.index.getX(i));else for(let i=0;i<position.count;i++)group.indices.push(offset+i);}original.push(o);});
  const retained=new Set([...groups.values()].map(g=>g.material)),disposedGeometry=new Set(),disposedMaterial=new Set();for(const old of original){old.removeFromParent();if(!disposedGeometry.has(old.geometry)){old.geometry.dispose();disposedGeometry.add(old.geometry);}if(!retained.has(old.material)&&!disposedMaterial.has(old.material)){old.material.dispose();disposedMaterial.add(old.material);}}
  for(const group of groups.values()){const geometry=new THREE.BufferGeometry();geometry.setAttribute('position',new THREE.Float32BufferAttribute(group.positions,3));geometry.setAttribute('normal',new THREE.Float32BufferAttribute(group.normals,3));geometry.setAttribute('uv',new THREE.Float32BufferAttribute(group.uvs,2));geometry.setIndex(group.indices);geometry.computeBoundingSphere();const m=new THREE.Mesh(geometry,group.material);m.name='Batched street details';m.castShadow=group.castShadow;m.receiveShadow=group.receiveShadow;parent.add(m);}
+}
+
+// Silhouetted branches and individual leaves leave light between the foliage.
+// This replaces the solid spheres and flat discs used for the older venue trees.
+export function venueTree(parent,x,z,palm=false){
+ const g=new THREE.Group();g.position.set(x,0,z);g.name=palm?'Coconut palm':'Shade tree';parent.add(g);
+ if(palm){
+  wire(g,[[0,0,0],[.12,2.7,.1],[.36,5.7,.18]],.17);
+  for(let i=0;i<19;i++){const collar=mesh(g,new THREE.TorusGeometry(.17,.018,4,9),new THREE.MeshStandardMaterial({color:0x8a7f60,roughness:1}),i/19*.36,i*.29,.1);collar.rotation.x=Math.PI/2;}
+  const positions=[],colors=[],c=new THREE.Color();
+  const tri=(a,b,d,color)=>{positions.push(...a,...b,...d);c.setHex(color);for(let j=0;j<3;j++)colors.push(c.r,c.g,c.b);};
+  for(let i=0;i<10;i++){const a=i*Math.PI/5,dir=new THREE.Vector3(Math.sin(a),0,Math.cos(a));
+   const spine=t=>new THREE.Vector3(.36,5.7,.18).addScaledVector(dir,t*3).add(new THREE.Vector3(0,Math.sin(t*Math.PI)*.55-t*t*1.3,0));
+   wire(g,[spine(0).toArray(),spine(.45).toArray(),spine(1).toArray()],.025);
+   for(let j=1;j<=15;j++){const t=j/17,p=spine(t),q=spine(t+.065),length=Math.sin(t*Math.PI)*.78;
+    for(const side of [-1,1]){const tip=p.clone().add(new THREE.Vector3(Math.cos(a),-.3,-Math.sin(a)).multiplyScalar(side*length)).addScaledVector(dir,.25);tip.y=p.y-.18-length*.24;tri(p.toArray(),q.toArray(),tip.toArray(),(i+j)%3?0x4c6841:0x708052);}
+   }
+  }
+  const geom=new THREE.BufferGeometry();geom.setAttribute('position',new THREE.Float32BufferAttribute(positions,3));geom.setAttribute('color',new THREE.Float32BufferAttribute(colors,3));geom.computeVertexNormals();mesh(g,geom,new THREE.MeshStandardMaterial({vertexColors:true,roughness:.9,side:THREE.DoubleSide}));
+ }else{
+  pipe(g,[0,0,0],[.22,4.7,.08],.21,0x756a51);
+  for(let i=0;i<9;i++){const a=i*2.4;pipe(g,[.12,2.6+i%3*.5,0],[Math.sin(a)*1.8,4.6+(i%3)*.4,Math.cos(a)*1.8],.065,0x756a51);}
+  const leaf=new THREE.Shape();leaf.moveTo(0,-.5);leaf.quadraticCurveTo(.3,0,0,.5);leaf.quadraticCurveTo(-.3,0,0,-.5);
+  const foliage=new THREE.InstancedMesh(new THREE.ShapeGeometry(leaf,3),new THREE.MeshStandardMaterial({color:0xffffff,roughness:.95,side:THREE.DoubleSide}),520),m=new THREE.Matrix4(),q=new THREE.Quaternion(),c=new THREE.Color();
+  for(let i=0;i<520;i++){const a=i*2.39996,r=2.5*Math.sqrt((i%97)/97),y=4.2+1.65*Math.sin(i*4.73)*Math.sqrt(Math.max(.1,1-r*r/7));q.setFromEuler(new THREE.Euler(i*1.3,i*2.7,i*.87));m.compose(new THREE.Vector3(Math.sin(a)*r,y,Math.cos(a)*r),q,new THREE.Vector3(.75,.85,1));foliage.setMatrixAt(i,m);c.setHex([0x516443,0x657950,0x758457][i%3]);foliage.setColorAt(i,c);}
+  foliage.castShadow=true;foliage.receiveShadow=true;g.add(foliage);
+ }
+ return g;
+}
+
+export function footballStreetscape(parent,theme,hx,hz,solids){
+ const back=-hz-8,edge=hx+5,decor=batch(parent);
+ // Two-storey frontage, balconies and deep verandas break the old uniform skyline.
+ const upper=(x,z,w,d,color,index,front=0)=>{
+  const h=detailedHome(parent,x,z,w,d,2.8,color,index,front);h.position.y=3.22;h.name='Upper-storey veranda';
+  const balcony=new THREE.Group();balcony.position.set(x,0,z);balcony.rotation.y=front;parent.add(balcony);
+  block(balcony,w+.3,.18,1.25,0xbeb39a,0,3.16,d/2+.5,'plastered_wall_02');
+  for(let i=0;i<Math.ceil(w/.5);i++)pipe(balcony,[-w/2+.25+i*.5,3.3,d/2+1.05],[-w/2+.25+i*.5,4.12,d/2+1.05],.025,0x576d67);
+  pipe(balcony,[-w/2,4.14,d/2+1.05],[w/2,4.14,d/2+1.05],.04,0x576d67);
+  for(const side of [-1,1])block(balcony,.16,3.1,.16,0xcbbfa0,side*(w/2-.15),1.55,d/2+1.05);
+ };
+ if(theme==='dirt'){
+  for(let i=-2;i<=2;i++)upper(i*6.4,-hz-7,6.2,4,i%2?0xd1b576:0xdbc8a1,71+i);
+  sign(parent,'COMMUNITY SCHOOL',0,6.45,-hz-4.89,7);
+  for(let i=-3;i<=3;i++){decor.box(0x9e6249,i*3.6,.38,-hz-3.1,3.45,.7,.4);decor.box(0xd5bca0,i*3.6,.77,-hz-3.1,3.55,.08,.46);}
+ }else if(theme==='concrete'){
+  for(const i of [-2,1])upper(i*6.5,-hz-7,6.3,4,i<0?0xe1c494:0x91b0a6,80+i);
+  // Courtyard mural, recessed shutters, canopy and narrow pavement outside the pitch.
+  const mural=block(parent,5.5,1.2,.06,0x517d7c,0,.95,-hz-4.95);mural.name='Painted community wall';
+  sign(parent,'PLAY TOGETHER',0,1.05,-hz-4.9,4.5);
+  for(const side of [-1,1]){block(parent,2.6,.09,hz*2+6,0xb7ac95,side*(hx+2.8),-.045,0,'plastered_wall_02');for(let j=0;j<20;j++)decor.box(j%3?0xd9cfb2:0x927e62,side*(hx+1.4),.08,-hz-2+j*(hz*2+4)/20,.15,.16,(hz*2+4)/20-.04);}
+ }else{
+  sign(parent,'COMMUNITY PARK',0,3.65,-hz-7.4,5);
+  for(const side of [-1,1]){const stand=new THREE.Group();stand.position.set(side*(hx+4),0,0);stand.rotation.y=side*Math.PI/2;parent.add(stand);for(let row=0;row<3;row++)block(stand,7,.3,.7,0x9d9a83,0,.15+row*.3,-row*.65);const roof=block(stand,8,.08,3.1,0x6d8275,0,3.1,-.65,'corrugated_iron_02');roof.rotation.x=.08;for(const x of [-3.7,3.7])pipe(stand,[x,0,-1.6],[x,3.1,-1.6],.055,0x656b60);}
+ }
+ // A second layer of homes creates a neighbourhood rather than an empty horizon.
+ for(let i=-3;i<=3;i++){const z=back-8-(i%2)*1.5,x=i*7.7;detailedHome(parent,x,z,7.4,5,4+(i%3)*.45,wallColors[(i+3)%5],90+i);solids.push({x,z,w:7.4,d:5,h:5});}
+ for(const side of [-1,1]){
+  const x=side*(edge+3.3);pipe(parent,[x,0,-hz],[x,7.3,-hz],.11,0x877b66);pipe(parent,[x,6.5,-hz],[x-side*1.1,6.5,-hz],.035,0x5a625a);decor.box(0xc5c0a6,x-side*1.1,6.47,-hz,.48,.13,.23);
+  wire(parent,[[x,7,-hz],[x,6.3,0],[x,7,hz+8]],.018);
+  const house=detailedHome(parent,x+side*3,hz+5,5.5,5,4.6,side>0?0xba9b78:0x8eaba1,side>0?104:105,side>0?-Math.PI/2:Math.PI/2);house.name='Corner shop';
+  planter(parent,side*(hx+3),hz+1);bench(parent,side*(hx+3),hz-3,side*Math.PI/2);
+ }
+ wire(parent,[[-edge-3.3,7,-hz],[0,6.1,-hz],[edge+3.3,7,-hz]],.017);
+ // Sparse edge stones, drains and repairs stay clear of the playable rectangle.
+ for(let i=0;i<20;i++){const side=i%2?1:-1,x=side*(hx+1.7+(i%3)*.3),z=-hz+(i*.731%(hz*2));decor.box(i%3?0x968773:0xc4b79b,x,.035,z,.13,.07,.18,0,i*.43);}
+ decor.finish();
 }
