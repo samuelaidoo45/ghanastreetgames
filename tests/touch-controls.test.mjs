@@ -38,3 +38,19 @@ test('pause cancels pointer ownership so resuming cannot fire an old shot',()=>{
 test('disabling a held charge cancels rather than releases it',()=>{
  const c=control();c.send('pointerdown');c.button.disabled=true;c.send('pointerup');assert.equal(c.events.at(-1),'cancel');
 });
+
+const {bindTapControl,bindJoystick}=await import('../dist/touch-controls.js');
+function pointer(target,type,id=1,extra={}){const e=new Event(type,{cancelable:true});Object.assign(e,{pointerId:id,button:0,...extra});target.dispatchEvent(e);return e;}
+test('timing buttons fire immediately once and ignore another finger and native click',()=>{
+ const b=new EventTarget();b.setPointerCapture=()=>{};let calls=0;bindTapControl(b,()=>calls++);
+ pointer(b,'pointerdown');assert.equal(calls,1);pointer(b,'pointerdown',2);pointer(b,'pointerup',2);pointer(b,'click',1,{detail:1});assert.equal(calls,1);
+ pointer(b,'pointerup');pointer(b,'click',1,{detail:0});assert.equal(calls,2);b.disabled=true;pointer(b,'pointerdown');assert.equal(calls,2);
+});
+test('joystick ownership survives a second finger and resets after pause or lost capture',()=>{
+ const pad=new EventTarget();pad.setPointerCapture=()=>{};let moves=0,resets=0;
+ const stick=bindJoystick(pad,{move(){moves++;},reset(){resets++;}});
+ pointer(pad,'pointerdown');pointer(pad,'pointerdown',2);pointer(pad,'pointermove',2);pointer(pad,'pointerup',2);assert.equal(moves,1);assert.equal(resets,0);
+ pointer(pad,'pointermove');assert.equal(moves,2);stick.cancel();pointer(pad,'pointermove');assert.equal(moves,2);
+ pointer(pad,'pointerdown',3);pointer(pad,'lostpointercapture',3);assert.equal(moves,3);assert.equal(resets,2);
+ pointer(pad,'pointerdown',4);pointer(pad,'pointercancel',4);assert.equal(moves,4);assert.equal(resets,3);
+});

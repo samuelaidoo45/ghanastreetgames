@@ -107,3 +107,11 @@ Laski continues beyond the chalk lines: human and CPU players can retrieve misse
 ### Version 4.12 — six playground games
 
 Stay uses a spread-out street court, individual roaming/dodging and one nearby loose-ball challenger. Body separation includes boundaries in Stay and Sulia; Sulia’s tag phase no longer sends every player into the same point. Stay’s glancing rebounds use impact direction rather than automatically returning toward the thrower. Chaskele adds physical tyre-entry scoring and can retrieval, Tumatu adds a landing preview and return-trip marker pickup, Counters Ball adds momentum-sharing cap collisions and touchline restarts, and Antoakyire adds cloth pickup and runner/seat exchanges. Details, sources and 209 passing tests are recorded in `research/verification-v412.md`.
+
+### Version 4.13 — mobile play across all 33 games
+
+Phone controls now use a compact two-thumb layout. Pushing the movement stick to its outer ring sprints, while aiming controls never trigger sprint. Settings can restore a separate Sprint button or put actions on the left. Football keeps Shoot, Pass and Switch beside a More button for Low shot and Chip. Timing actions respond on contact; charged actions preserve hold/release behavior and cancel safely on pause, rotation or lost touch capture.
+
+Phone setup instructions cover every game. Small pieces get a 24 CSS-pixel near-touch selection allowance, keeping direct hits and mouse precision unchanged. Equipment and action cameras fit between the measured HUD and controls in portrait and landscape; zoom and alternate views remain available. The phone catalogue uses two columns.
+
+The 3D engine loads only after Play, with loading progress. Menus, paused games and hidden tabs do not schedule continuous render frames. Phone graphics use the smaller existing assets, a pixel budget and sustained-load resolution adjustment. Physics retains 60 Hz substeps while character skeletons update once per displayed frame; the hidden phone radar is not drawn. Identical sounds share decoded audio buffers and compressed copies are released. Validation and remaining device checks: `research/verification-v413.md`.

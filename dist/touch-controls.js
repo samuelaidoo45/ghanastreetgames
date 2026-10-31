@@ -32,3 +32,28 @@ export function bindChargeControl(button,{start,release,cancel,activate}){
  button.addEventListener('click',event=>{if(!button.disabled&&pointer===null&&key===null&&event.detail===0)activate();});
  return {cancel:reset};
 }
+
+// Timed actions fire on contact, not after the finger lifts. Native click is
+// still supported for keyboard and assistive-technology activation.
+export function bindTapControl(button,activate){
+ let pointer=null;
+ button.addEventListener('pointerdown',event=>{
+  if(button.disabled||pointer!==null||event.button!==0)return;
+  event.preventDefault();pointer=event.pointerId;button.setPointerCapture(pointer);activate();
+ });
+ for(const type of ['pointerup','pointercancel','lostpointercapture'])button.addEventListener(type,event=>{if(pointer===event.pointerId)pointer=null;});
+ button.addEventListener('click',event=>{if(!button.disabled&&event.detail===0&&pointer===null)activate();});
+ return {cancel(){pointer=null;}};
+}
+
+export function bindJoystick(element,{move,reset}){
+ let pointer=null;
+ const cancel=()=>{pointer=null;reset();};
+ element.addEventListener('pointerdown',event=>{
+  if(event.button!==0||pointer!==null||event.target.closest?.('button'))return;
+  event.preventDefault();pointer=event.pointerId;element.setPointerCapture(pointer);move(event);
+ });
+ element.addEventListener('pointermove',event=>{if(pointer===event.pointerId)move(event);});
+ for(const type of ['pointerup','pointercancel','lostpointercapture'])element.addEventListener(type,event=>{if(pointer===event.pointerId)cancel();});
+ return {cancel};
+}

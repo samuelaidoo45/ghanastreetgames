@@ -10,7 +10,8 @@ export class Mode{
  note(text){if(text!==this.lastNote){this.lastNote=text;this.ui.note(text);}}
  status(a,b=''){this.ui.status(a,b);}
  finish(title,detail,success=true){if(this.done)return;this.done=true;this.input.target=null;this.ui.end({title,detail,success,score:this.score});}
- tick(dt,t){if(this.done)return;this.age+=dt;this.time+=dt;for(const a of this.actors)animateActor(a,t,a.userData.run||0,a.userData.pose||'idle',a.userData.jump||0);this.update?.(dt,t);if(this.you?.userData.run>.1&&this.age-(this.lastStep||0)>.34){this.lastStep=this.age;this.ui.sound('step');}}
+ tick(dt,t){if(this.done)return;this.age+=dt;this.time+=dt;if(!this.world.deferAnimation)this.animate(t);this.update?.(dt,t);if(this.you?.userData.run>.1&&this.age-(this.lastStep||0)>.34){this.lastStep=this.age;this.ui.sound('step');}}
+ animate(t){for(const a of this.actors)if(a.visible)animateActor(a,t,a.userData.run||0,a.userData.pose||'idle',a.userData.jump||0);}
  hit(){} action(){} update(){} dispose(){}
 }
 export function makeStool(parent,x,z,color=0x765332){box(.85,.12,.8,color,x,.64,z,parent);for(const dx of [-.3,.3])for(const dz of [-.27,.27])box(.1,.6,.1,color,x+dx,.3,z+dz,parent);}

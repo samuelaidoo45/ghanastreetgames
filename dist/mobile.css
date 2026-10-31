@@ -1,0 +1,84 @@
+/* Mobile play: one movement thumb, one action thumb, and a clear centre. */
+.touch-ui #game-hud{--pad-size:clamp(64px,18vw,76px);--dock-height:158px;--hud-top:92px}
+.touch-ui .play-bottom{left:max(12px,env(safe-area-inset-left));right:max(12px,env(safe-area-inset-right));bottom:max(12px,env(safe-area-inset-bottom));display:flex;justify-content:space-between;align-items:flex-end;gap:12px;pointer-events:none}
+.touch-ui .play-bottom>*{pointer-events:auto}
+.touch-ui #joystick{width:clamp(96px,28vw,116px);height:clamp(96px,28vw,116px);flex-shrink:0;touch-action:none}
+.touch-ui #joystick [data-move]{display:none}
+.touch-ui #joystick .stick-label{font-size:10px;white-space:nowrap}
+.touch-ui #joystick.sprinting{border-color:#ffd779;box-shadow:0 0 0 4px #f4bb4050}
+.touch-ui #game-hud #action-buttons,.touch-ui .football-controls #game-hud #action-buttons{display:grid;grid-template-columns:repeat(2,var(--pad-size));gap:8px;max-width:none;align-items:center}
+.touch-ui #game-hud #action-buttons>button,.touch-ui #game-hud #action-buttons>.more-actions>summary{width:var(--pad-size);height:var(--pad-size);min-width:0;min-height:0;margin:0;padding:5px;border-radius:24px;align-self:center}
+.touch-ui #game-hud #action-buttons strong{font-size:clamp(10px,2.7vw,12px);line-height:1.2;white-space:normal;word-break:normal;overflow-wrap:normal;max-width:100%}
+.touch-ui #game-hud #action-buttons span{display:none}
+.touch-ui #game-hud #action-buttons .touch-label{display:block;font:8px/1.25 Arial,sans-serif;margin-top:3px;opacity:.8}
+.touch-ui #game-hud #action-buttons button.charging{outline:3px solid #fff0bd;outline-offset:2px;filter:brightness(1.12)}
+.touch-ui #game-hud #action-buttons[data-count="1"]{grid-template-columns:var(--pad-size)}
+.touch-ui.board-game .play-bottom,.touch-ui.floor-game .play-bottom{justify-content:center}
+.touch-ui.board-game #joystick,.touch-ui.floor-game #joystick{display:none}
+.touch-ui.board-game #game-hud #action-buttons,.touch-ui.floor-game #game-hud #action-buttons{grid-template-columns:repeat(3,var(--pad-size))}
+.touch-ui.board-game #game-hud #action-buttons[data-count="1"],.touch-ui.floor-game #game-hud #action-buttons[data-count="1"]{grid-template-columns:var(--pad-size)}
+.touch-ui.board-game #game-hud #action-buttons[data-count="2"],.touch-ui.floor-game #game-hud #action-buttons[data-count="2"]{grid-template-columns:repeat(2,var(--pad-size))}
+.touch-ui.left-actions .play-bottom{flex-direction:row-reverse}
+.touch-ui .keyboard-hint{display:none}
+.touch-ui #radar{display:none}
+.touch-ui #player-meter{top:auto;bottom:calc(var(--dock-height) + 5px);left:max(12px,env(safe-area-inset-left));width:100px;pointer-events:none}
+.touch-ui #player-name{display:none}
+.touch-ui #charge-meter{bottom:calc(var(--dock-height) + 5px);right:max(12px,env(safe-area-inset-right));width:120px;min-height:0;padding:6px 8px;font-size:10px;pointer-events:none}
+.touch-ui #announcement{top:calc(var(--hud-top) + 8px);bottom:auto;left:50%;transform:translateX(-50%);width:calc(100% - 36px);max-width:480px;max-height:70px;overflow:hidden;padding:7px 10px;font:500 12px/1.4 Shantell,sans-serif;pointer-events:none}
+.touch-ui .match-header{padding:0;gap:7px;align-items:flex-start}
+.touch-ui .score-panel{min-width:0;padding:7px 10px;border-radius:18px;max-width:350px}
+.touch-ui .score-panel>span{font-size:9px}
+.touch-ui .score-panel strong{font-size:clamp(13px,3.5vw,18px);line-height:1.3}
+.touch-ui .score-panel small{font-size:10px;line-height:1.3}
+.touch-ui .mode-score{top:calc(env(safe-area-inset-top) + 96px);gap:4px;max-width:calc(100vw - 24px)}
+.touch-ui .corner-life{padding:4px 7px;font-size:9px}
+.touch-ui .corner-life b{font-size:8px}
+.more-actions{position:relative}
+.more-actions>summary{display:flex;align-items:center;justify-content:center;background:#efdfb7;color:#30200e;border:3px solid #30200e;box-shadow:0 4px 0 #bd5034;font:12px Bungee,sans-serif;list-style:none;cursor:pointer;touch-action:manipulation}
+.more-actions>summary::-webkit-details-marker{display:none}
+.extra-actions{position:absolute;bottom:calc(100% + 10px);right:0;display:flex;gap:8px;padding:10px;background:#241b13f5;border:1px solid #b99b63;border-radius:18px;box-shadow:0 8px 24px #0006}
+.more-actions:not([open])>.extra-actions{display:none}
+.touch-ui .extra-actions button{width:76px;height:64px;padding:6px;border-radius:18px}
+.touch-ui.left-actions .extra-actions{right:auto;left:0}
+#touch-help{font:500 13px/1.55 Shantell,sans-serif;color:#f2dfb3;text-align:left;padding:4px 0}
+#view-options #touch-help{grid-column:1/-1}
+#setup-loading{font-size:13px;min-height:1.4em;color:#f0bb4a}
+@media(pointer:coarse),(max-width:600px){
+ dialog{max-width:calc(100vw - 20px);max-height:calc(100dvh - 24px - env(safe-area-inset-top) - env(safe-area-inset-bottom));overscroll-behavior:contain}
+ dialog .dialog-content{padding:24px 18px}
+ dialog input,dialog select,#game-search{font-size:16px}
+ dialog button,dialog select,.pager button{min-height:44px}
+ #begin-game{position:sticky;bottom:0;z-index:2;min-height:52px;box-shadow:0 -8px 18px #241b1380}
+ .setting-row{gap:12px;min-height:48px;flex-wrap:wrap}
+}
+@media(max-height:520px) and (orientation:landscape){
+ .touch-ui #game-hud{--pad-size:56px;--hud-top:70px}
+ .touch-ui .play-bottom{bottom:max(10px,env(safe-area-inset-bottom))}
+ .touch-ui #joystick{width:92px;height:92px}
+ .touch-ui #game-hud #action-buttons,.touch-ui.board-game #game-hud #action-buttons,.touch-ui.floor-game #game-hud #action-buttons{grid-template-columns:repeat(3,var(--pad-size));gap:7px}
+ .touch-ui #game-hud #action-buttons[data-count="2"]{grid-template-columns:repeat(2,var(--pad-size))}
+ .touch-ui #game-hud #action-buttons[data-count="1"]{grid-template-columns:var(--pad-size)}
+ .touch-ui #game-hud #action-buttons strong{font-size:10px}
+ .touch-ui .score-panel{max-width:310px;padding:5px 8px}
+ .touch-ui .score-panel>span{display:none}
+ .touch-ui .mode-score{top:calc(env(safe-area-inset-top) + 64px)}
+ .touch-ui #announcement{max-width:calc(100vw - 400px);font-size:11px;max-height:52px}
+ .touch-ui #charge-meter{width:100px}
+ #setup-dialog .setup-image{max-height:100px;object-fit:cover}
+}
+@media(prefers-reduced-motion:reduce){.touch-ui button{transition:none}}
+
+#touch-help{display:none}.touch-ui #touch-help{display:block}
+.touch-ui #game-hud #action-buttons .extra-actions button{width:76px;height:64px;min-width:76px;min-height:64px;padding:6px;border-radius:18px}
+@media(max-width:600px){
+ .touch-ui #game-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+ .touch-ui #game-grid .game-card{aspect-ratio:1.05;border-radius:16px}
+ .touch-ui #game-grid .card-copy{left:10px;right:10px;bottom:12px;padding-right:0}
+ .touch-ui #game-grid .game-name{font-size:clamp(12px,3.6vw,17px);line-height:1.2}
+ .touch-ui #game-grid .card-copy small,.touch-ui #game-grid .card-play{display:none}
+ .touch-ui #game-grid .card-tag{left:9px;top:15px;font-size:7px;padding:3px 6px;max-width:calc(100% - 18px)}
+ .touch-ui .shelf-controls .round-button{width:48px;height:48px;min-width:48px;min-height:48px}
+}
+.more-actions>summary:focus-visible{outline:3px solid #fff2c7;outline-offset:3px}
+.more-actions[open]>summary{background:#f4b83e}
+.touch-ui #game-hud{padding-top:max(12px,env(safe-area-inset-top));padding-left:max(12px,env(safe-area-inset-left));padding-right:max(12px,env(safe-area-inset-right))}

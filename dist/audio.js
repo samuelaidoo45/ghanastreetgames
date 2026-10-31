@@ -24,7 +24,7 @@ export class Soundscape{
   const c=this.context;this.master=c.createGain();this.master.gain.value=0;this.effects=c.createGain();this.effects.connect(this.master);this.limiter=c.createDynamicsCompressor();this.limiter.threshold.value=-5;this.limiter.knee.value=12;this.limiter.ratio.value=4;this.master.connect(this.limiter);this.limiter.connect(c.destination);this.recordDestination=c.createMediaStreamDestination();this.limiter.connect(this.recordDestination);
   // Resume synchronously inside the first trusted click, before decoding awaits.
   const resumed=c.resume();
-  this.initializing=(async()=>{await this.preload();await Promise.all(Object.entries(this.raw).map(async([key,data])=>{try{this.buffers[key]=await c.decodeAudioData(data.slice(0));}catch{}}));await resumed;this.sync();return true;})().catch(()=>false).finally(()=>this.initializing=null);
+  this.initializing=(async()=>{await this.preload();const decoded=new Map();await Promise.all(Object.entries(this.raw).map(async([key,data])=>{try{const file=FILES[key]||key;if(!decoded.has(file))decoded.set(file,c.decodeAudioData(data.slice(0)));this.buffers[key]=await decoded.get(file);}catch{}finally{delete this.raw[key];}}));await resumed;this.sync();return true;})().catch(()=>false).finally(()=>this.initializing=null);
   return this.initializing;
  }
  setEnabled(enabled){this.enabled=!!enabled;this.sync();}
