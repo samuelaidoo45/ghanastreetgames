@@ -4,8 +4,8 @@
   "assets": [
     {
       "path": "CREDITS.txt",
-      "bytes": 8503,
-      "sha256": "1585d2adf1e67dd0f8b0a3ca5ffce810e6834c20f9712a7c5982a83f343957ba"
+      "bytes": 8721,
+      "sha256": "face4e7db0d0e08c18c2160bc94543e421b593c9c061d8bf60de5d6d3e5cabd9"
     },
     {
       "path": "audio/applause.mp3",
@@ -181,6 +181,111 @@
       "path": "lighting/daylight.hdr",
       "bytes": 1435119,
       "sha256": "fd94c84997b8a3c353b62c2125a9b44e19509956986a126e472684432a02d798"
+    },
+    {
+      "path": "mobile/characters/athlete-afro.glb",
+      "bytes": 285368,
+      "sha256": "4865cf9f21442909604911e7dae26390eba6ec91800b42dc9980fb449232211e"
+    },
+    {
+      "path": "mobile/characters/athlete-body.glb",
+      "bytes": 3287600,
+      "sha256": "253b4b4319a13bb7c7eb787bbc6e1c71bea8dda57ed1bc9f3dceda331a10c357"
+    },
+    {
+      "path": "mobile/characters/athlete-hair.glb",
+      "bytes": 162988,
+      "sha256": "ccabf7d33fdb79eb0adcf1f4503b5b9d14ebd866f1f942bf8e885e9005e86d78"
+    },
+    {
+      "path": "mobile/characters/athlete-shirt.glb",
+      "bytes": 125164,
+      "sha256": "710ea7886ca2b743b1bef3755078afbf2e5c3c7ff68c8283716cfab3b2ade2ae"
+    },
+    {
+      "path": "mobile/characters/athlete-shoes.glb",
+      "bytes": 386436,
+      "sha256": "f2fd9bbc6fdd8575b6b90f863024701ae7586d4b593fd697283463a3bba8bae9"
+    },
+    {
+      "path": "mobile/characters/athlete-shorts.glb",
+      "bytes": 107308,
+      "sha256": "bf010fdc06e47c95f07001d2e9233c7032cfc7b7250f7995246bf45ea9038763"
+    },
+    {
+      "path": "mobile/textures/corrugated_iron_02_color.jpg",
+      "bytes": 23128,
+      "sha256": "ab7542a29f3fb9653163fb3ba79f0c6fd1b26c36253cbb88c14d4b05ebe42a27"
+    },
+    {
+      "path": "mobile/textures/corrugated_iron_02_normal.jpg",
+      "bytes": 27366,
+      "sha256": "7a92eb16ae2e5aecbfcef5e54fbf5817b3d39a187457ee5d9a25a559482f98a2"
+    },
+    {
+      "path": "mobile/textures/corrugated_iron_02_roughness.jpg",
+      "bytes": 37773,
+      "sha256": "20b0172d7c1d156520eaa02c31f8060c553e06e417d11e1c897da860daef8969"
+    },
+    {
+      "path": "mobile/textures/dry_ground_01_color.jpg",
+      "bytes": 70115,
+      "sha256": "d8bdff60b19a907bde0a3b9aa2b5c369ce5f78d1e52aa825e209c8e2fdb52ba6"
+    },
+    {
+      "path": "mobile/textures/dry_ground_01_normal.jpg",
+      "bytes": 38412,
+      "sha256": "51f2ee4fb715a46f7f66cceb70203e423e9a1892d8dd688b9fc25adbf004f0f6"
+    },
+    {
+      "path": "mobile/textures/dry_ground_01_roughness.jpg",
+      "bytes": 40334,
+      "sha256": "85f67f9395fce04c3d3c3d51f2e7922fc227a96892e7f3b711653444bd1c7234"
+    },
+    {
+      "path": "mobile/textures/plastered_wall_02_color.jpg",
+      "bytes": 7693,
+      "sha256": "2dcd499c5a130db931fcf94e93561d377b8e17b36679b91da9f25a2bcb720ded"
+    },
+    {
+      "path": "mobile/textures/plastered_wall_02_normal.jpg",
+      "bytes": 38115,
+      "sha256": "d3e13cbdc047dd42b68ef4b924b6aecea5ad671a101f9e7fcbb24ade9ac48dc5"
+    },
+    {
+      "path": "mobile/textures/plastered_wall_02_roughness.jpg",
+      "bytes": 2222,
+      "sha256": "0d0bc6e02da4edc308e66c34866da255155917d9ce57524396abae13e000e563"
+    },
+    {
+      "path": "mobile/textures/red_dirt_mud_01_color.jpg",
+      "bytes": 88573,
+      "sha256": "3fcd9c7cf6cb32a8840ed5b88cc2e691790a503c993bbf3deed5dab02ab42513"
+    },
+    {
+      "path": "mobile/textures/red_dirt_mud_01_normal.jpg",
+      "bytes": 84963,
+      "sha256": "8b9017320c04d70d971849a9a1015e0db71790b842b03c418e63656bfedffa7e"
+    },
+    {
+      "path": "mobile/textures/red_dirt_mud_01_roughness.jpg",
+      "bytes": 108699,
+      "sha256": "72e944767a4d5a26e9e573a2cbe0c86791b8bc6e9c0cfc2ffbe71934d7efb871"
+    },
+    {
+      "path": "mobile/textures/wood_planks_color.jpg",
+      "bytes": 32561,
+      "sha256": "9c945ed4a44a59d56488afbfd8d43127e9c4d2ab7e246a3e949deb79f0da77fa"
+    },
+    {
+      "path": "mobile/textures/wood_planks_normal.jpg",
+      "bytes": 24077,
+      "sha256": "6de55f8fc49b48f1e6fc31a82754e08ebb68635a27329b75d776f0bd24d5f629"
+    },
+    {
+      "path": "mobile/textures/wood_planks_roughness.jpg",
+      "bytes": 12123,
+      "sha256": "43883e92d0df1398aa6b0218cdfd4cef1d6a09afb8e36dbc99fd890bcdfbe948"
     },
     {
       "path": "previews/alasa.jpg",

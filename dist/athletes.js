@@ -3,9 +3,9 @@ import {GLTFLoader} from './vendor/addons/loaders/GLTFLoader.js';
 import {clone as cloneRig} from './vendor/addons/utils/SkeletonUtils.js';
 let template=null,clips=[];
 const loader=new GLTFLoader();
-export async function loadAthletes(progress=()=>{}){
+export async function loadAthletes(progress=()=>{},quality="high"){
  const names=['body','shirt','shorts','shoes','hair','afro'];let completed=0;
- const outfits=await Promise.all(names.map(async name=>{const gltf=await loader.loadAsync(`assets/characters/athlete-${name}.glb`);progress(++completed,names.length);return gltf;}));
+ const outfits=await Promise.all(names.map(async name=>{const gltf=await loader.loadAsync(`assets/${quality==='low'?'mobile/':''}characters/athlete-${name}.glb`);progress(++completed,names.length);return gltf;}));
  const body=outfits[0];let skeleton;body.scene.traverse(o=>{if(o.isSkinnedMesh&&!skeleton)skeleton=o.skeleton;});
  body.scene.updateMatrixWorld(true);
  for(const outfit of outfits.slice(1)){outfit.scene.updateMatrixWorld(true);const parts=[];outfit.scene.traverse(o=>{if(o.isSkinnedMesh)parts.push(o);});for(const mesh of parts){mesh.removeFromParent();mesh.bind(skeleton,mesh.bindMatrix);body.scene.add(mesh);}}

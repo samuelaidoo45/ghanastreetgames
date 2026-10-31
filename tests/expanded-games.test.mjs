@@ -62,3 +62,12 @@ test('every selected court has one continuous ground surface without overlapping
  }
 });
 test('venue foliage retains per-leaf colours after geometry batching',()=>{const h=harness('football',{pitchSurface:'grass'});let foliage=0;h.world.venue.traverse(o=>{if(o.isInstancedMesh&&o.instanceColor){foliage++;assert.ok(o.count>=500);}});assert.ok(foliage>0);h.close();});
+test('big goals add a dedicated keeper to each selected outfield team; small poles do not',()=>{
+ for(const n of [1,3,7])for(const size of ['big','small']){const h=harness('football',{teamSize:n,goalSize:size});assert.equal(h.mode.keepers.length,size==='big'?2:0);assert.equal(h.mode.teams[0].length,n);for(const k of h.mode.keepers){assert.equal(k.userData.keeper,true);assert.ok(Math.abs(k.position.x)>h.mode.halfX-1);}h.close();}
+});
+test('keeper saves a fast shot across the entire flight segment then distributes to a teammate',()=>{
+ const h=harness('football',{goalSize:'big'}),m=h.mode,k=m.keepers[1];m.pause=0;m.possessor=null;const start=new THREE.Vector3(k.position.x-3,.8,0);m.b.position.set(k.position.x+1,.8,0);m.velocity.set(30,0,0);assert.equal(m.saveKeeper(start),true);assert.equal(m.possessor,k);m.updateKeepers(1);assert.equal(m.possessor,null);assert.ok(m.velocity.x<0);assert.equal(m.saveKeeper(m.b.position.clone()),false);advance(m,.5);assert.notEqual(m.possessor,k);h.close();
+});
+test('keepers cannot save a shot outside reach or above their hands',()=>{
+ const h=harness('football',{goalSize:'big'}),m=h.mode,k=m.keepers[1];m.possessor=null;for(const [y,z]of [[2.4,0],[.7,2.3]]){m.b.position.set(k.position.x+1,y,z);assert.equal(m.saveKeeper(new THREE.Vector3(k.position.x-2,y,z)),false);}h.close();
+});

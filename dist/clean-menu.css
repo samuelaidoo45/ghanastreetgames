@@ -70,3 +70,15 @@ body.football-controls #game-hud .action-buttons button strong{font-size:10px;ov
 @media(max-width:600px){body.football-controls #game-hud .action-buttons{grid-template-columns:repeat(2,68px);gap:8px}body.football-controls #game-hud .action-buttons button{width:68px;height:68px;min-width:68px;min-height:68px;padding:4px}body.football-controls #game-hud .action-buttons button strong{font-size:9px}}
 
 #lobby[data-layout="viewport"] #no-results{flex:1;min-height:0}
+/* Lightweight launch and menu: visible before any 3D asset download. */
+body.in-launch,body.in-lobby{background:linear-gradient(#17140b66,#17100cdd),url('assets/previews/football.jpg') center/cover fixed}
+body.in-launch #world,body.in-lobby #world{visibility:hidden}
+#game-hud{height:100dvh;padding-top:env(safe-area-inset-top);padding-bottom:env(safe-area-inset-bottom)}
+.camera-tools{position:absolute;top:115px;right:max(16px,env(safe-area-inset-right));display:flex;align-items:center;gap:6px;pointer-events:auto;padding:6px;border-radius:12px;background:#231b13d9}
+.camera-tools button{min-width:40px;min-height:40px;border:1px solid #d5bc83;border-radius:8px;color:#f3dfb5;background:#34291d;font-size:15px}
+.camera-tools label{display:flex;gap:5px;align-items:center;font-size:12px}.camera-tools input{width:85px;accent-color:#f4b83e}
+#joystick,.action-buttons,.action-buttons button,[data-move],.camera-tools{touch-action:none;user-select:none;-webkit-user-select:none}
+.play-bottom{bottom:max(22px,env(safe-area-inset-bottom));left:max(16px,env(safe-area-inset-left));right:max(16px,env(safe-area-inset-right))}
+body.full-window #lobby,body.full-window #game-hud{height:100dvh}
+@media(pointer:coarse){#keyboard-hint,.action-buttons button span{display:none}#joystick{width:116px;height:116px}.action-buttons button{touch-action:none}.camera-tools{top:100px}.match-header{padding:12px}.score-panel{max-width:calc(100vw - 150px)}}
+@media(max-height:520px) and (orientation:landscape){.match-header{padding:6px 14px}.score-panel{padding:5px 12px}.score-panel strong{font-size:18px}.camera-tools{top:8px;right:85px}.camera-tools label{font-size:0}.camera-tools input{width:70px}.match-header .score-panel{max-width:260px;margin-right:150px}body.football-controls #game-hud .action-buttons{grid-template-columns:repeat(3,58px);gap:6px}body.football-controls #game-hud .action-buttons button{width:58px;height:58px;min-width:58px;min-height:58px;font-size:9px}#joystick{width:100px;height:100px}#announcement{top:75px;font-size:11px;padding:5px 10px}.play-bottom{bottom:max(12px,env(safe-area-inset-bottom))}}

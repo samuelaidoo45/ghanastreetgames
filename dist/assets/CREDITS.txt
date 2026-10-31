@@ -95,3 +95,5 @@ Version 4.5: the CC0 African menu instrumental remains unchanged. Original
 street/crowd recordings and sound effects are retained; AMB Outside 1 is excluded
 from preload/playback to remove the continuous hissing bed. New Stay event cues
 reuse the credited Kenney impacts, with no synthesized background replacement.
+
+Mobile variants (v4.7): resized photographic surfaces and embedded character textures derived from the corresponding licensed assets above. Character meshes and animations are unchanged. Original licence terms apply.

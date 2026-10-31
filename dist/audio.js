@@ -15,7 +15,7 @@ export function sceneMix(scene,venue='pitch'){
 }
 export class Soundscape{
  constructor(){this.enabled=true;this.active=false;this.scene='menu';this.venue='pitch';this.game='';this.surface='dirt';this.visible=true;this.volumes={music:.55,ambience:.7,effects:.85};this.buffers={};this.raw={};this.context=null;this.loops=new Map();this.initializing=null;}
- preload(){return this.preloading??=Promise.all(Object.entries(FILES).map(async([key,name])=>{try{const r=await fetch('assets/audio/'+name);if(r.ok)this.raw[key]=await r.arrayBuffer();}catch{}}));}
+ preload(){return this.preloading??=(()=>{const downloads=new Map();return Promise.all(Object.entries(FILES).map(async([key,name])=>{try{if(!downloads.has(name))downloads.set(name,fetch('assets/audio/'+name).then(r=>r.ok?r.arrayBuffer():null));const data=await downloads.get(name);if(data)this.raw[key]=data;}catch{}}));})();}
  unlock(){
   if(this.context){const resumed=this.context.resume();return (this.initializing||Promise.resolve()).then(()=>resumed).then(()=>this.sync());}
   const Context=globalThis.AudioContext||globalThis.webkitAudioContext;
