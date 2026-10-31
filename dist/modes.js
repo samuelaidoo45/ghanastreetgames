@@ -1,3 +1,4 @@
+import {Sulia} from './sulia.js';
 import {footballVariant} from './football-variants.js';
 import {Pampanaa,RubberBand} from './neighbourhood-games.js';
 import {Mode} from './mode-base.js';
@@ -6,7 +7,7 @@ import {Football} from './football.js';
 import {THREE,box,cylinder,sphere,ball,ring,moveActor,distance,palette} from './world.js';
 import {createBoardMode} from './board-modes.js';
 import {createMotionMode} from './motion-modes.js';
-export function createMode(ctx){const variant=footballVariant(ctx);if(variant)return variant;if(['pampanaa','shooting'].includes(ctx.game.id))return new Pampanaa(ctx);if(ctx.game.id==='rubberband')return new RubberBand(ctx);const revised=traditional(ctx);if(revised)return revised;const id=ctx.game.id;if(['oware','ludo','dame','counters'].includes(id))return createBoardMode(ctx);if(['football','sulia'].includes(id))return new Football(ctx);if(['pilolo','pampanaa','shooting','sansankroma','police','pretend','tyre'].includes(id))return new Explore(ctx);return createMotionMode(ctx);}
+export function createMode(ctx){if(ctx.game.id==='sulia')return new Sulia(ctx);const variant=footballVariant(ctx);if(variant)return variant;if(['pampanaa','shooting'].includes(ctx.game.id))return new Pampanaa(ctx);if(ctx.game.id==='rubberband')return new RubberBand(ctx);const revised=traditional(ctx);if(revised)return revised;const id=ctx.game.id;if(['oware','ludo','dame','counters'].includes(id))return createBoardMode(ctx);if(id==='football')return new Football(ctx);if(['pilolo','pampanaa','shooting','sansankroma','police','pretend','tyre'].includes(id))return new Explore(ctx);return createMotionMode(ctx);}
 class Explore extends Mode{
  constructor(ctx){super(ctx);this.id=ctx.game.id;this.world.setCamera('chase');this.you=this.player(0,7);this.world.follow?.(this.you);this.home=this.circle(0,7,1.3);this.text('HOME',0,.2,7,'#ffe2a1',.4);this.lives=3;this.boost=0;this.carry=null;this.invuln=0;this.items=[];this.rivals=[];this.obstacles=[];this.limit=this.id==='pretend'?Infinity:75;this.setActions([{id:'interact',label:['pampanaa','shooting'].includes(this.id)?'Tag':this.id==='tyre'?'Push':'Pick / use',key:'Space'},{id:'sprint',label:'Sprint',key:'Shift',hold:true}]);
  for(const [x,z]of (this.id==='tyre'?[[-2,-5],[2,-1],[-2,4]]:[[-8,-5],[-3,-7],[7,-5],[9,2],[-8,2],[4,2]])){const crate=box(1.4,1.5,1.4,0x79644a,x,.75,z,this.root);box(1.5,.12,1.5,0x927b58,x,1.55,z,this.root);this.obstacles.push({x,z,r:1});}

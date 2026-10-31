@@ -1,3 +1,4 @@
+import {makeStreetGoal} from './goal-markers.js';
 import {footballGoal} from './football-assets.js';
 import {footballCamera} from './football-physics.js';
 import {segmentBlocked} from './venues.js';
@@ -68,18 +69,7 @@ export class World{
  render(dt=0,t=0){if(this.followTarget){const p=this.followTarget.position;if(this.followFootball){const frame=footballCamera(p,this.footballFocus?.ball?.position||p,this.camera.aspect,this.footballFocus?.view||'broadcast');this.desired.copy(frame.position);this.targetLook.copy(frame.look);}else{this.desired.set(THREE.MathUtils.clamp(p.x+2.6,-18,18),4.6,Math.min(18,p.z+8.5));this.targetLook.set(p.x,.8,p.z-3);if(this.venueSolids?.length){let f=1;const desired=this.desired.clone();while(f>.15&&segmentBlocked(p,this.desired,this.venueSolids,.15)){f-=.1;this.desired.copy(p).lerp(desired,f);this.desired.y=2.4+(4.6-2.4)*f;}}}}const factor=this.cameraKind==='menu'||this.cameraKind==='follow'?1:Math.max(1,.75/this.camera.aspect);const framed=this.desired.clone().sub(this.targetLook).multiplyScalar(factor).add(this.targetLook);this.camera.position.lerp(framed,Math.min(1,dt*4||1));this.look.lerp(this.targetLook,Math.min(1,dt*4||1));this.camera.lookAt(this.look);for(const g of this.stage.children)if(g.userData.net)g.userData.net.visible=!g.userData.netHidden&&!(this.cameraKind==='follow'&&Math.sign(this.camera.position.x)===Math.sign(g.userData.goalX)&&Math.abs(this.camera.position.x)>Math.abs(g.userData.goalX)-.2);for(const a of this.spectators)animateActor(a,t,0,'idle');if(this.composer&&this.quality==='high'&&!this.thumbnail)this.composer.render(dt);else this.renderer.render(this.scene,this.camera);}
  pick(clientX,clientY){const r=this.canvas.getBoundingClientRect();this.ray.setFromCamera(new THREE.Vector2((clientX-r.left)/r.width*2-1,-(clientY-r.top)/r.height*2+1),this.camera);const hit=this.ray.intersectObjects(this.stage.children,true).find(h=>{let o=h.object;while(o&&o!==this.stage){if(o.userData.pick!==undefined)return true;o=o.parent;}return false;});let id;if(hit){let o=hit.object;while(o&&o.userData.pick===undefined)o=o.parent;id=o?.userData.pick;}const point=new THREE.Vector3();this.plane.constant=-(this.pickPlaneY||0);this.ray.ray.intersectPlane(this.aimPlane||this.plane,point);return {id,point};}
  court(w=28,d=18){const s=this.stage;for(const [x,z,a,b]of [[0,-d/2,w,.055],[0,d/2,w,.055],[-w/2,0,.055,d],[w/2,0,.055,d],[0,0,.04,d]]){const chalk=box(a,.002,b,0xd3c6aa,x,.007,z,s);chalk.castShadow=false;chalk.material.transparent=true;chalk.material.opacity=.7;}const circle=new THREE.Mesh(new THREE.RingGeometry(2.57,2.63,96),material(0xd3c6aa,{side:THREE.DoubleSide,transparent:true,opacity:.7}));circle.rotation.x=-Math.PI/2;circle.position.y=.009;s.add(circle);}
- goal(x,w=5,height=2.5){
-  const imported=footballGoal(w,height,1.25);if(imported){imported.position.set(x,0,0);imported.rotation.y=x>0?-Math.PI/2:Math.PI/2;imported.userData.goalX=x;this.stage.add(imported);return imported;}
-  const g=new THREE.Group();g.position.set(x,0,0);g.userData.goalX=x;this.stage.add(g);
-  for(const z of [-w/2,w/2])cylinder(.04,.04,height,0xe9dec5,0,height/2,z,g,12);
-  box(.08,.08,w,0xe9dec5,0,height,0,g);
-  const back=x<0?-1.1:1.1,points=[],line=(a,b)=>points.push(...a,...b);
-  for(let z=-w/2;z<=w/2+.01;z+=.18){line([back,0,z],[back,height-.05,z]);line([0,height-.05,z],[back,height-.05,z]);}
-  for(let y=0;y<=height-.05;y+=.18){line([back,y,-w/2],[back,y,w/2]);for(const z of [-w/2,w/2])line([0,y,z],[back,y,z]);}
-  for(let d=0;d<=1.1;d+=.18){const xx=Math.sign(back)*d;line([xx,height-.05,-w/2],[xx,height-.05,w/2]);for(const z of [-w/2,w/2])line([xx,0,z],[xx,height-.05,z]);}
-  const net=new THREE.LineSegments(new THREE.BufferGeometry().setAttribute('position',new THREE.Float32BufferAttribute(points,3)),new THREE.LineBasicMaterial({color:0xd2d1b8,transparent:true,opacity:.55}));g.add(net);g.userData.net=net;
-  return g;
- }
+ goal(x,w=5,height=2.5,style='net'){const g=makeStreetGoal(this.stage,x,0,x<0?Math.PI:0,w,height,style);g.userData.goalX=x;return g;}
  dust(x,z){const puff=sphere(.15,0xd1af80,x,.12,z,this.stage,5);puff.userData.life=.4;return puff;}
  async loadSky(){const hdr=await new HDRLoader().loadAsync('assets/lighting/daylight.hdr');hdr.mapping=THREE.EquirectangularReflectionMapping;this.scene.background=hdr;this.scene.backgroundIntensity=.7;this.scene.environment=hdr;this.scene.environmentIntensity=.35;}
  dispose(){this.clear();this.composer?.dispose();this.renderer.dispose();}

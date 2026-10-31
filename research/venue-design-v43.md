@@ -1,0 +1,11 @@
+# Street environments, version 4.3
+
+Original procedural geometry reuses the project's existing licensed plaster, red-earth, wood and corrugated-metal PBR materials. No reference-game models or imagery were copied.
+
+The neighbourhood retains its established footprint and navigation graph. The eight houses now have pitched metal roofs, ridge caps and gutters, inset doors, louvred windows with bars, side windows, plinths, masonry repairs, meter boxes and wall wiring. Fictional shop signs are attached to facades in world space. Overhead clotheslines and utility cables, boundary planting, layered background houses and subtle ground wear give the streets depth. Facade fittings stay within the existing wall collision margin; clotheslines are above player height.
+
+One Pole occupies a narrow residential lane with doors and shopfronts facing the playing corridor. Laski uses a separate, wider street court with room for the ball contest. Both have segmented drains, crossing grates, benches, washing, basins, planters and trees beyond the playing space. One Pole's corridor is clear across x ±4.9; Laski's playing area remains clear across x ±9 and z ±11. Decoration is static and does not alter scoring.
+
+Repeated fittings initially use instancing. A final geometry pass bakes untextured opaque static meshes into shared material groups, preserving transforms and normals; textured meshes keep their individual UV tiling and transparent ground decals remain separate. Headless geometry checks with fallback materials measured 71 mesh draws / 18,612 triangles for the neighbourhood and 62 / 16,930 for the street venues, excluding players and gameplay props. With PBR map slots populated by mock textures, the same scenes measured 128 and 108 draws respectively, because textured surfaces retain individual tiling. These counts are not device performance measurements.
+
+All 14 existing Pilolo hiding locations remained reachable from the home point in a route check. Every generated position attribute was finite. House shells are closed facades: this pass does not add playable interiors or claim that every decorative item has an independent collision shape. Navigation and Pampanaa sight lines use the same existing building/wall solids. Browsers were not controlled or rendered during this asset task; the parent handles integration and visual verification.

@@ -1,11 +1,11 @@
 {
   "checked": "2026-10-31",
-  "license": "Mixed licences: CC0-1.0 for original media; Unlicense for Gameplay Football geometry/surfaces; CC BY 3.0 for music; CC BY 4.0 for Ghana ambience. See CREDITS.txt.",
+  "license": "Mixed licences: CC0-1.0 for photographed materials, effects and current menu music; Unlicense for Gameplay Football geometry/surfaces; CC BY 4.0 for Ghana ambience. See CREDITS.txt.",
   "assets": [
     {
       "path": "CREDITS.txt",
-      "bytes": 7585,
-      "sha256": "e0c44d917102d8419b180955b9d88efeabfb5841c99f9ebfdaca8af6fdef125d"
+      "bytes": 8123,
+      "sha256": "ab6e94ef0c5b2c5b8f0b819a95fedb454de64c1005d11aa282dcb7c3ff1c67c8"
     },
     {
       "path": "audio/applause.mp3",
@@ -58,11 +58,6 @@
       "sha256": "5f1c252942a220d658121bd9417448cd19649ded9fff2ff15f6e50899373ce8e"
     },
     {
-      "path": "audio/handclap.mp3",
-      "bytes": 13882,
-      "sha256": "623bfca8c28a767598bb134b1180caa88998254659546cc0e39c23114503448c"
-    },
-    {
       "path": "audio/impactGeneric_light_000.ogg",
       "bytes": 5827,
       "sha256": "f0e982611e97512fee5f777986b67e8b435434b601f94992ec044f7e89fb5acb"
@@ -78,11 +73,6 @@
       "sha256": "eb45e35b4bed784d3f120de4afec4b0d6ac09d9e143cce8cfcb7d739e1b1f3c3"
     },
     {
-      "path": "audio/menu-music.mp3",
-      "bytes": 5981349,
-      "sha256": "654defd1dd3d51c086e3e161c784d0f168d6bd765008ffa90f05d249050ec869"
-    },
-    {
       "path": "audio/outdoor-ambience.ogg",
       "bytes": 289001,
       "sha256": "5af2486b996457462cebb0f50beeb7014a9ca973b00605171c05b11671124fc6"
@@ -96,6 +86,16 @@
       "path": "audio/street-ambience.ogg",
       "bytes": 178728,
       "sha256": "10ac8830c3c7b0c41639b806e88bfd51c8a5f95dd8037909f6914fbdc51a2ede"
+    },
+    {
+      "path": "audio/v43/menu-loop.mp3",
+      "bytes": 1069748,
+      "sha256": "140fd6cc5d1a65e22c76c383adc8c301e0811871bea76935f68b5437cc26eef1"
+    },
+    {
+      "path": "audio/v43/soft-clap.mp3",
+      "bytes": 2611,
+      "sha256": "193ea36f2bbd3f5a6a8c5fea34a98384f5e86ca2a113f8d1eac23eb53898a45d"
     },
     {
       "path": "audio/whistle.mp3",

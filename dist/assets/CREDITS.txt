@@ -32,7 +32,6 @@ RECORDED AUDIO
 football-kick.mp3 — Soccer Ball Kick, bittermelonheart — https://freesound.org/people/bittermelonheart/sounds/555042/
 footstep-dirt-1.mp3, footstep-dirt-2.mp3, footstep-dirt-3.mp3 — Footsteps_Gravel_01.wav, BenDrain — https://freesound.org/people/BenDrain/sounds/488075/
 The three footstep files are 0.45-second mono excerpts starting at 7.11, 16.48 and 20.82 seconds, with short fades, encoded at 96 kb/s.
-handclap.mp3 — HandClap10.wav, bastianpusch — https://freesound.org/people/bastianpusch/sounds/493712/
 whistle.mp3 — Referee whistle sound.wav, Rosa-Orenes256 — https://freesound.org/people/Rosa-Orenes256/sounds/538422/
 The Freesound files use the publicly available HQ MP3 preview encodings, under each recording's CC0 dedication.
 applause.mp3 — Applaudissements #1, Dorian CLAIR — https://lasonotheque.org/applaudissements-1-s2363.html
@@ -55,12 +54,21 @@ Pampanaa pretend-play mouth call: OBXJohn, Laser Gun Pew Pew (Freesound 365635),
 Source: https://freesound.org/people/OBXJohn/sounds/365635/
 Licence: https://creativecommons.org/publicdomain/zero/1.0/
 
-MENU MUSIC — CC BY 3.0
-The Soul is a Pulse / Non Vocal Version — Michał Jałochowski.
-Source: https://archive.org/details/jamendo-613486
-Composer release: https://www.jamendo.com/album/613486
-Licence: https://creativecommons.org/licenses/by/3.0/
-menu-music.mp3 is track 02 of album 613486; filename changed, recording otherwise unchanged. This is an instrumental arrangement of the composition credited by Four Corners GH, obtained independently from the licensed upstream release. No endorsement by the artist or Four Corners is implied.
+MENU / LAUNCH MUSIC — CC0
+Happy African Village — John Bartmann.
+Composer release: https://johnbartmann.bandcamp.com/track/happy-african-village
+Distribution: https://freemusicarchive.org/music/John_Bartmann/Public_Domain_Soundtrack_Music_Album_One/happy-african-village
+Licence: https://creativecommons.org/publicdomain/zero/1.0/
+v43/menu-loop.mp3 is a 66.78-second excerpt, normalized, equalized and wrap-crossfaded. The composer explicitly releases the track as CC0; the source MP3 has an older contradictory tag, documented in research/audio-v43.md. No endorsement implied.
+
+SOFT HANDCLAP — CC0
+Soft clap 7.wav — hypernovajm. https://freesound.org/people/hypernovajm/sounds/384151/
+Licence: https://creativecommons.org/publicdomain/zero/1.0/
+v43/soft-clap.mp3 is the creator's HQ preview, filtered, gain-adjusted and faded for the game.
+
+ORIGINAL STREET / COUNTERS GEOMETRY
+The block, footwear and wooden goal markers, folded-paper goals, bottle caps and detailed neighbourhood fittings are original procedural geometry. Coke and Pepsi names identify the reused household objects depicted; no endorsement is implied. Existing photographed material licences above still apply.
+
 
 GHANA ENVIRONMENTAL SOUNDS — CC BY 4.0
 GESMA: A Dataset of Ghanaian Environmental Soundscapes for Machine Learning Applications, v1 (2026).

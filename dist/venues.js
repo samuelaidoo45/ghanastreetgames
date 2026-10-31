@@ -1,7 +1,8 @@
 import {THREE,box,cylinder,sphere} from './world.js';
 import {surface} from './surfaces.js';
+import {detailedHome,neighbourhoodDetails,streetCourtDetails,compactVenueGeometry} from './venue-details.js';
 
-export const venueFor=id=>['pampanaa','shooting','pilolo'].includes(id)?'neighbourhood':id==='rubberband'?'wall':id==='onepole'?'lane':['fourcorners','penalties','laski','football','sulia'].includes(id)?'pitch':['oware','dame','ludo','counters','chempe','pretend'].includes(id)?'veranda':['alikoto','kpitinge','alasa'].includes(id)?'sand':id==='tyre'?'lane':'schoolyard';
+export const venueFor=id=>['pampanaa','shooting','pilolo'].includes(id)?'neighbourhood':id==='rubberband'?'wall':id==='onepole'?'lane':id==='laski'?'streetcourt':['fourcorners','penalties','football','sulia'].includes(id)?'pitch':['oware','dame','ludo','counters','chempe','pretend'].includes(id)?'veranda':['alikoto','kpitinge','alasa'].includes(id)?'sand':id==='tyre'?'lane':'schoolyard';
 export function clearVenue(world){
  if(world.venue){world.venue.traverse(o=>{o.geometry?.dispose();for(const m of Array.isArray(o.material)?o.material:[o.material]){if(!m)continue;for(const k of ['map','normalMap','roughnessMap'])if(m[k]&&!m[k].userData.sharedAsset)m[k].dispose();m.dispose();}});world.scene?.remove(world.venue);}
  world.venue=null;if(world.environment)world.environment.visible=true;
@@ -19,7 +20,7 @@ export function buildVenue(world,game){
  if(kind==='pitch'){world.venueSolids=[];return {kind,solids:[]};}
  const g=new THREE.Group();world.venue=g;world.scene?.add(g);if(world.environment)world.environment.visible=false;
  const ground=new THREE.Mesh(new THREE.PlaneGeometry(160,160),surface(kind==='veranda'?'plastered_wall_02':'red_dirt_mud_01',kind==='veranda'?0xaaa391:0xe9c4a4,100));ground.rotation.x=-Math.PI/2;ground.receiveShadow=true;g.add(ground);
- const solids=[];const solid=(x,z,w,d,h=3.4,tint=0xc1a782)=>{home(g,x,z,w,d,h,tint);solids.push({x,z,w,d,h});};
+ const solids=[];let houseIndex=0;const solid=(x,z,w,d,h=3.4,tint=0xc1a782,front=0)=>{if(['neighbourhood','lane','streetcourt'].includes(kind)&&w<=10&&d<=10)detailedHome(g,x,z,w,d,h,tint,houseIndex++,front);else home(g,x,z,w,d,h,tint);solids.push({x,z,w,d,h});};
  if(kind==='neighbourhood'){
   // Connected alleys and private courtyards: navigation and sight tests use these same walls.
   for(const q of [[-9,-9,6,5,3.2], [0,-10,5,4,3.8], [9,-9,6,5,3.2],[-10,0,5,6,3.5],[1,0,5,5,3.1],[10,1,4,7,4],[-8,9,7,4,3.1],[3,10,5,4,3.4]])solid(...q,[0xb4a288,0xb47759,0x7a9690][solids.length%3]);
@@ -28,6 +29,7 @@ export function buildVenue(world,game){
   for(const x of [-17,17])solid(x,0,3,36,4,0xb6a281);
   solid(0,-18,32,3,4,0xbcae92);solid(0,18,32,3,3,0xac8970);
   for(const [x,z]of [[-5,7],[7,-4],[-14,-10]]){box(.9,.05,.6,0x9b8a70,x,.03,z,g);for(let i=0;i<5;i++)box(.1,.02,.55,0x403d35,x-.35+i*.17,.065,z,g);}
+  neighbourhoodDetails(g,solids);
  }else if(kind==='veranda'){
   for(const x of [-9,9])solid(x,-1,4,23,3.5,0xc1b397);solid(0,-13,16,3,3.6,0xb9a387);
   for(const x of [-5,5]){cylinder(.1,.12,3.1,0x796f59,x,1.55,-2,g);textured(3,.1,20,'corrugated_iron_02',0x8f9186,x,3.2,-2,g);}
@@ -39,9 +41,10 @@ export function buildVenue(world,game){
   for(let i=0;i<8;i++)box(.8,.13,.06,0x9a8d74,-2.8+i*.8,.12,-4.1,g);
   solid(-9,0,3,14,3.4);solid(9,0,3,14,3.4,0x87978a);solid(0,-11,18,4,4);
   for(const x of [-4,4]){box(1.8,.1,.5,0x78634d,x,.48,4,g);for(const dx of [-.6,.6])box(.08,.45,.35,0x685743,x+dx,.225,4,g);}
- }else if(kind==='lane'){
-  for(const x of [-7,7])for(let i=0;i<5;i++)solid(x,-14+i*7,4,6.8,3.2+i%2*.8,[0x9caa96,0xc2ab88,0xad7b62][i%3]);
-  for(const x of [-4.9,4.9]){box(.3,.09,36,0x847d6e,x,.045,0,g);box(.18,.015,36,0x484b42,x+Math.sign(x)*.2,.01,0,g);}
+ }else if(kind==='lane'||kind==='streetcourt'){
+  const offset=kind==='streetcourt'?13.2:7.6;
+  for(const x of [-offset,offset])for(let i=0;i<5;i++)solid(x,-14+i*7,4,6.8,3.2+i%2*.8,[0x9caa96,0xc2ab88,0xad7b62][i%3],x<0?Math.PI/2:-Math.PI/2);
+  streetCourtDetails(g,kind==='streetcourt');
  }else if(kind==='sand'){
   solid(0,-11,23,4,3,0xcbb28f);solid(-13,0,4,22,3.4,0x9eaa94);solid(13,-1,4,21,3.5,0xb9957c);
   for(const x of [-7,7]){box(3,.14,.65,0x796148,x,.5,0,g);for(const dx of [-1,1])box(.12,.45,.5,0x6c5b42,x+dx,.23,0,g);}
@@ -51,6 +54,7 @@ export function buildVenue(world,game){
   box(4,1.4,.08,0x3e5c4c,0,1.6,-12.94,g);
   for(let i=0;i<10;i++){const x=-12+i*2.6;box(1.8,.1,.5,0x78634d,x,.5,-11,g);for(const dx of [-.65,.65])box(.08,.45,.4,0x635842,x+dx,.225,-11,g);}
  }
+ if(['neighbourhood','lane','streetcourt'].includes(kind))compactVenueGeometry(g);
  world.venueSolids=solids;return {kind,solids};
 }
 // Segment-vs-expanded-wall test is shared by navigation, collision and pretend shots.
