@@ -65,11 +65,40 @@ test('venue foliage retains per-leaf colours after geometry batching',()=>{const
 test('big goals add a dedicated keeper to each selected outfield team; small poles do not',()=>{
  for(const n of [1,3,7])for(const size of ['big','small']){const h=harness('football',{teamSize:n,goalSize:size});assert.equal(h.mode.keepers.length,size==='big'?2:0);assert.equal(h.mode.teams[0].length,n);for(const k of h.mode.keepers){assert.equal(k.userData.keeper,true);assert.ok(Math.abs(k.position.x)>h.mode.halfX-1);}h.close();}
 });
-test('keeper saves a fast shot across the entire flight segment then distributes to a teammate',()=>{
- const h=harness('football',{goalSize:'big'}),m=h.mode,k=m.keepers[1];m.pause=0;m.possessor=null;const start=new THREE.Vector3(k.position.x-3,.8,0);m.b.position.set(k.position.x+1,.8,0);m.velocity.set(30,0,0);assert.equal(m.saveKeeper(start),true);assert.equal(m.possessor,k);m.updateKeepers(1);assert.equal(m.possessor,null);assert.ok(m.velocity.x<0);assert.equal(m.saveKeeper(m.b.position.clone()),false);advance(m,.5);assert.notEqual(m.possessor,k);h.close();
+test('keeper catches a reachable soft shot across a flight segment then distributes to a teammate',()=>{
+ const h=harness('football',{goalSize:'big'}),m=h.mode,k=m.keepers[1];m.pause=0;m.possessor=null;const start=new THREE.Vector3(k.position.x-3,.8,0);m.b.position.set(k.position.x+1,.8,0);m.velocity.set(12,0,0);assert.equal(m.saveKeeper(start),true);assert.equal(m.possessor,k);m.updateKeepers(1);assert.equal(m.possessor,null);assert.ok(m.velocity.x<0);assert.equal(m.saveKeeper(m.b.position.clone()),false);advance(m,.5);assert.notEqual(m.possessor,k);h.close();
 });
 test('keepers cannot save a shot outside reach or above their hands',()=>{
  const h=harness('football',{goalSize:'big'}),m=h.mode,k=m.keepers[1];m.possessor=null;for(const [y,z]of [[2.4,0],[.7,2.3]]){m.b.position.set(k.position.x+1,y,z);assert.equal(m.saveKeeper(new THREE.Vector3(k.position.x-2,y,z)),false);}h.close();
 });
 test('street football restores the selected formation after a goal',()=>{const h=harness('football',{teamSize:7,formation:'defensive'}),m=h.mode;assert.equal(m.formation.label,'3–3–1');for(const team of m.teams)for(const p of team){assert.ok(p.userData.role);p.position.set(0,0,0);}m.reset(0);for(const team of m.teams){assert.equal(new Set(team.map(p=>p.position.x+':'+p.position.z)).size,7);for(const p of team){assert.equal(p.position.x,p.userData.home.x);assert.equal(p.position.z,p.userData.home.z);}}h.close();});
 test('off-ball teammates retain width and depth over several seconds of possession',()=>{const h=harness('football',{teamSize:7,formation:'balanced'}),m=h.mode;m.pause=0;m.possessor=m.teams[0][m.selected];for(const p of m.teams[1])p.position.x=m.halfX-1;advance(m,2);const team=m.teams[0];assert.ok(Math.max(...team.map(p=>p.position.z))-Math.min(...team.map(p=>p.position.z))>7);assert.ok(Math.max(...team.map(p=>p.position.x))-Math.min(...team.map(p=>p.position.x))>5);h.close();});
+
+test('hard central shots produce a live parry instead of an automatic catch',()=>{
+ const h=harness('football',{goalSize:'big'}),m=h.mode,k=m.keepers[1];m.possessor=null;
+ const start=new THREE.Vector3(k.position.x-3,.8,0);m.b.position.set(k.position.x+1,.8,0);m.velocity.set(30,0,0);
+ assert.equal(m.saveKeeper(start),true);assert.equal(m.possessor,null);assert.ok(m.velocity.x<0);assert.ok(m.velocity.y>0);assert.ok(k.userData.saveCooldown>0);h.close();
+});
+
+test('street football corner shots beat the keeper through the actual scoring path',()=>{
+ const original=Math.random;Math.random=()=>.5;
+ try{for(const difficulty of ['easy','normal','hard'])for(const side of [-1,1]){
+  const h=harness('football',{goalSize:'big',difficulty,teamSize:1}),m=h.mode,a=m.teams[0][0];
+  m.pause=0;a.position.set(m.halfX-7,0,0);m.teams[1][0].position.set(-8,0,7);m.possessor=a;m.b.position.copy(a.position);m.b.position.y=.14;
+  m.kick(a,{x:m.halfX+1,z:side*2.3},26,true);m.velocity.y=1.4;
+  advance(m,.7);assert.equal(m.scores[0],1,`${difficulty} corner ${side}`);h.close();
+ }}finally{Math.random=original;}
+});
+
+test('penalty outcomes reward placed shots while keepers still make saves',()=>{
+ const original=Math.random;let seed=493;Math.random=()=>{seed=(Math.imul(seed,1664525)+1013904223)>>>0;return seed/4294967296;};
+ try{for(const difficulty of ['easy','normal','hard']){
+  const h=harness('penalties',{difficulty}),m=h.mode;let goals=0,saves=0;
+  for(let i=0;i<128;i++){
+   m.prepare();m.pendingShot={x:i%2?2.25:-2.25,y:.7,power:.72};m.strike();
+   for(let j=0;j<240&&m.phase==='flight';j++)m.tick(1/120,m.age+1/120);
+   assert.equal(m.phase,'result');if(m.history[0].at(-1))goals++;if(m.saved)saves++;
+  }
+  assert.ok(goals>=32&&goals<=120,`${difficulty}: ${goals}/128 goals`);assert.ok(saves>=8,`${difficulty}: keepers must still save`);h.close();
+ }}finally{Math.random=original;}
+});

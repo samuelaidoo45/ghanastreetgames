@@ -1,7 +1,7 @@
 import {buildVenue} from './venues.js';
 import {THREE,actor,animateActor,moveActor,box,ring,label,palette} from './world.js';
 export class Mode{
- constructor(ctx){Object.assign(this,ctx);this.age=0;this.time=0;this.score=0;this.done=false;this.actors=[];this.actions=[];this.limit=60;this.root=this.world.stage;this.world.clear();this.venue=buildVenue(this.world,this.game,this.settings);this.world.setCamera('wide');this.lastNote='';this.delay=0;}
+ constructor(ctx){Object.assign(this,ctx);this.age=0;this.time=0;this.score=0;this.done=false;this.actors=[];this.actions=[];this.limit=60;this.root=this.world.stage;this.world.clear();this.world.gameMode=this;this.venue=buildVenue(this.world,this.game,this.settings);this.world.setCamera('wide');this.lastNote='';this.delay=0;}
  player(x=0,z=5,color=this.settings.color){const a=actor(this.root,{x,z,color:color||palette.red});this.actors.push(a);return a;}
  text(text,x,y,z,color='#f8df9d',size=.55){const l=label(text,color,size,this.root);l.position.set(x,y,z);return l;}
  circle(x,z,r=1,color=palette.gold){return ring(r,color,x,z,this.root,.07);}

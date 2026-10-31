@@ -59,7 +59,7 @@ The CC0 character output is derived from CharacterCreator/MakeHuman, with the au
 
 This is an independent browser arcade, not EA Sports production quality or a replica of proprietary Four Corners assets. It has no motion capture, online multiplayer, commentary system, full-body collision solver or per-game studio animation set. Some rules are explicit digital presets: Tumatu begins with a marker already placed, Dame uses a declared one-piece-loss rule with conflicting source conventions, and Four Corners uses finite knockout rounds instead of a queue of replacement players. The rebuilt modes are not a byte-identical clone: the original networking, authored venues, custom models and studio animation catalogue are not included.
 
-Scene thumbnails render from the actual 3D scenes on first load of this release, then stay in a local IndexedDB cache. The cache contains only scene JPEGs. Local `?generate-previews` remains available for manual asset authoring. No screenshots from the preceding release should be mistaken for validation of this expansion.
+The menu uses shipped scene JPEGs immediately, with lazy loading, so starting the game does not require rendering all 33 previews. Manual preview authoring can still store scene JPEGs in IndexedDB. Local `?generate-previews` remains available for manual asset authoring. No screenshots from the preceding release should be mistaken for validation of this expansion.
 
 The expanded project is independent of the previous account's hosted site. The user authorized use of the currently connected account; `.openai/hosting.json` holds its newly registered identity.
 # ghanastreetgames
@@ -80,3 +80,10 @@ The menu follows the supplied two-column landscape-card design, with compact cat
 Large desktop windows show two rows of games: 6, 8 or 10 cards according to available CSS width and height. The category row, page arrows and footer fit inside the viewport. Left/right arrows and Page Up/Down navigate the catalogue; window resizing keeps the current first game on the appropriate page. Smaller and short windows retain scrolling.
 
 Concrete and grass courts now have a genuine opening in the surrounding terrain instead of several overlapping ground planes. School, coastal and park venues have additional architecture, verandas, planted edges, detailed trees and overhead wiring. Foliage remains instanced where possible. Football action labels use complete words. The original African music and Ghanaian street/crowd recordings are unchanged; the previously disabled continuous outdoor-noise layer remains disabled.
+
+
+### Version 4.9 — keeper balance and clearer action cameras
+
+Big-goal keepers have reaction delays, imperfect committed reads and bounded movement/reach. Soft reachable balls can be caught; hard shots produce playable parries. Human shots with no directional input aim away from the keeper, and directional aiming reaches the goal corners. Penalty keepers commit to a side instead of following the exact target; difficulty controls reads and reaction time.
+
+Street football uses closer framing with an end-on portrait view. Four Corners shows all four side goals in landscape and follows the action in portrait. Laski, Stay and Sulia follow the player and ball in their default view, while alternate overview cameras remain available. Framing keeps space for HUD and controls and pulls back as the action separates. Penalties and One Pole avoid the extra portrait zoom-out. Rigged characters are taller and broader while preserving their animations and planted feet. No additional model or texture downloads were added. Verification: `research/verification-v49.md`.

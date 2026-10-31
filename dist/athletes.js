@@ -14,7 +14,7 @@ export async function loadAthletes(progress=()=>{},quality="high"){
 }
 export function createAthlete(parent,{x=0,z=0,color=0xa93424,skin=0x895237,scale=1}={}){
  if(!template)return null;
- const root=new THREE.Group(),model=cloneRig(template);root.add(model);parent?.add(root);root.position.set(x,0,z);root.scale.setScalar(scale);const identity=Math.abs(Math.round(x*97+z*131))%5,heights=[1,.98,1.025,.965,1.015],builds=[1,.97,1.025,1.01,.985];model.scale.set(1.08*builds[identity],1.12*heights[identity],1.08*builds[identity]);
+ const root=new THREE.Group(),model=cloneRig(template);root.add(model);parent?.add(root);root.position.set(x,0,z);root.scale.setScalar(scale);const identity=Math.abs(Math.round(x*97+z*131))%5,heights=[1,.98,1.025,.965,1.015],builds=[1,.97,1.025,1.01,.985];model.scale.set(1.18*builds[identity],1.28*heights[identity],1.18*builds[identity]);
  const afro=Math.abs(Math.round(x*3+z*7))%3===0;const bones={};model.traverse(o=>{if(o.isBone)bones[o.name]=o;if(o.isMesh){if(o.name==='Hair_afro01')o.visible=afro;if(o.name==='Hair_short04')o.visible=!afro;o.userData.sharedAsset=true;if(o.material){const materials=(Array.isArray(o.material)?o.material:[o.material]).map(m=>{const n=m.clone();n.userData.sharedTextures=true;if(n.name==='Skin'){n.color.setHex(skin).lerp(new THREE.Color([0x89573e,0x744a34,0x976344,0x634331,0x805039][identity]),.25);n.roughness=.54;n.normalScale?.set(.5,.5);n.envMapIntensity=.55;}
  if(n.name==='Cloth_tshirt'){n.color.setHex(color);n.roughness=.86;n.normalScale?.set(.7,.7);}
  if(n.name==='Cloth_shorts'){n.color.setHex([0x283438,0x34312a,0x222f3e,0x302b29,0x2b3532][identity]);n.roughness=.9;}
