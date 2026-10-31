@@ -99,3 +99,7 @@ Camera, zoom and fullscreen controls now sit inside one collapsible View menu. G
 ### Version 4.10 — active Sulia and Laski football
 
 Sulia and Laski now use visible rolling dribbles, one main challenger, off-ball spacing and recovery intervals between possession changes. Laski attackers advance and shoot into space; Sulia carriers approach and attempt nutmegs. Existing elimination and chase/tag rules remain. Keeper hands use blended reaches fitted to the character's arm lengths, and moving keepers use lateral shuffle animations. See `research/verification-v410.md` for the 168-test validation and visual-testing limits.
+
+### Version 4.11 — live Laski rallies and fluid football positioning
+
+Laski continues beyond the chalk lines: human and CPU players can retrieve missed shots and keep attacking, with the distant compound edge keeping balls reachable. Formations now provide recovery positions while players make attacking runs, mark opponents, support passes and challenge nearby carriers. Uncontrolled attackers on both teams can dribble, pass and shoot. Three-player Balanced uses 2–1 and Attacking uses 1–2; 1–1–1 is removed. Verification is recorded in `research/verification-v411.md`.

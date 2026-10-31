@@ -33,11 +33,28 @@ export class Football extends Mode {
  if(controlled.userData.run>.2&&this.age-this.footstepAt>(sprint?.23:.34)){this.ui.sound('step');this.footstepAt=this.age;}
  if(this.age>=this.nextTactics||this.tacticsCarrier!==this.possessor||this.tacticsSelected!==controlled){
   this.nextTactics=this.age+.16;this.tacticsCarrier=this.possessor;this.tacticsSelected=controlled;
-  this.tactics=this.teams.map((players,team)=>planTeam({players,opponents:this.teams[1-team],ball:this.b.position,carrier:this.possessor,receiver:this.passTarget,controlled:team===0?controlled:null,halfX:this.halfX,halfZ:this.halfZ,previous:this.tactics[team],now:this.age}));
+  this.tactics=this.teams.map((players,team)=>planTeam({players,opponents:this.teams[1-team],ball:this.b.position,carrier:this.possessor,receiver:this.passTarget,controlled:team===0?controlled:null,halfX:this.halfX,halfZ:this.halfZ,previous:this.tactics[team],now:this.age,ballVelocity:this.velocity}));
  }
- for(let team=0;team<2;team++)for(let i=0;i<this.teamSize;i++){const p=this.teams[team][i];if(p===controlled)continue;const direction=team===0?1:-1;let target;if(p===this.possessor){target={x:direction*(this.halfX-1),z:Math.sin(t*.6)*1.6};p.userData.run=moveActor(p,target,4.5,dt);if(team===1&&this.cool<=0){const pressure=this.teams[0].some(o=>distance(o,p)<2);if((p.position.x<1||pressure)&&Math.random()<dt*2.2){const mate=this.teams[1].filter(m=>m!==p).sort((a,b)=>a.position.x-b.position.x)[0];if(pressure&&mate&&mate.position.x<p.position.x-1&&Math.random()<.55){this.kick(p,mate.position,11);this.passTarget=mate;this.passFrom=p;}else this.kick(p,{x:-this.halfX-1,z:(Math.random()-.5)*this.goalWidth*.8},18,true);}}continue;}
- target=this.tactics[team].targets.get(p);p.userData.duty=target.duty;
- p.userData.run=moveActor(p,target,(this.settings.difficulty==='hard'?5.2:this.settings.difficulty==='easy'?3.7:4.5),dt);if(p===this.tactics[team].presser&&this.possessor&&this.possessor.userData.team!==team&&distance(p,this.possessor)<1.3&&Math.random()<dt*1.7)this.tackle(p);
+ for(let team=0;team<2;team++)for(let i=0;i<this.teamSize;i++){
+  const p=this.teams[team][i];if(p===controlled)continue;
+  const direction=team===0?1:-1,beforeX=p.position.x,beforeZ=p.position.z;let target;
+  if(p===this.possessor){
+   const pressure=this.teams[1-team].some(o=>distance(o,p)<2),opposingKeeper=this.keepers.find(k=>k.userData.team!==team);
+   const lane=opposingKeeper?(opposingKeeper.position.z>=0?-1:1)*this.goalWidth*.33:Math.sin(t*.6)*this.goalWidth*.25;
+   target={x:direction*(this.halfX-1),z:lane};p.userData.run=moveActor(p,target,4.7,dt);p.userData.velocity.set((p.position.x-beforeX)/Math.max(dt,.001),0,(p.position.z-beforeZ)/Math.max(dt,.001));
+   if(this.cool<=0&&Math.random()<dt*1.8){
+    const mates=this.teams[team].filter(m=>m!==p&&distance(m,p)<14).sort((a,b)=>direction*(b.position.x-a.position.x)-.15*(distance(b,p)-distance(a,p)));
+    const mate=mates.find(m=>this.teams[1-team].every(o=>distance(o,m)>1.5));
+    if(mate&&(pressure||direction*(mate.position.x-p.position.x)>2)&&Math.random()<.65){this.kick(p,mate.position,12);this.passTarget=mate;this.passFrom=p;}
+    else if(direction*p.position.x>this.halfX*.15)this.kick(p,{x:direction*(this.halfX+1),z:lane},20,true);
+   }
+   continue;
+  }
+  target=this.tactics[team].targets.get(p);p.userData.duty=target.duty;
+  const urgent=target.duty==='Press'||target.duty==='Challenge'||target.duty==='Collect',pace=(this.settings.difficulty==='hard'?5.2:this.settings.difficulty==='easy'?3.7:4.5)+(urgent?.35:0);
+  p.userData.run=moveActor(p,target,pace,dt);p.userData.velocity.set((p.position.x-beforeX)/Math.max(dt,.001),0,(p.position.z-beforeZ)/Math.max(dt,.001));
+  // Any nearby opponent can make a tackle; a formation role is not a restriction.
+  if(this.possessor&&this.possessor.userData.team!==team&&distance(p,this.possessor)<1.4&&Math.random()<dt*2.2)this.tackle(p);
  }
  const all=this.actors;for(let i=0;i<all.length;i++)for(let j=i+1;j<all.length;j++){const p=all[i],q=all[j],d=distance(p,q);if(d<.66&&d>.001){const dx=(p.position.x-q.position.x)/d*(.66-d)*.5,dz=(p.position.z-q.position.z)/d*(.66-d)*.5;p.position.x+=dx;p.position.z+=dz;q.position.x-=dx;q.position.z-=dz;}}
  for(const p of all){p.position.x=THREE.MathUtils.clamp(p.position.x,-this.halfX+.5,this.halfX-.5);p.position.z=THREE.MathUtils.clamp(p.position.z,-this.halfZ+.5,this.halfZ-.5);}

@@ -21,3 +21,31 @@ test('formation targets are mirrored for opponents and stay within the pitch',()
  for(const team of [0,1])for(const style of ['balanced','defensive','attacking']){const players=make(7,team,style),p=plan(players,{ball:{x:14,z:9},opponents:make(7,1-team)});for(const target of p.targets.values()){assert.ok(Math.abs(target.x)<15);assert.ok(Math.abs(target.z)<10);}}
 });
 test('the passer does not override the nominated receiver immediately after releasing a pass',()=>{const players=make(5),controlled=players[0],receiver=players.at(-1);controlled.position={x:4,z:3};const p=plan(players,{controlled,receiver});assert.equal(p.presser,receiver);assert.equal(p.targets.get(controlled).duty,'Cover');});
+
+test('three-player formations no longer offer 1–1–1',()=>{
+ for(const style of ['balanced','defensive','attacking'])assert.notEqual(formationFor(3,style).label,'1–1–1');
+ assert.equal(formationFor(3,'balanced').label,'2–1');assert.equal(formationFor(3,'attacking').label,'1–2');
+});
+test('attacking teammates advance with possession instead of staying at formation coordinates',()=>{
+ const players=make(7),carrier=players[3],early=plan(players,{carrier,ball:{x:-6,z:0},now:1}),late=plan(players,{carrier,ball:{x:9,z:4},now:3});
+ const movers=players.filter(p=>p!==carrier&&late.targets.get(p).x-early.targets.get(p).x>5);
+ assert.ok(movers.length>=3,'multiple players make forward runs');
+ assert.ok([...late.targets.values()].some(t=>t.x<0),'one player covers the counterattack');
+});
+test('nearby defenders can challenge outside their original formation position',()=>{
+ const players=make(5),carrier=make(1,1)[0];carrier.position={x:3,z:0};players[0].position={x:2.6,z:0};players[1].position={x:3,z:1.2};
+ const p=plan(players,{carrier,ball:carrier.position,controlled:players[0]});assert.equal(p.presser,players[0]);assert.equal(p.targets.get(players[1]).duty,'Challenge');
+ assert.ok(Math.hypot(p.targets.get(players[1]).x-3,p.targets.get(players[1]).z)<.1);
+});
+test('players recover their spacing once the nearby contest moves away',()=>{
+ const players=make(5),carrier=make(1,1)[0];carrier.position={x:3,z:0};players[0].position={x:2.6,z:0};players[1].position={x:3,z:1.2};
+ const first=plan(players,{carrier,ball:carrier.position});
+ const recovered=plan(players,{previous:first,ball:{x:-10,z:-7},now:4});const target=recovered.targets.get(players[1]);
+ assert.notEqual(target.duty,'Challenge');assert.ok(Math.hypot(target.x-3,target.z-1.2)>3);
+});
+test('a passer continues a give-and-go run after the receiving player controls the ball',()=>{
+ const players=make(5),passer=players[2],receiver=players[4];
+ const before=plan(players,{carrier:passer,now:1});const flight=plan(players,{carrier:null,receiver,previous:before,now:1.2});
+ const received=plan(players,{carrier:receiver,ball:{x:4,z:0},previous:flight,now:1.6});const next=plan(players,{carrier:receiver,ball:{x:4,z:0},previous:received,now:1.8});
+ assert.equal(next.runner,passer);assert.ok(next.targets.get(passer).x>6);
+});

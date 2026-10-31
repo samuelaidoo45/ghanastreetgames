@@ -137,3 +137,40 @@ test('a normal Laski shoot action can beat the keeper with assisted placement',(
 test('CPU players contest a loose ball even when an idle human is slightly closer',()=>{
  for(const id of ['sulia','laski']){const h=harness(id),m=h.mode;m.phase='play';m.cool=0;m.carrier=null;m.possessor=null;m.you.position.set(0,0,1.2);m.you.userData.run=0;m.players[1].position.set(2,0,0);m.players.slice(2).forEach((p,i)=>p.position.set(6,0,-5+i*3));m.b.position.set(0,.12,0);m.v.set(0,0,0);advance(m,.4);assert.ok(m.players[1].position.x<1,'CPU goes to the ball instead of waiting for idle human');h.close();}
 });
+
+test('Laski keeps sideline, end-line and missed-shot crossings live without a new keeper serve',()=>{
+ for(const [x,z,vx,vz]of [[8.9,2,5,0],[-8.9,2,-5,0],[5,10.9,0,5],[4,-10.4,0,-5]]){
+  const h=harness('laski'),m=h.mode;m.phase='play';m.cool=2;m.possessor=null;m.lastTouch=0;m.b.position.set(x,.12,z);m.v.set(vx,0,vz);advance(m,.2);
+  assert.equal(m.phase,'play');assert.equal(m.lastTouch,0);assert.ok(Math.abs(m.b.position.x)>9||Math.abs(m.b.position.z)>10.5);h.close();
+ }
+});
+test('Laski human and CPU can chase the live ball outside the chalked court',()=>{
+ for(const human of [true,false]){const h=harness('laski'),m=h.mode;m.phase='play';m.cool=0;m.possessor=null;m.b.position.set(10.6,.12,3);m.v.set(0,0,0);
+  const chaser=human?m.you:m.players[1];m.players.forEach((p,i)=>p.position.set(-6,0,i*2));chaser.position.set(8.2,0,3);
+  if(human)h.input.target=m.b.position.clone();advance(m,.55);assert.ok(chaser.position.x>9,'player crosses the chalk line');assert.equal(m.phase,'play');assert.equal(m.possessor,chaser);h.close();
+ }
+});
+test('Laski distant balls rebound inside the reachable compound without erasing the rally',()=>{
+ const h=harness('laski'),m=h.mode;m.phase='play';m.cool=10;m.lastTouch=1;m.b.position.set(12.25,.12,14);m.v.set(12,0,0);advance(m,.03);assert.equal(m.phase,'play');assert.equal(m.lastTouch,1);assert.ok(m.b.position.x<=12.3);assert.ok(m.v.x<0);h.close();
+});
+
+test('uncontrolled football attackers on either team can dribble and shoot',()=>{
+ const random=Math.random;Math.random=()=>0;
+ try{for(const team of [0,1]){const h=harness('football',{teamSize:3,goalSize:'small'}),m=h.mode,p=m.teams[team][2],direction=team===0?1:-1;m.pause=0;m.cool=0;
+  m.teams[team].forEach((a,i)=>a.position.set(-direction*8,0,(i-1)*4));m.teams[1-team].forEach((a,i)=>a.position.set(-direction*5,0,(i-1)*4));p.position.set(direction*(m.halfX-5),0,0);m.possessor=p;m.b.position.copy(p.position);m.b.position.y=.12;
+  const x=p.position.x;m.update(.05,.05);assert.ok(direction*(p.position.x-x)>0,'carrier advances');assert.equal(m.possessor,null,'attacker shoots');assert.ok(p.userData.kick>0);assert.ok(direction*m.velocity.x>15);h.close();
+ }}finally{Math.random=random;}
+});
+test('a football defender may tackle nearby even when another player is assigned to press',()=>{
+ const random=Math.random;Math.random=()=>0;
+ try{const h=harness('football',{teamSize:3,goalSize:'small'}),m=h.mode,carrier=m.teams[1][0],challenger=m.teams[0][2];m.pause=0;m.cool=10;m.possessor=carrier;m.nextTactics=10;m.tacticsCarrier=carrier;m.tacticsSelected=m.teams[0][m.selected];
+  carrier.position.set(0,0,0);challenger.position.set(.8,0,0);m.actors.filter(p=>p!==carrier&&p!==challenger).forEach((p,i)=>p.position.set(-6,0,i-2));m.b.position.set(0,.23,0);
+  for(let team=0;team<2;team++)m.tactics[team]={presser:m.teams[team][0],targets:new Map(m.teams[team].map(p=>[p,{x:p.position.x,z:p.position.z,duty:'Cover'}]))};
+  m.update(.01,.01);assert.ok(challenger.userData.tackleCool>0);assert.notEqual(m.possessor,carrier);h.close();
+ }finally{Math.random=random;}
+});
+
+test('Laski retrieves behind-goal possession before attempting another shot',()=>{
+ const h=harness('laski'),m=h.mode,p=m.players[1];m.phase='play';m.possessor=p;m.lastTouch=1;m.cool=0;p.position.set(4,0,-12);m.b.position.set(4,.12,-11.5);m.players.filter(a=>a!==p).forEach((a,i)=>a.position.set(-6,0,i*2));advance(m,.4);
+ assert.equal(m.possessor,p);assert.ok(p.position.z>-12);assert.ok(p.position.z<-7.7);assert.equal(m.phase,'play');h.close();
+});

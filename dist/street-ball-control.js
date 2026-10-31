@@ -13,7 +13,8 @@ export function separatePlayers(players,gap=.9,bounds=8){
   if(d<.0001){const angle=(i*2.4+j)*2.399;dx=Math.cos(angle);dz=Math.sin(angle);d=1;const push=gap*.5;a.x+=dx*push;a.z+=dz*push;b.x-=dx*push;b.z-=dz*push;}
   else{const push=(gap-d)*.5/d;a.x+=dx*push;a.z+=dz*push;b.x-=dx*push;b.z-=dz*push;}
  }
- for(const p of players){p.position.x=THREE.MathUtils.clamp(p.position.x,-bounds,bounds);p.position.z=THREE.MathUtils.clamp(p.position.z,-bounds,bounds);}
+ const bx=typeof bounds==='number'?bounds:bounds.x,bz=typeof bounds==='number'?bounds:bounds.z;
+ for(const p of players){p.position.x=THREE.MathUtils.clamp(p.position.x,-bx,bx);p.position.z=THREE.MathUtils.clamp(p.position.z,-bz,bz);}
 }
 
 // Short alternating touches keep the ball visibly rolling in front of the feet.
