@@ -82,3 +82,27 @@ body.in-launch #world,body.in-lobby #world{visibility:hidden}
 body.full-window #lobby,body.full-window #game-hud{height:100dvh}
 @media(pointer:coarse){#keyboard-hint,.action-buttons button span{display:none}#joystick{width:116px;height:116px}.action-buttons button{touch-action:none}.camera-tools{top:100px}.match-header{padding:12px}.score-panel{max-width:calc(100vw - 150px)}}
 @media(max-height:520px) and (orientation:landscape){.match-header{padding:6px 14px}.score-panel{padding:5px 12px}.score-panel strong{font-size:18px}.camera-tools{top:8px;right:85px}.camera-tools label{font-size:0}.camera-tools input{width:70px}.match-header .score-panel{max-width:260px;margin-right:150px}body.football-controls #game-hud .action-buttons{grid-template-columns:repeat(3,58px);gap:6px}body.football-controls #game-hud .action-buttons button{width:58px;height:58px;min-width:58px;min-height:58px;font-size:9px}#joystick{width:100px;height:100px}#announcement{top:75px;font-size:11px;padding:5px 10px}.play-bottom{bottom:max(12px,env(safe-area-inset-bottom))}}
+
+/* No selection handles or iOS copy callout while holding game controls. */
+body{-webkit-user-select:none;user-select:none;-webkit-touch-callout:none}
+input:not([type]),input[type="text"],input[type="search"],input[type="email"],input[type="url"],input[type="number"],textarea,[contenteditable="true"]{-webkit-user-select:text;user-select:text;-webkit-touch-callout:default}
+#world,#game-hud,#game-hud *{-webkit-touch-callout:none;-webkit-user-select:none;user-select:none}
+
+/* One quiet control, with the full tool set available only when opened. */
+.view-options{position:relative;flex:0 0 44px;z-index:12;pointer-events:auto}
+.view-options>summary{display:flex;align-items:center;justify-content:center;width:44px;height:44px;padding:0;list-style:none;border:2px solid #35230f;border-radius:50%;background:#f2dfb3;color:#35230f;box-shadow:0 3px 0 #24170d;font-family:Bungee,sans-serif;font-size:10px;cursor:pointer;touch-action:manipulation}
+.view-options>summary::-webkit-details-marker{display:none}
+.view-options[open]>summary{background:#f4b83e}
+.view-options>summary:focus-visible,#view-options button:focus-visible{outline:3px solid #fff2c7;outline-offset:3px}
+#view-options:not([open])>.camera-tools{display:none}
+#view-options>.camera-tools{top:52px;right:0;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;width:min(272px,calc(100vw - 48px));max-height:calc(100dvh - 96px - env(safe-area-inset-top) - env(safe-area-inset-bottom));overflow-y:auto;padding:12px;background:#241b13f5;border:1px solid #b99b63;border-radius:14px;box-shadow:0 8px 24px #0006;overscroll-behavior:contain;touch-action:pan-y}
+#view-options .camera-tools button{width:auto;min-width:0;min-height:44px;padding:6px;font-size:11px;line-height:1.25;touch-action:manipulation}
+#view-options #camera-button{grid-column:span 2}
+#view-options .camera-tools label{grid-column:1/-1;min-height:44px;gap:12px;font-size:12px}
+#view-options .camera-tools input{flex:1;min-width:0;width:100%;height:44px;touch-action:none}
+#view-options #view-close{grid-column:1/-1;background:#eedcb0;color:#30210f}
+@media(max-width:900px),(pointer:coarse),(max-height:520px){
+ .match-header{align-items:flex-start;gap:8px;padding-left:0;padding-right:0}
+ .match-header>#pause-button{width:44px;height:44px;flex:0 0 44px}
+ .match-header .score-panel{min-width:0;flex:1;max-width:360px;margin-right:0}
+}

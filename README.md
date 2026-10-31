@@ -91,3 +91,7 @@ Street football uses closer framing with an end-on portrait view. Four Corners s
 ### Version 4.9.1 — camera and input follow-up
 
 Charged actions now retain one pointer or keyboard owner and cancel safely on interruption. Focused controls no longer also invoke global shooting shortcuts. Movement follows the displayed camera direction in alternate views. Sulia's overview stays selected, and portrait Pampanaa retains its wall-adjusted camera distance. All 157 automated checks pass; see `research/verification-v491.md` for validation limits.
+
+### Version 4.9.2 — compact mobile controls
+
+Camera, zoom and fullscreen controls now sit inside one collapsible View menu. Game surfaces suppress accidental long-press text selection and Copy/Select All callouts, while search fields remain editable. See `research/verification-v492.md`.
