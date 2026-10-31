@@ -1,11 +1,11 @@
 {
   "checked": "2026-10-31",
-  "license": "Mixed licences: original media CC0-1.0; menu music CC BY 3.0; Ghana ambience CC BY 4.0. See CREDITS.txt.",
+  "license": "Mixed licences: CC0-1.0 for original media; Unlicense for Gameplay Football geometry/surfaces; CC BY 3.0 for music; CC BY 4.0 for Ghana ambience. See CREDITS.txt.",
   "assets": [
     {
       "path": "CREDITS.txt",
-      "bytes": 5926,
-      "sha256": "6f00d0ab9ce6ab95cfd2d7ef65a9a58b96483535acfe4993b657a64746af56f0"
+      "bytes": 7585,
+      "sha256": "e0c44d917102d8419b180955b9d88efeabfb5841c99f9ebfdaca8af6fdef125d"
     },
     {
       "path": "audio/applause.mp3",
@@ -136,6 +136,46 @@
       "path": "characters/athlete-shorts.glb",
       "bytes": 107308,
       "sha256": "bf010fdc06e47c95f07001d2e9233c7032cfc7b7250f7995246bf45ea9038763"
+    },
+    {
+      "path": "football/LICENSE.txt",
+      "bytes": 1211,
+      "sha256": "6b0382b16279f26ff69014300541967a356a666eb0b91b422f6862f6b7dad17e"
+    },
+    {
+      "path": "football/ball.json",
+      "bytes": 8559,
+      "sha256": "dab93a1001c57ec4a9f75211fb73fe964c664038f8f8bf5275c0491741d3bd71"
+    },
+    {
+      "path": "football/ball.png",
+      "bytes": 13650,
+      "sha256": "8a6f746b4fdf52c299cdf8055ba955b4dd139162bbc626c2767e523b036e29ec"
+    },
+    {
+      "path": "football/concrete-normal.png",
+      "bytes": 303617,
+      "sha256": "bc320148d5bd9f9be37e1d6281e1377a22398da58345398591506736d5170adc"
+    },
+    {
+      "path": "football/concrete.jpg",
+      "bytes": 75417,
+      "sha256": "9e9d1a492c436b6d73103292fbc9f0373ebf94bba8fa98f56484df76b8400eb6"
+    },
+    {
+      "path": "football/goal.json",
+      "bytes": 41706,
+      "sha256": "5d4b6ca3c459568bb963b5d4549057a920b778783de03f77f789743ad0eba6d3"
+    },
+    {
+      "path": "football/grass.jpg",
+      "bytes": 808718,
+      "sha256": "66c35c2f7054c0710ce7e0ac320689c85fc21c5f8b384c74ea0b7979062befab"
+    },
+    {
+      "path": "football/netting.png",
+      "bytes": 155,
+      "sha256": "e280e2dbfd04bde1d70ec4b47c1592b7c11ce73ab2c485fc068aeed0b3147988"
     },
     {
       "path": "lighting/daylight.hdr",

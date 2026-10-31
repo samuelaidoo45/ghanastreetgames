@@ -70,3 +70,15 @@ Licence: https://creativecommons.org/licenses/by/4.0/
 street-ambience.ogg: Ayeduase, Ashanti Region; Ambient street sounds; source IDs NSE-PDJRZ-20250923133157-AB5, -BA9, -474.
 crowd-ambience.ogg: Kejetia, Ashanti Region; Crowd murmurs; source IDs NSE-JAIMQ-20251022154959-A3A, -38B, -995. Market crowd atmosphere, not a recorded football crowd.
 Edits: selected excerpts joined and trimmed into 27-second loops; crossfaded, filtered, resampled, loudness-normalized and compressed to Ogg/Opus. The recordings are licensed adaptations; no endorsement by the authors is implied.
+
+FOOTBALL GEOMETRY & SURFACES — Gameplay Football / Unlicense
+Original author: Bastiaan Konings Schuiling, Gameplay Football; distributed in Google Research Football's third_party/gfootball_engine subtree.
+Primary source: https://github.com/google-research/football/tree/master/third_party/gfootball_engine
+Licence: https://raw.githubusercontent.com/google-research/football/master/third_party/gfootball_engine/LICENSE
+A copy of the Unlicense is included at football/LICENSE.txt. No C++ engine or proprietary Four Corners application code is included.
+football/goal.json: independently converted from data/media/objects/stadiums/goals.ase. One goal extracted; duplicate reverse net faces omitted; axes converted to Y-up; normals computed. Runtime scales goal size and depth.
+football/ball.json and ball.png: independently converted from objects/balls/generic.ase and ball.bmp. Geometry normalized to radius1, axes converted, UVs preserved, smooth radial normals computed. Original white/lime skin retained; this is not claimed to be Four Corners' exact ball skin.
+football/grass.jpg: textures/pitch/seamlessgrass08.bmp, JPEG encoding.
+football/concrete.jpg and concrete-normal.png: textures/concrete/concrete.wall01a.bmp and concrete.wall01_normal.bmp, JPEG/PNG encoding.
+football/netting.png: textures/stadium/goalnetting.bmp, RGBA PNG preserving transparency.
+Four Corners' public bundle identifies the same upstream asset family. These files were obtained from the independent original distribution and converted for this game, not copied from Four Corners' customized exports. The existing independently licensed MakeHuman-derived people remain in use.

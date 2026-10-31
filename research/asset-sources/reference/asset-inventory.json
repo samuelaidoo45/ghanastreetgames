@@ -1,0 +1,155 @@
+{
+  "upstreamTreeCommit": "3d9e754720a95621bba6475c4d3b0d56fe919014",
+  "files": [
+    {
+      "path": "convert-ball.py",
+      "bytes": 2494,
+      "sha256": "863fc0a3d368f312450fef9e5aba009ecad0b234497ac687ce690205d02c5581"
+    },
+    {
+      "path": "convert-goal.py",
+      "bytes": 2962,
+      "sha256": "363704148eb38f809b24733e34ff09f2bb32b660a01d1e38e905b4d0bd448af8"
+    },
+    {
+      "path": "converted/ball.json",
+      "bytes": 8559,
+      "sha256": "dab93a1001c57ec4a9f75211fb73fe964c664038f8f8bf5275c0491741d3bd71"
+    },
+    {
+      "path": "converted/ball.png",
+      "bytes": 13650,
+      "sha256": "8a6f746b4fdf52c299cdf8055ba955b4dd139162bbc626c2767e523b036e29ec"
+    },
+    {
+      "path": "converted/concrete-normal.png",
+      "bytes": 303617,
+      "sha256": "bc320148d5bd9f9be37e1d6281e1377a22398da58345398591506736d5170adc"
+    },
+    {
+      "path": "converted/concrete.jpg",
+      "bytes": 75417,
+      "sha256": "9e9d1a492c436b6d73103292fbc9f0373ebf94bba8fa98f56484df76b8400eb6"
+    },
+    {
+      "path": "converted/goal.json",
+      "bytes": 41706,
+      "sha256": "5d4b6ca3c459568bb963b5d4549057a920b778783de03f77f789743ad0eba6d3"
+    },
+    {
+      "path": "converted/grass.jpg",
+      "bytes": 808718,
+      "sha256": "66c35c2f7054c0710ce7e0ac320689c85fc21c5f8b384c74ea0b7979062befab"
+    },
+    {
+      "path": "converted/netting.png",
+      "bytes": 155,
+      "sha256": "e280e2dbfd04bde1d70ec4b47c1592b7c11ce73ab2c485fc068aeed0b3147988"
+    },
+    {
+      "path": "football-LICENSE",
+      "bytes": 1211,
+      "sha256": "6b0382b16279f26ff69014300541967a356a666eb0b91b422f6862f6b7dad17e"
+    },
+    {
+      "path": "football-engine-LICENSE",
+      "bytes": 1211,
+      "sha256": "6b0382b16279f26ff69014300541967a356a666eb0b91b422f6862f6b7dad17e"
+    },
+    {
+      "path": "football-engine-README.md",
+      "bytes": 122,
+      "sha256": "addeeb97d424fd56ef70ded8c7c736aca683b88943b67825ec08e3a01bdd209d"
+    },
+    {
+      "path": "football-root-LICENSE",
+      "bytes": 11309,
+      "sha256": "25e8791da26f7e74c4baf19eafd7d137b64a46952ef840ed01c172b680cf4046"
+    },
+    {
+      "path": "football-setup.py",
+      "bytes": 7516,
+      "sha256": "3f095bc2131ae2e2ed19f94988ccce5b0852591344170a30a362603add2d4507"
+    },
+    {
+      "path": "football-tree.json",
+      "bytes": 275764,
+      "sha256": "69d3b1b3f1536c3c1a648223a82f6a9edcbf5a7e9702efba645009f077c43577"
+    },
+    {
+      "path": "gfootball/ball.ase",
+      "bytes": 76747,
+      "sha256": "30ed49652171b92621984c144c7921f07e096826d99b629a8925a7e4d8953fec"
+    },
+    {
+      "path": "gfootball/ball.bmp",
+      "bytes": 196746,
+      "sha256": "922be899c99c82f8b87e83312b54362060db292bdd26d0adae5fac1e0c772771"
+    },
+    {
+      "path": "gfootball/concrete.wall01_normal.bmp",
+      "bytes": 786570,
+      "sha256": "17feaf3ba45500c28f8b3eaeb7006f3edfa8b9ad21aa4baa5fe9e86b829dd2c7"
+    },
+    {
+      "path": "gfootball/concrete.wall01a.bmp",
+      "bytes": 786570,
+      "sha256": "baa59dc76e7da77e0fc2bff765e7f27a5dcd52691d942c7a9a8bed76d1e12995"
+    },
+    {
+      "path": "gfootball/fullbody.ase",
+      "bytes": 368395,
+      "sha256": "fcf9fe18a8845d96b820e37a72242d6c3680db6f7a3c98564a3f89c222240d35"
+    },
+    {
+      "path": "gfootball/fullbody.object",
+      "bytes": 170,
+      "sha256": "a4416278f170ca5ea8dc30203bac83b42f06349ce9f23417f2261a77fa8460ef"
+    },
+    {
+      "path": "gfootball/goalnetting.bmp",
+      "bytes": 4234,
+      "sha256": "b471e7e5c612ecf453c5f18616344c04cf1bbbd726be11464782732609c1ee26"
+    },
+    {
+      "path": "gfootball/goals.ase",
+      "bytes": 1573386,
+      "sha256": "3c22e7e9f9166d7fb39fbd0d58bd97d91057f1a2354fe0c29b2051741190daf0"
+    },
+    {
+      "path": "gfootball/goals.object",
+      "bytes": 222,
+      "sha256": "6ad4ebdd6fd25af2542914d4998bdd3e0a1708ea84132408fdc20f733ea74c65"
+    },
+    {
+      "path": "gfootball/idle.anim",
+      "bytes": 1254,
+      "sha256": "751837925907e2c4aad0801e6842afc06713645c0406d891a712431d517d0fad"
+    },
+    {
+      "path": "gfootball/player.object",
+      "bytes": 2955,
+      "sha256": "f6dfb25c5578d6b806c7818130dd052aec86907e01733912c59e1e0d19728e61"
+    },
+    {
+      "path": "gfootball/save-high.anim",
+      "bytes": 6195,
+      "sha256": "abd7f2836459d18d6c1a448003bcf4c0fd859768b4f0b33dfae9e4023df66c87"
+    },
+    {
+      "path": "gfootball/seamlessgrass08.bmp",
+      "bytes": 4320138,
+      "sha256": "4eda7232be832738ae625aaf5dd40c9e56fe2d42235659a7c6123642ec03b47c"
+    },
+    {
+      "path": "gfootball/shot-020.anim",
+      "bytes": 4974,
+      "sha256": "82320a745b309919cd665ef33ca65b69e35a977162046fd52c3f288eaa6fd21e"
+    },
+    {
+      "path": "gfootball/sprint.anim",
+      "bytes": 3773,
+      "sha256": "8fbafce011de4b4386e8575232c1d93cba6a6e031c3fce9143d04a8d7e54af53"
+    }
+  ]
+}
