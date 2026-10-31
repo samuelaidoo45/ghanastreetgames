@@ -87,3 +87,7 @@ Concrete and grass courts now have a genuine opening in the surrounding terrain 
 Big-goal keepers have reaction delays, imperfect committed reads and bounded movement/reach. Soft reachable balls can be caught; hard shots produce playable parries. Human shots with no directional input aim away from the keeper, and directional aiming reaches the goal corners. Penalty keepers commit to a side instead of following the exact target; difficulty controls reads and reaction time.
 
 Street football uses closer framing with an end-on portrait view. Four Corners shows all four side goals in landscape and follows the action in portrait. Laski, Stay and Sulia follow the player and ball in their default view, while alternate overview cameras remain available. Framing keeps space for HUD and controls and pulls back as the action separates. Penalties and One Pole avoid the extra portrait zoom-out. Rigged characters are taller and broader while preserving their animations and planted feet. No additional model or texture downloads were added. Verification: `research/verification-v49.md`.
+
+### Version 4.9.1 — camera and input follow-up
+
+Charged actions now retain one pointer or keyboard owner and cancel safely on interruption. Focused controls no longer also invoke global shooting shortcuts. Movement follows the displayed camera direction in alternate views. Sulia's overview stays selected, and portrait Pampanaa retains its wall-adjusted camera distance. All 157 automated checks pass; see `research/verification-v491.md` for validation limits.

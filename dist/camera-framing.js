@@ -19,7 +19,7 @@ export function frameAction(player, ball, aspect, offset, fov=aspect<1?65:52) {
 }
 
 export function gameActionCamera(mode,aspect){
- if(!mode?.you||!mode.b||(mode.cameraView||0)!==0)return null;
+ if(!mode?.you||!mode.b||mode.wide||mode.cameraWide||(mode.cameraView||0)!==0)return null;
  if(!['fourcorners','laski','sulia','stay'].includes(mode.game.id))return null;
  // Four-way defence needs every side goal visible on landscape displays.
  if(mode.game.id==='fourcorners'&&aspect>=1.2)return {position:new THREE.Vector3(0,13.8,16.5),look:new THREE.Vector3(0,.4,0)};

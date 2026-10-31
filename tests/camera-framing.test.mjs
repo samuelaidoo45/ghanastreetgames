@@ -57,3 +57,26 @@ test('Four Corners landscape default keeps all four side goals visible',()=>{
   for(const [x,z]of [[-9,0],[9,0],[0,-9],[0,9]]){const p=project(new THREE.Vector3(x,.3,z));assert.ok(Math.abs(p.x)<.9&&Math.abs(p.y)<.9);}
  }
 });
+
+test('movement follows the actual screen direction in alternate and rotated views',async()=>{
+ const {World}=await import('../dist/world.js');
+ for(const kind of ['follow','wide',[12,12,7,0,.4,-2]])for(const position of [[-14,9,14],[14,9,14],[0,15,-12],[0,15,0]]){
+  const world=Object.create(World.prototype);world.camera=new THREE.PerspectiveCamera();world.camera.position.set(...position);world.look=new THREE.Vector3();world.camera.lookAt(world.look);world.cameraKind=kind;world.camera.updateMatrixWorld();
+  const right=new THREE.Vector3(1,0,0).applyQuaternion(world.camera.quaternion);right.y=0;right.normalize();
+  const movement=world.movementVector({x:1,z:0});assert.ok(new THREE.Vector3(movement.x,0,movement.z).dot(right)>.999);
+  const up=world.movementVector({x:0,z:-1});assert.ok(Math.abs(up.x*movement.x+up.z*movement.z)<.001);assert.ok(Math.abs(Math.hypot(up.x,up.z)-1)<.001);
+ }
+});
+
+test('Sulia overview is not overwritten by automatic action framing',()=>{
+ const mode={game:{id:'sulia'},you:{position:new THREE.Vector3()},b:{position:new THREE.Vector3()},wide:true};
+ assert.equal(gameActionCamera(mode,.48),null);mode.wide=false;assert.ok(gameActionCamera(mode,.48));
+});
+
+test('portrait framing does not undo the neighbourhood camera wall clearance',async()=>{
+ const {World}=await import('../dist/world.js');
+ for(const [width,height]of screens){const world=Object.create(World.prototype);
+  Object.assign(world,{camera:new THREE.PerspectiveCamera(65,width/height,.08,180),desired:new THREE.Vector3(1,2.2,1),targetLook:new THREE.Vector3(1,1.5,-6),look:new THREE.Vector3(),stage:new THREE.Group(),environment:{visible:false},renderer:{render(){}},quality:'low',cameraKind:'neighbourhood'});
+  world.render(1,1);assert.ok(world.camera.position.distanceTo(world.desired)<.0001);
+ }
+});
