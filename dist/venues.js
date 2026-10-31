@@ -1,3 +1,4 @@
+import {pitchType,pitchSurface} from './football-assets.js';
 import {THREE,box,cylinder,sphere} from './world.js';
 import {surface} from './surfaces.js';
 import {detailedHome,neighbourhoodDetails,streetCourtDetails,compactVenueGeometry} from './venue-details.js';
@@ -15,9 +16,9 @@ function home(g,x,z,w,d,h,tint){
  for(const dx of [-w*.3,w*.3]){box(.75,.85,.09,0x263d3c,x+dx,h*.62,z+d/2+.07,g);for(let k=0;k<4;k++)box(.022,.85,.04,0x8e8d7e,x+dx-.3+k*.2,h*.62,z+d/2+.13,g);}
  box(w,.16,.28,0xa69c83,x,.08,z+d/2+.1,g);
 }
-export function buildVenue(world,game){
+export function buildVenue(world,game,settings={}){
  clearVenue(world);const kind=venueFor(game.id);world.venueKind=kind;
- if(kind==='pitch'){world.venueSolids=[];return {kind,solids:[]};}
+ if(['pitch','lane','streetcourt'].includes(kind)&&['football','fourcorners','penalties','onepole','laski','sulia'].includes(game.id))return buildFootballVenue(world,game,settings,kind);
  const g=new THREE.Group();world.venue=g;world.scene?.add(g);if(world.environment)world.environment.visible=false;
  const ground=new THREE.Mesh(new THREE.PlaneGeometry(160,160),surface(kind==='veranda'?'plastered_wall_02':'red_dirt_mud_01',kind==='veranda'?0xaaa391:0xe9c4a4,100));ground.rotation.x=-Math.PI/2;ground.receiveShadow=true;g.add(ground);
  const solids=[];let houseIndex=0;const solid=(x,z,w,d,h=3.4,tint=0xc1a782,front=0)=>{if(['neighbourhood','lane','streetcourt'].includes(kind)&&w<=10&&d<=10)detailedHome(g,x,z,w,d,h,tint,houseIndex++,front);else home(g,x,z,w,d,h,tint);solids.push({x,z,w,d,h});};
@@ -70,4 +71,36 @@ export function routeTo(start,end,solids){
  const {x:sx,z:sz}=source,{x:tx,z:tz}=target,queue=[[sx,sz]],previous=new Map([[key(sx,sz),null]]);let final=null;
  for(let head=0;head<queue.length&&head<300;head++){const [x,z]=queue[head];if(x===tx&&z===tz){final=key(x,z);break;}for(const [dx,dz]of [[1,0],[-1,0],[0,1],[0,-1]]){const xx=x+dx,zz=z+dz,k=key(xx,zz);if(Math.abs(xx)>7||Math.abs(zz)>7||previous.has(k)||segmentBlocked({x:x*2,z:z*2},{x:xx*2,z:zz*2},solids,.42))continue;previous.set(k,key(x,z));queue.push([xx,zz]);}}
  if(!final)return[];const points=[end.clone()];while(final){const [x,z]=final.split(',').map(Number);points.unshift(new THREE.Vector3(x*2,0,z*2));final=previous.get(final);}return points;
+}
+
+function buildFootballVenue(world,game,settings,kind){
+ const theme=pitchType(game.id,settings.pitchSurface),g=new THREE.Group();g.name='venue-'+theme;world.venue=g;world.scene?.add(g);if(world.environment)world.environment.visible=false;
+ const teamSize=Math.max(1,Math.min(7,Number(settings.teamSize)||3));
+ const halfX=game.id==='football'?11+teamSize*1.15:game.id==='onepole'?4.4:game.id==='penalties'?7.5:10;
+ const halfZ=game.id==='football'?7+teamSize*.7:game.id==='fourcorners'?10:12.5;
+ const edgeX=halfX+5,edgeZ=halfZ+5;
+ const ground=new THREE.Mesh(new THREE.PlaneGeometry(180,180),surface('red_dirt_mud_01',theme==='grass'?0x72805c:0xd5b794,90));ground.rotation.x=-Math.PI/2;ground.position.y=-.015;ground.receiveShadow=true;g.add(ground);
+ if(theme!=='dirt'){const base=new THREE.Group();base.position.y=-.012;g.add(base);pitchSurface(base,edgeX*2+2,edgeZ*2+2,theme);}
+ const solids=[];
+ const building=(x,z,w,d,h,color,i,front=0)=>{detailedHome(g,x,z,w,d,h,color,i,front);solids.push({x,z,w,d,h});};
+ const bench=(x,z)=>{textured(2.8,.12,.65,'wood_planks',0x7d6850,x,.52,z,g);for(const dx of [-1,1])box(.15,.46,.5,0x716b5d,x+dx,.23,z,g);};
+ const tree=(x,z,palm=false)=>{cylinder(.16,.26,5,0x75644a,x,2.5,z,g,10);for(let i=0;i<7;i++){const a=i*Math.PI*2/7;const leaf=sphere(palm?1.5:1.3,i%2?0x516847:0x647953,x+Math.sin(a)*.9,4.5+Math.sin(i)*.3,z+Math.cos(a)*.9,g,10);leaf.scale.set(palm?1.4:1,palm?.14:.8,.6);leaf.rotation.y=-a;}};
+ if(theme==='dirt'){
+  // Open school frontage, sheltered benches and sand shoulders.
+  for(let i=-2;i<=2;i++)building(i*6.4,-edgeZ-2,6.2,4,4.1,i%2?0xc5b68c:0xe0cda8,i+2);
+  for(const x of [-edgeX,edgeX])for(let i=-1;i<=1;i++)building(x+Math.sign(x)*2,i*7,4,6.7,3.3,i%2?0xa48d70:0x9aaa93,i+4,x<0?Math.PI/2:-Math.PI/2);
+  for(const x of [-edgeX+2,edgeX-2]){bench(x,-halfZ-2);tree(x,halfZ+4);}
+ }else if(theme==='concrete'){
+  // Coastal court: open sea-coloured horizon wall, palms and painted shops.
+  for(let i=-2;i<=2;i++)building(i*6.5,-edgeZ-2,6.3,4,3.2,[0xc6ddd2,0xe2bd89,0x719e9c][(i+2)%3],i+2);
+  box(edgeX*2,1.2,.25,0x74a8ae,0,.6,edgeZ,g);box(edgeX*2,.13,.42,0xe4d5b6,0,1.25,edgeZ,g);
+  for(const x of [-edgeX,edgeX]){for(const z of [-halfZ,0,halfZ])tree(x,z,true);bench(x- Math.sign(x),3);}
+  for(let i=-2;i<=2;i++){const bunting=box(.8,.5,.025,[0xbd583b,0xe3bd55,0x48866a][(i+2)%3],i*4,3.6,-halfZ-2,g);bunting.rotation.z=i*.04;}
+ }else{
+  // Community park: green shoulders, trees, perimeter rails and a pavilion.
+  for(const x of [-edgeX,edgeX])for(let i=-2;i<=2;i++)tree(x+2*Math.sign(x),i*7);
+  for(const z of [-edgeZ,edgeZ]){for(let x=-edgeX;x<=edgeX;x+=3)cylinder(.045,.045,1.3,0x9b9e8b,x,.65,z,g,8);for(const y of [.45,1.1])box(edgeX*2,.055,.055,0x9b9e8b,0,y,z,g);}
+  building(0,-edgeZ-5,8,5,3.4,0xd6c6a2,3);for(const x of [-7,-3,3,7])bench(x,-halfZ-2.5);
+ }
+ compactVenueGeometry(g);world.venueSolids=solids;world.venueTheme=theme;return {kind,theme,surface:theme,solids};
 }

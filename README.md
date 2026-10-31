@@ -21,7 +21,7 @@ The runtime and fonts are vendored in `dist`; the hosted game requires no extern
 - Oware, Ghana-inspired 10×10 Dame and Ludo: CPU or local two-player games on physical 3D boards. Counters Ball uses a concrete floor, folded-paper goals, Coke/Pepsi/water-bottle caps and a small paper ball. Setup selects 1–11 counters per player, with spaced formations and cap collisions. Dame includes mandatory/backward captures, flying kings, captured-piece blocking during chained jumps and end-of-turn crowning. Variant conventions are stated in Rules & stories.
 - Four Corners places one goal at the midpoint of each side, with selectable 1/3/5 lives and dribbling or alternating touches. Football, Four Corners, penalties and Laski offer blocks, sticks, footwear or net goals; One Pole offers a single stick, block or shoe target per end. Penalties has timing/free-aim controls, a contact-timed run-up, keeper dives, attempt history and early-clinch scoring. One Pole has contact-timed run-ups, selectable starting positions, ball tracking and actual target collisions. Laski lets the scorer select the eliminated rival and the winner select their next role.
 - Pampanaa/Shooting is a neighbourhood free-for-all with sightlines blocked by buildings, mouth calls, and one-hit elimination. Tyre — rubber-band target is separate from tyre rolling.
-- Pilolo uses fourteen concealed-object hiding places throughout the neighbourhood and competing seekers who route around buildings; Stay uses planted-foot kick/header returns; Tumatu follows an out-and-back hop route; Alikoto and Kpitinge score actual landings; Pempenaa tracks individual legs; Mbobagor gives every player a stone; Chempε alternates food-holder and claimant roles.
+- Pilolo uses fourteen concealed-object hiding places throughout the neighbourhood and competing seekers who route around buildings; Stay uses eight players with hit-and-catch role transfers, loose-ball clearances and retrieval; Tumatu follows an out-and-back hop route; Alikoto and Kpitinge score actual landings; Pempenaa tracks individual legs; Mbobagor gives every player a stone; Chempε alternates food-holder and claimant roles.
 - Pause → Watch replay plays and saves actual gameplay as WebM where supported, with an MP4 fallback. Recordings stay on the device, contain the 3D canvas and game audio, and are bounded to five minutes per clip. Viewing a replay finalizes that segment; resuming starts a new segment. The HUD is not part of the recording.
 - The other games use character movement, hiding/searching, chase-and-rescue, jumping, timing, spinning, throwing, recall and role-play mechanics. Each has a setup screen with its digital rules.
 - Settings include four shirt colours, CC0 menu music and softer recorded claps, CPU/local board opponents, football difficulty and lower graphics quality. Settings remain in this browser. No online multiplayer or accounts.
@@ -41,8 +41,8 @@ REA was attempted against the reference's public bundle in the initial investiga
 - `dist/goal-markers.js`, `counter-assets.js`, `venue-details.js`: original street equipment and detailed neighbourhood geometry.
 - `dist/sulia.js`: geometric nutmeg scoring and chase/restart phases.
 - `dist/football-assets.js`, `football-physics.js`: reusable upstream goal/ball/surface assets, continuous frame collisions, shootout rules and ball-aware cameras.
-- `dist/football.js`, `football-variants.js`, `neighbourhood-games.js`, `venues.js`, `traditional.js`, `modes.js`, `motion-modes.js`, `board-modes.js`: 33 game adaptations.
-- `dist/audio.js`, `replay.js`: recorded soundscape and local gameplay video.
+- `dist/stay.js`, `football.js`, `football-variants.js`, `neighbourhood-games.js`, `venues.js`, `traditional.js`, `modes.js`, `motion-modes.js`, `board-modes.js`: 33 game adaptations.
+- `dist/audio.js`, `replay.js`: game-specific sound profiles and local gameplay video.
 - `dist/assets/CREDITS.txt`: media attribution and licence provenance.
 - `dist/board-rules.js`, `oware.js`: pure board rules.
 - `dist/catalogue.js`, `data.js`: research and mode metadata.
@@ -53,7 +53,7 @@ Previous saved notes/favourites are left untouched in local storage. The 2D prot
 
 ## Asset scope
 
-Menu music uses Michał Jałochowski’s licensed instrumental “The Soul is a Pulse” (CC BY 3.0). Ghana street and crowd atmosphere uses attributed GESMA recordings from Ayeduase and Kejetia (CC BY 4.0). The launch screen unlocks music on the first tap; music, venue ambience and effects have separate saved volume sliders. Hidden tabs are silent. See `research/verification-sound-style.md` for this release’s checks and limitations.
+The original CC0 African instrumental (`v43/menu-loop.mp3`) and street/crowd backgrounds remain. The separate continuous `outdoor-ambience.ogg` bed is excluded from preload and playback to remove the hissing layer. Game-specific cues reuse the existing licensed effects, and footsteps follow dirt/concrete/grass surfaces. Music, ambience and effects have separate saved sliders; hidden tabs are silent.
 
 The CC0 character output is derived from CharacterCreator/MakeHuman, with the author’s clothing coverage mask, fitted shirt/shorts/shoes, two hairstyles and embedded locomotion. No GPL generator/runtime code was copied. Poly Haven supplies photographic PBR maps and HDR sky lighting; Freesound, LaSonotheque, OpenGameArt and Kenney supply credited recordings. These are generic licensed materials and recordings, not Ghana location scans or authenticated traditional chants. See `research/assets-realism.md` and the two new rules research reports for provenance.
 
@@ -68,3 +68,8 @@ The expanded project is independent of the previous account's hosted site. The u
 ## Vercel
 
 The existing GitHub integration deploys main to the Ghana Street Games Vercel project. `vercel.json` sets the framework to Other, runs `npm run check` and serves `dist` as the static output directory, so the game opens at `/`. Source files and research are outside that served directory. HTML, JavaScript and CSS revalidate on subsequent visits; preview images are also versioned in the browser cache.
+
+
+Version 4.5 fixes miniature-game scale and camera framing, provides distinct sand-school / concrete-coastal / grass-park surroundings for every football venue choice, and replaces Stay with the user-specified neighbourhood rules. See `research/verification-v45.md`.
+
+The menu follows the supplied two-column landscape-card design, with compact category badges and a single column on narrow phones. Character materials preserve glossy eyes, softer skin highlights and textured matte clothing; subtle build/height/skin/hair variation and grounded, smoothed gestures improve the existing licensed models.

@@ -1,11 +1,11 @@
 {
   "checked": "2026-10-31",
-  "license": "Mixed licences: CC0-1.0 for photographed materials, effects and current menu music; Unlicense for Gameplay Football geometry/surfaces; CC BY 4.0 for Ghana ambience. See CREDITS.txt.",
+  "license": "Mixed licences: current African menu instrumental/effects are CC0; Ghana street/crowd backgrounds are CC BY 4.0; football geometry/surfaces include Unlicense. See CREDITS.txt.",
   "assets": [
     {
       "path": "CREDITS.txt",
-      "bytes": 8123,
-      "sha256": "ab6e94ef0c5b2c5b8f0b819a95fedb454de64c1005d11aa282dcb7c3ff1c67c8"
+      "bytes": 8503,
+      "sha256": "1585d2adf1e67dd0f8b0a3ca5ffce810e6834c20f9712a7c5982a83f343957ba"
     },
     {
       "path": "audio/applause.mp3",

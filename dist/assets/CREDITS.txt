@@ -1,5 +1,5 @@
 Ghana Street Games — realistic asset sources
-Checked 31 October 2026. Original model/material/foley assets are CC0 1.0 / public domain. Menu music is CC BY 3.0; Ghana ambience is CC BY 4.0 (see below).
+Checked 31 October 2026. Original model/material/foley assets are CC0 1.0 / public domain. Current menu music is CC0; retained Ghana street/crowd ambience is CC BY 4.0. The generic outdoor noise bed is no longer played.
 CC0 terms: https://creativecommons.org/publicdomain/zero/1.0/
 
 CHARACTERS
@@ -90,3 +90,8 @@ football/grass.jpg: textures/pitch/seamlessgrass08.bmp, JPEG encoding.
 football/concrete.jpg and concrete-normal.png: textures/concrete/concrete.wall01a.bmp and concrete.wall01_normal.bmp, JPEG/PNG encoding.
 football/netting.png: textures/stadium/goalnetting.bmp, RGBA PNG preserving transparency.
 Four Corners' public bundle identifies the same upstream asset family. These files were obtained from the independent original distribution and converted for this game, not copied from Four Corners' customized exports. The existing independently licensed MakeHuman-derived people remain in use.
+
+Version 4.5: the CC0 African menu instrumental remains unchanged. Original
+street/crowd recordings and sound effects are retained; AMB Outside 1 is excluded
+from preload/playback to remove the continuous hissing bed. New Stay event cues
+reuse the credited Kenney impacts, with no synthesized background replacement.

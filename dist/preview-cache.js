@@ -1,5 +1,5 @@
 // Rendered scene images only. No user data or recordings are stored here.
-const revision='clean-menu-floor-v4-4';
+const revision='gallery-athletes-stay-v4-5';
 async function database(){return new Promise(resolve=>{try{const request=indexedDB.open('gsg-scene-previews',1);request.onupgradeneeded=()=>request.result.createObjectStore('images');request.onsuccess=()=>resolve(request.result);request.onerror=request.onblocked=()=>resolve(null);}catch{resolve(null);}});}
 export async function readPreviews(ids){const db=await database();if(!db)return new Map();return new Promise(resolve=>{const result=new Map(),tx=db.transaction('images','readonly'),store=tx.objectStore('images');for(const id of ids){const r=store.get(revision+':'+id);r.onsuccess=()=>{if(typeof r.result==='string'&&r.result.startsWith('data:image/jpeg;'))result.set(id,r.result);};}const done=()=>{db.close();resolve(result);};tx.oncomplete=tx.onerror=tx.onabort=done;});}
 export async function savePreviews(images){const db=await database();if(!db)return;await new Promise(resolve=>{const tx=db.transaction('images','readwrite'),store=tx.objectStore('images');store.clear();for(const [id,image]of images)store.put(image,revision+':'+id);const done=()=>{db.close();resolve();};tx.oncomplete=tx.onerror=tx.onabort=done;});}
