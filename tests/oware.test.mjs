@@ -1,0 +1,11 @@
+import test from 'node:test';
+import assert from 'node:assert/strict';
+import {initialOware,legalMoves,moveOware} from '../dist/oware.js';
+import {games,sources} from '../dist/data.js';
+test('opening move sows four seeds and hands over turn',()=>{const s=initialOware();const next=moveOware(s,2);assert.deepEqual(next.pits,[4,4,0,5,5,5,5,4,4,4,4,4]);assert.equal(next.turn,1);assert.deepEqual(s.pits,Array(12).fill(4));});
+test('an empty opponent must be fed if possible',()=>{const s={...initialOware(),pits:[1,0,0,0,0,2,0,0,0,0,0,0]};assert.deepEqual(legalMoves(s),[5]);assert.equal(moveOware(s,0),s);});
+test('capture cannot empty the whole opponent row',()=>{const s={...initialOware(),pits:[2,0,0,0,0,1,1,0,0,0,0,0]};const n=moveOware(s,5);assert.equal(n.pits[6],2);assert.equal(n.scores[0],0);});
+test('valid capture collects two seeds',()=>{const s={...initialOware(),pits:[2,0,0,0,0,1,1,1,0,0,0,0]};const n=moveOware(s,5);assert.equal(n.pits[6],0);assert.equal(n.scores[0],2);});
+test('full lap skips the origin house',()=>{const s={...initialOware(),pits:[12,1,1,1,1,1,1,1,1,1,1,1]};const n=moveOware(s,0);assert.equal(n.pits[0],0);assert.equal(n.pits[1],3);});
+test('complete games preserve all 48 seeds and use legal turns',()=>{let random=813;const rand=()=>{random=(random*1664525+1013904223)>>>0;return random/2**32;};for(let game=0;game<100;game++){let s=initialOware(),moves=0;while(!s.over&&moves<5000){const legal=legalMoves(s);assert.ok(legal.length);s=moveOware(s,legal[Math.floor(rand()*legal.length)]);assert.equal(s.pits.reduce((a,b)=>a+b,0)+s.scores[0]+s.scores[1],48);assert.ok(s.pits.every(n=>Number.isInteger(n)&&n>=0));moves++;}assert.ok(s.over,'game eventually ends');}});
+test('catalogue has unique IDs, working source IDs and honest playable status',()=>{assert.equal(new Set(games.map(g=>g.id)).size,games.length);assert.equal(games.filter(g=>g.play).length,9);for(const g of games){for(const ref of g.refs)assert.ok(sources[ref],ref);if(g.play)assert.ok(g.adaptation&&g.rules.length);if(g.pending)assert.ok(!g.play);}assert.equal(games.length,28);});

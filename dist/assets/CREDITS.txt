@@ -1,0 +1,56 @@
+Ghana Street Games — realistic asset sources
+Checked 31 October 2026. Listed media assets are CC0 1.0 / public domain.
+CC0 terms: https://creativecommons.org/publicdomain/zero/1.0/
+
+CHARACTERS
+CharacterCreator generated output by Kasper Olesen / kblood, built from MakeHuman CC0 system assets.
+https://github.com/kblood/CharacterCreator
+Specific licence for generated body, hair, clothing and animation data:
+https://github.com/kblood/CharacterCreator/blob/master/LICENSE-NOTES.md#generated-files-owner-decision-2026-10-03
+The generator/runtime source code is GPL; none of that code is included in this game.
+athlete-body.glb: base_body_anim.glb derivative; customization morphs removed, skinning and 12 clips preserved; matching authored _CCZONE clothing-coverage attribute transferred from base_body.glb.
+athlete-shirt.glb, athlete-shorts.glb, athlete-shoes.glb: corresponding clothing GLBs with customization morphs removed.
+athlete-hair.glb, athlete-afro.glb: hair_short04 / hair_afro01 with customization morphs removed.
+The game applies its own kit and skin colour choices. No real person's likeness is claimed.
+Original source files and licence evidence are retained in research/asset-sources/characters in the source repository.
+
+PBR MATERIALS — Poly Haven
+https://polyhaven.com/license
+Dry Ground 01 — Rob Tuytel — https://polyhaven.com/a/dry_ground_01
+Red Dirt Mud 01 — Rob Tuytel — https://polyhaven.com/a/red_dirt_mud_01
+Plastered Wall 02 — Charlotte Baglioni — https://polyhaven.com/a/plastered_wall_02
+Corrugated Iron 02 — Jenelle van Heerden (processing), Sergej Majboroda (photography) — https://polyhaven.com/a/corrugated_iron_02
+Wood Planks — Amal Kumar — https://polyhaven.com/a/wood_planks
+Downloaded diffuse, OpenGL normal and roughness maps at 1K resolution. These are generic surface materials, not scans of a named Ghanaian location.
+
+LIGHTING — Poly Haven
+Kloofendal 48d Partly Cloudy (Pure Sky) — Greg Zaal (original), Jarod Guest (sky edits).
+https://polyhaven.com/a/kloofendal_48d_partly_cloudy_puresky
+lighting/daylight.hdr is the 1K HDR edition. It is a lighting reference; no Ghanaian capture location is claimed.
+
+RECORDED AUDIO
+football-kick.mp3 — Soccer Ball Kick, bittermelonheart — https://freesound.org/people/bittermelonheart/sounds/555042/
+footstep-dirt-1.mp3, footstep-dirt-2.mp3, footstep-dirt-3.mp3 — Footsteps_Gravel_01.wav, BenDrain — https://freesound.org/people/BenDrain/sounds/488075/
+The three footstep files are 0.45-second mono excerpts starting at 7.11, 16.48 and 20.82 seconds, with short fades, encoded at 96 kb/s.
+handclap.mp3 — HandClap10.wav, bastianpusch — https://freesound.org/people/bastianpusch/sounds/493712/
+whistle.mp3 — Referee whistle sound.wav, Rosa-Orenes256 — https://freesound.org/people/Rosa-Orenes256/sounds/538422/
+The Freesound files use the publicly available HQ MP3 preview encodings, under each recording's CC0 dedication.
+applause.mp3 — Applaudissements #1, Dorian CLAIR — https://lasonotheque.org/applaudissements-1-s2363.html
+outdoor-ambience.ogg — AMB Outside 1, Kresiek The Furry — https://opengameart.org/content/amb-outside-1
+The ambient recording is generic outdoors, not claimed to have been recorded in Ghana.
+
+KENNEY FOLEY
+footstep_grass_000.ogg, footstep_grass_001.ogg, footstep_concrete_000.ogg, footstep_wood_000.ogg,
+impactGeneric_light_000.ogg, impactSoft_medium_000.ogg, impactWood_light_000.ogg.
+Kenney Impact Sounds — https://kenney.nl/assets/impact-sounds — CC0.
+Publisher download returned HTTP 403 during acquisition; original CC0 samples obtained from this mirror:
+https://github.com/GeorgeQLe/assets-sfx-combat/tree/main/assets/kenney/impact-sounds
+
+No Four Corners GH models, recordings or other proprietary media are included. It remains a visual/gameplay reference.
+
+Game scene previews
+JPEG previews are rendered from the game’s own Three.js scenes. Underlying character, material and lighting credits are listed above.
+
+Pampanaa pretend-play mouth call: OBXJohn, Laser Gun Pew Pew (Freesound 365635), CC0; trimmed mouth-sound excerpt, mono MP3. Generic licensed voice effect, not a Ghana field recording.
+Source: https://freesound.org/people/OBXJohn/sounds/365635/
+Licence: https://creativecommons.org/publicdomain/zero/1.0/

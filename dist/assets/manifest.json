@@ -1,0 +1,346 @@
+{
+  "checked": "2026-10-31",
+  "license": "CC0-1.0 for listed media; see CREDITS.txt",
+  "assets": [
+    {
+      "path": "CREDITS.txt",
+      "bytes": 4289,
+      "sha256": "8f7545adbc1354c65e4154a114cbf5666cf68238f738fde876eaeeab260c036f"
+    },
+    {
+      "path": "audio/applause.mp3",
+      "bytes": 232160,
+      "sha256": "1e282390be352a2d0c5c0f0bb6c921af41ddb84654d7da16f3376106cea657ca"
+    },
+    {
+      "path": "audio/football-kick.mp3",
+      "bytes": 21504,
+      "sha256": "7b5b6bd8f7567832c98f030e94783dba04108d74fef42fb24d5b2bbf1abb3949"
+    },
+    {
+      "path": "audio/footstep-dirt-1.mp3",
+      "bytes": 6313,
+      "sha256": "e1000bdd6da9e93016918067928ce98360b2dc83bff43c7b74447a9f63fd364f"
+    },
+    {
+      "path": "audio/footstep-dirt-2.mp3",
+      "bytes": 6313,
+      "sha256": "be124cc9985f982a0fb3b3f29d5848458df090f3ba8c0d7b18f62a73274523ad"
+    },
+    {
+      "path": "audio/footstep-dirt-3.mp3",
+      "bytes": 6313,
+      "sha256": "b6ba0f7e8b730ab5b6e0cf669ecac28f26b0937aea020cb06b0f01764bdd09cd"
+    },
+    {
+      "path": "audio/footstep_concrete_000.ogg",
+      "bytes": 5808,
+      "sha256": "d7267e183067757c92c169de2a379abea592cfca6b39bb2e8feea15221ad79fe"
+    },
+    {
+      "path": "audio/footstep_grass_000.ogg",
+      "bytes": 8290,
+      "sha256": "9d49497777405d78d7cf7f2888e28277f3a23192300cfd1d79d54876b20f479f"
+    },
+    {
+      "path": "audio/footstep_grass_001.ogg",
+      "bytes": 8313,
+      "sha256": "fb28781bd22b2eefdc14077f1adf5c94d7fe9c3a130194633b55f3e0d39d9f04"
+    },
+    {
+      "path": "audio/footstep_wood_000.ogg",
+      "bytes": 5949,
+      "sha256": "5f1c252942a220d658121bd9417448cd19649ded9fff2ff15f6e50899373ce8e"
+    },
+    {
+      "path": "audio/handclap.mp3",
+      "bytes": 13882,
+      "sha256": "623bfca8c28a767598bb134b1180caa88998254659546cc0e39c23114503448c"
+    },
+    {
+      "path": "audio/impactGeneric_light_000.ogg",
+      "bytes": 5827,
+      "sha256": "f0e982611e97512fee5f777986b67e8b435434b601f94992ec044f7e89fb5acb"
+    },
+    {
+      "path": "audio/impactSoft_medium_000.ogg",
+      "bytes": 5351,
+      "sha256": "7d3ba0bb5e60a11b5d3e558c141303dcf494256675fbf753c0d252d2cf0481e3"
+    },
+    {
+      "path": "audio/impactWood_light_000.ogg",
+      "bytes": 6343,
+      "sha256": "eb45e35b4bed784d3f120de4afec4b0d6ac09d9e143cce8cfcb7d739e1b1f3c3"
+    },
+    {
+      "path": "audio/outdoor-ambience.ogg",
+      "bytes": 289001,
+      "sha256": "5af2486b996457462cebb0f50beeb7014a9ca973b00605171c05b11671124fc6"
+    },
+    {
+      "path": "audio/pampanaa-mouth.mp3",
+      "bytes": 15717,
+      "sha256": "0cfc2c2db185b7a8df6cf6847f5072232d5705698b1431fab36f6b274fcc76a1"
+    },
+    {
+      "path": "audio/whistle.mp3",
+      "bytes": 16320,
+      "sha256": "1bc56409d3439a16fd54bc8fa83affb7e2bc69519b15ac49979d924e895910bf"
+    },
+    {
+      "path": "characters/SOURCE-LICENSE-NOTES.md",
+      "bytes": 18771,
+      "sha256": "18af8d071bcb1cab2260263991ad49c314dc616facf7f33b0ab19bee78d4ec13"
+    },
+    {
+      "path": "characters/athlete-afro.glb",
+      "bytes": 1718940,
+      "sha256": "81823ca6bef7a1a0fefc041161efac71292d0667ef31e7601d0e65fa39c78035"
+    },
+    {
+      "path": "characters/athlete-body.glb",
+      "bytes": 3441640,
+      "sha256": "1965fab5edae0ed141397a02efa09c81347c9e9884fa8bb74742824c54dc0999"
+    },
+    {
+      "path": "characters/athlete-hair.glb",
+      "bytes": 975844,
+      "sha256": "89cf3e2d6060226c89ddb979e2407999b6bd7a92342712860dad08a70fc60831"
+    },
+    {
+      "path": "characters/athlete-shirt.glb",
+      "bytes": 126772,
+      "sha256": "5e484a97811ee05b6164862ef2f5007626b7457392f92bd2b49b79c7add9cf9c"
+    },
+    {
+      "path": "characters/athlete-shoes.glb",
+      "bytes": 410576,
+      "sha256": "bd815620f33ecad20ebb88694ab2214cb5a24e8f719128ca61f76e043358e16f"
+    },
+    {
+      "path": "characters/athlete-shorts.glb",
+      "bytes": 107308,
+      "sha256": "bf010fdc06e47c95f07001d2e9233c7032cfc7b7250f7995246bf45ea9038763"
+    },
+    {
+      "path": "lighting/daylight.hdr",
+      "bytes": 1435119,
+      "sha256": "fd94c84997b8a3c353b62c2125a9b44e19509956986a126e472684432a02d798"
+    },
+    {
+      "path": "previews/alasa.jpg",
+      "bytes": 136395,
+      "sha256": "6648cca837b108ba54b426596f0a8147603c738bf374cdd5291f111310edddde"
+    },
+    {
+      "path": "previews/alikoto.jpg",
+      "bytes": 138589,
+      "sha256": "3f3c1be80abb0290ad546fcda31b92ace3d5fb8e9de11306ca8885b332602f12"
+    },
+    {
+      "path": "previews/ampe.jpg",
+      "bytes": 118859,
+      "sha256": "017418c6d3dda948289498cd0127064960822c339e3ae0cd8733a13ca17dd389"
+    },
+    {
+      "path": "previews/antoakyire.jpg",
+      "bytes": 108433,
+      "sha256": "edd6e47c64dcdd56fe9a2fa80cceacb6140100448ed5f1a8a6e89f7f182445ae"
+    },
+    {
+      "path": "previews/chaskele.jpg",
+      "bytes": 108843,
+      "sha256": "1cb86862c90899f18ed6e82c1c3378e1dbbaf2f03c961c62624e79f7985ca90f"
+    },
+    {
+      "path": "previews/chempe.jpg",
+      "bytes": 121262,
+      "sha256": "3afda9a0bc2d9f3a3d89d3c07dd3ac87a2ba2fc5ed761d40496d6b6ca1f1452e"
+    },
+    {
+      "path": "previews/counters.jpg",
+      "bytes": 56653,
+      "sha256": "1eaab36452f5569c56dcd55d321bd23dbb46c94e8a37d0e8f74e747a8fb1ae45"
+    },
+    {
+      "path": "previews/dame.jpg",
+      "bytes": 62529,
+      "sha256": "8b62548a644d28901ec54c2dd33079c25712ecaa585465f3a800a4525db87c5f"
+    },
+    {
+      "path": "previews/football.jpg",
+      "bytes": 104193,
+      "sha256": "d8b55f124087769fd945ea85b7b877d8b7a9be3d3a42fcffbe8a797504b55c7f"
+    },
+    {
+      "path": "previews/kpitinge.jpg",
+      "bytes": 116575,
+      "sha256": "a5a03080cfb1a5ce57925db8dc58b295767a1b0668ccea41bc717976beb6b84c"
+    },
+    {
+      "path": "previews/kyekyekule.jpg",
+      "bytes": 119296,
+      "sha256": "8999917b5984473b89e7307cde1f8d93d48a4e6c601533e190bc85ed41ef04b3"
+    },
+    {
+      "path": "previews/ludo.jpg",
+      "bytes": 59888,
+      "sha256": "b587491249956156fcbe5ccdef4c2412b13fa5d7dea512836edbaa0cbb54a46e"
+    },
+    {
+      "path": "previews/mbobagor.jpg",
+      "bytes": 122447,
+      "sha256": "956ecb5fd93777a15a0df79e554c61835e6b084bbb6396ef89c0c70c6f6d1bab"
+    },
+    {
+      "path": "previews/numbers.jpg",
+      "bytes": 116716,
+      "sha256": "55c1aff987b5cffaf2d498f4d2f2c614d1a47b3e0e4eae9ed99e61e7af0667b9"
+    },
+    {
+      "path": "previews/oware.jpg",
+      "bytes": 60529,
+      "sha256": "fd601e7832a211deaef6c8349738d9eb19a77dcd3e8db54b8710318754cc21ee"
+    },
+    {
+      "path": "previews/pampanaa.jpg",
+      "bytes": 110893,
+      "sha256": "322c671481691ee330373d391149bdca02837cc47a8e8eba4ff9a010bf835996"
+    },
+    {
+      "path": "previews/pempenaa.jpg",
+      "bytes": 124750,
+      "sha256": "abe9a2513188485adf596ab9de4f1ac356adda334e0a41ff75aed25f9919ac30"
+    },
+    {
+      "path": "previews/pilolo.jpg",
+      "bytes": 114017,
+      "sha256": "0552b5cfe23143d5833f8861369e08af85455dd0f1f7b1f7b71e8e56d0e3adbe"
+    },
+    {
+      "path": "previews/police.jpg",
+      "bytes": 111600,
+      "sha256": "d83db2feb367b47e9418f77175a799cc7065cf5edc3fb9295d38aaac15ddb165"
+    },
+    {
+      "path": "previews/pretend.jpg",
+      "bytes": 111950,
+      "sha256": "a147a52ecc107645cee6b90ae60c72e70f249a5e0638481f404bd93721598627"
+    },
+    {
+      "path": "previews/sansankroma.jpg",
+      "bytes": 111427,
+      "sha256": "142d57112bbbe9e85ea710e09ba50cc191e8c68bcb2bcf70cd290d43dca0de7f"
+    },
+    {
+      "path": "previews/shooting.jpg",
+      "bytes": 110893,
+      "sha256": "322c671481691ee330373d391149bdca02837cc47a8e8eba4ff9a010bf835996"
+    },
+    {
+      "path": "previews/skipping.jpg",
+      "bytes": 120173,
+      "sha256": "0a8d0c6ac4c3462b77bf89351a0e6a3bf9cf5a009ded17fd21a4149e64835695"
+    },
+    {
+      "path": "previews/stay.jpg",
+      "bytes": 109989,
+      "sha256": "54c5e84f3982b9033f4c9e2ed06a1c1044abc512149549033fa713b539c74d7a"
+    },
+    {
+      "path": "previews/sulia.jpg",
+      "bytes": 103379,
+      "sha256": "c4678b44ec158b52230f5a85b5a5c4a0af7649dd70b55509eb9db01ccbc80546"
+    },
+    {
+      "path": "previews/tumatu.jpg",
+      "bytes": 115228,
+      "sha256": "23514918081505af0f735eec86b69b90ad8f93af4af103666c67f59843269990"
+    },
+    {
+      "path": "previews/tyre.jpg",
+      "bytes": 113815,
+      "sha256": "29ba00bb69476942ae21f0fe77878ce93796d4cc18ef0e2878309318eb9a897c"
+    },
+    {
+      "path": "previews/zanzama.jpg",
+      "bytes": 105930,
+      "sha256": "cd8c05ae93ac5b9f0a7684da870c96e07db77b6c3ac3ae79ac121b5e358f3d1c"
+    },
+    {
+      "path": "textures/corrugated_iron_02_color.jpg",
+      "bytes": 568492,
+      "sha256": "7a7b43099d015c1b08ebb175da5965caeae44b86de65a727b3fffa20a7c69a93"
+    },
+    {
+      "path": "textures/corrugated_iron_02_normal.jpg",
+      "bytes": 489773,
+      "sha256": "9743c93668689c36a67e9c4dc8d6a0870fe91202f82dcdaf70ddc330c12f9ecb"
+    },
+    {
+      "path": "textures/corrugated_iron_02_roughness.jpg",
+      "bytes": 793854,
+      "sha256": "56ec8d8b04bac56b5d85ee2f35256b7b00d8c7a0ef13e6791cdabc5c05ed2f4b"
+    },
+    {
+      "path": "textures/dry_ground_01_color.jpg",
+      "bytes": 604799,
+      "sha256": "75222fc97a82b635a09cf8f2891dd58bc42e49599b9fda920b2c50193fe85e9f"
+    },
+    {
+      "path": "textures/dry_ground_01_normal.jpg",
+      "bytes": 243523,
+      "sha256": "8faf30f0656721f861dba573006c3f90e38fcda8dad481d2369145b114c6b45e"
+    },
+    {
+      "path": "textures/dry_ground_01_roughness.jpg",
+      "bytes": 336234,
+      "sha256": "1e2587819279786a45b3a6b766cd75cd571e7e524b787ebd7e534bc7f9bd143e"
+    },
+    {
+      "path": "textures/plastered_wall_02_color.jpg",
+      "bytes": 436395,
+      "sha256": "0a316ffd3f953a902325c06afb5a5863bbf71d13a353f9d85378562adca79603"
+    },
+    {
+      "path": "textures/plastered_wall_02_normal.jpg",
+      "bytes": 960241,
+      "sha256": "0f1b4ea0c4707ea133f133c020923bddd8610a43a153281dad15d49f39ad9624"
+    },
+    {
+      "path": "textures/plastered_wall_02_roughness.jpg",
+      "bytes": 173930,
+      "sha256": "6c317c0e647b02259601690bd33501bbc825858c6d1715cd0f8f46a5b51f6db4"
+    },
+    {
+      "path": "textures/red_dirt_mud_01_color.jpg",
+      "bytes": 935891,
+      "sha256": "c3ac7c922bb5a8e390294b8097e61b882a15113b751c12395c526813d173882e"
+    },
+    {
+      "path": "textures/red_dirt_mud_01_normal.jpg",
+      "bytes": 1136486,
+      "sha256": "c9dde2809a950e18c4155b8e33dcaf18369a6fefeb86ae7354775323bef0b05a"
+    },
+    {
+      "path": "textures/red_dirt_mud_01_roughness.jpg",
+      "bytes": 671715,
+      "sha256": "714127e20d6f01805de15aa77f2c6a2f5f3d68dbe4d735a171035ffe6504899e"
+    },
+    {
+      "path": "textures/wood_planks_color.jpg",
+      "bytes": 609525,
+      "sha256": "3b0669f683e4bf10f5a55a381cfa9669a7b8dfd921901829daa3b35acc2bbdec"
+    },
+    {
+      "path": "textures/wood_planks_normal.jpg",
+      "bytes": 652441,
+      "sha256": "d02abf113e17a8abe97e1be3e9d6d88add242e8c2291e2200d37aa8c68909f25"
+    },
+    {
+      "path": "textures/wood_planks_roughness.jpg",
+      "bytes": 299757,
+      "sha256": "1b7f115bfa25619b0a2db554eb1ab88a6fc5ef0b74ba4890611eae04d00b9829"
+    }
+  ]
+}
