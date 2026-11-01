@@ -44,7 +44,7 @@ export class Abedemu extends Mode{
   const dir=target.position.clone().addScaledVector(target.userData.velocity,lead).sub(p.position);dir.y=0;dir.normalize();
   // Pressure disturbs contact, not the score: the resulting ball still has to be intercepted.
   const defender=this.players[this.middleIndex],side=Math.sign((defender.position.x-p.position.x)*dir.z-(defender.position.z-p.position.z)*dir.x)||1;
-  dir.applyAxisAngle(new THREE.Vector3(0,1,0),side*pressure*(.06+power*.11));
+  dir.applyAxisAngle(new THREE.Vector3(0,1,0),side*pressure*(.06+power*.11)*(i===0?1:this.difficultyTuning.error));
   p.rotation.y=Math.atan2(dir.x,dir.z);this.b.position.copy(p.position).addScaledVector(dir,.55);this.b.position.y=.14;
   this.v.copy(dir.multiplyScalar(speed));this.v.y=id==='lob'?4.2:.45;this.carrier=null;this.lastTouch=i;this.lastPass={from:i,to:j};this.cool=.16;
   p.userData.kick=.38;p.userData.runUntil=this.age+2.2;p.userData.supportAt=0;this.shapeTurn+=(i%2?1:-1)*.25;this.ui.sound('kick');
@@ -145,7 +145,7 @@ export class Abedemu extends Mode{
      if(Math.hypot(raw.x,raw.z)>.05)target={x:p.position.x+raw.x*3,z:p.position.z+raw.z*3};else target=this.input.target||p.position;
      speed=this.input.sprint?6.8:pressing?(this.age-p.userData.pressStarted<.55?6.2:5.5):5.1;
     }else if(i===this.middleIndex){target=this.pressTarget(i);speed=this.settings.difficulty==='easy'?4.8:this.settings.difficulty==='hard'?6.2:5.6;}
-    else{target=i===this.carrier?this.carryTarget(i):this.supportTarget(i);speed=i===this.carrier?3.8:this.age<p.userData.runUntil?4.9:4.1;}
+    else{target=i===this.carrier?this.carryTarget(i):this.supportTarget(i);speed=(i===this.carrier?3.8:this.age<p.userData.runUntil?4.9:4.1)*this.difficultyTuning.speed;}
     this.moveRunner(p,target,speed,dt,i!==this.carrier&&i!==this.middleIndex);
     if(i===this.middleIndex&&(i!==0||this.age<p.userData.pressUntil)&&distance(p,this.b)<1.2)this.tackle(i);
    }

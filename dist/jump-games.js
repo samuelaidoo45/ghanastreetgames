@@ -3,11 +3,11 @@ import {THREE,box,cylinder,ring} from './world.js';
 import {weatherMesh,surface} from './surfaces.js';
 const clamp=THREE.MathUtils.clamp,TAU=Math.PI*2;
 export const jumpStyles=['Tuck','Pike','Layout'];
-export function landingGrade(angle,opened,braceTime,flightTime,z){
+export function landingGrade(angle,opened,braceTime,flightTime,z,tolerance=1){
  const upright=Math.abs(Math.atan2(Math.sin(angle),Math.cos(angle)));
  const inSand=z<-.65&&z>-7;
- const feet=inSand&&upright<.48&&opened;
- const timing=braceTime===null?0:clamp(1-Math.abs(flightTime-braceTime-.14)/.24,0,1);
+ const feet=inSand&&upright<.48*tolerance&&opened;
+ const timing=braceTime===null?0:clamp(1-Math.abs(flightTime-braceTime-.14)/(.24*tolerance),0,1);
  return {feet,upright,timing,landing:feet?Math.round(24+16*timing):0};
 }
 export class JumpGames extends Mode{
@@ -33,7 +33,7 @@ export class JumpGames extends Mode{
  isCPU(){return !this.networked&&!this.local&&this.turn>0;}
  prepare(){
   this.phase='ready';this.time=0;this.flightTime=0;this.angle=0;this.omega=0;this.opened=!this.agawowa;this.braceTime=null;this.barHit=false;this.crossed=false;this.peak=0;this.takeoffQuality=0;this.mark.visible=false;
-  this.barHeight=.7+this.round*.2;this.bar.position.set(0,this.barHeight,0);this.bar.rotation.set(0,0,Math.PI/2);
+  this.barHeight=.7+this.round*.2+this.difficultyTuning.bar;this.bar.position.set(0,this.barHeight,0);this.bar.rotation.set(0,0,Math.PI/2);
   this.players.forEach((p,i)=>{p.position.set(-4-i*.8,0,3);p.rotation.set(0,Math.PI,0);Object.assign(p.userData,{run:0,pose:'idle',jump:0,lean:0});});
   this.you=this.players[this.turn];this.you.position.set(0,0,6.5);this.speed=0;
   this.note(`${this.name()} · attempt ${this.round+1}/3. ${this.agawowa?jumpStyles[this.style]+': run onto the block, tuck, open and land on your feet.':'Run to the gold mark, jump over the palm bar, then land in the sand.'}`);this.controls();
@@ -61,7 +61,7 @@ export class JumpGames extends Mode{
   if(id==='next'&&this.phase==='result')this.next();
  }
  launch(){
-  const z=this.you.position.z,ideal=this.agawowa?1.65:1.5;this.takeoffQuality=clamp(1-Math.abs(z-ideal)/1.05,0,1);
+  const z=this.you.position.z,ideal=this.agawowa?1.65:1.5;this.takeoffQuality=clamp(1-Math.abs(z-ideal)/(1.05*this.difficultyTuning.window),0,1);
   if(this.takeoffQuality<.08){this.resolve(false,'Missed the take-off mark',0);return;}
   this.phase='air';this.flightTime=0;this.vy=5.4+this.takeoffQuality*.7;this.vz=-(3.8+this.takeoffQuality*.7);this.you.position.y=this.agawowa?.32:0;this.opened=!this.agawowa;
   this.mark.visible=true;this.mark.position.set(0,.055,-3.5);this.you.userData.run=0;this.you.userData.pose=this.agawowa?['airTuck','airPike','airLayout'][this.style]:'airHigh';this.ui.sound('jump');this.controls();
@@ -105,7 +105,7 @@ export class JumpGames extends Mode{
    this.crossed=true;this.barHit=low<this.barHeight+.04;if(this.barHit)this.ui.sound('stone');
   }
   if(p.position.y<=0&&this.flightTime>.2){
-   const grade=landingGrade(this.agawowa?this.angle:0,this.opened,this.braceTime,this.flightTime,p.position.z),flips=Math.floor((this.angle+.2)/TAU),clear=!this.withBar||this.crossed&&!this.barHit;
+   const grade=landingGrade(this.agawowa?this.angle:0,this.opened,this.braceTime,this.flightTime,p.position.z,this.difficultyTuning.window),flips=Math.floor((this.angle+.2)/TAU),clear=!this.withBar||this.crossed&&!this.barHit;
    const ok=grade.feet&&clear&&(!this.agawowa||flips>=1);
    const air=Math.round(clamp(this.peak/2,0,1)*20),style=this.agawowa?Math.min(30,flips*15+this.style*4):Math.round(this.barHeight*30),flow=Math.round(this.takeoffQuality*10);
    const points=ok?Math.min(100,air+style+flow+grade.landing):0;

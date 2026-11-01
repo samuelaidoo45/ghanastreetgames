@@ -11,7 +11,7 @@ export class Sulia extends Mode{
  placeBall(){const p=this.players[this.carrier];this.b.position.set(p.position.x+Math.sin(p.rotation.y)*.48,.12,p.position.z+Math.cos(p.rotation.y)*.48);this.v.set(0,0,0);}
  hold(){if(this.phase==='play')this.charge=this.age;}
  action(id){if(id==='target'){this.target=this.target%4+1;return;}if(this.phase!=='play')return;if(id==='shield'&&this.carrier===0){this.shieldUntil=this.age+.8;this.note('Shielding the ball. Turn away from pressure.');return;}if(id!=='nutmeg')return;const power=this.charge===null?.4:clamp(this.age-this.charge,.1,1);this.charge=null;if(this.carrier===0)this.poke(0,this.target,power);else if(this.carrier!==null&&distance(this.you,this.players[this.carrier])<1.15&&this.cool<=0){this.carrier=0;this.lastKicker=-1;this.cool=.4;this.ui.sound('kick');this.note('Ball won. Face a player and thread the gap.');}else this.note('Get close enough to win the ball first.');}
- poke(i,target,power=.4){if(this.carrier!==i||this.cool>0)return false;const p=this.players[i],q=this.players[target];this.placeBall();const d=q.position.clone().sub(this.b.position);d.y=0;if(i!==0)d.x+=(Math.random()-.5)*.5;this.v.copy(d.normalize().multiplyScalar(7+power*8));this.v.y=.12;this.carrier=null;this.lastKicker=i;this.cool=.32;p.userData.kick=.38;this.ui.sound('kick');return true;}
+ poke(i,target,power=.4){if(this.carrier!==i||this.cool>0)return false;const p=this.players[i],q=this.players[target];this.placeBall();const d=q.position.clone().sub(this.b.position);d.y=0;if(i!==0)d.x+=(Math.random()-.5)*.5*this.difficultyTuning.error;this.v.copy(d.normalize().multiplyScalar(7+power*8));this.v.y=.12;this.carrier=null;this.lastKicker=i;this.cool=.32;p.userData.kick=.38;this.ui.sound('kick');return true;}
  nutmeg(scorer,victim){if(this.phase!=='play'||scorer<0||scorer===victim)return false;this.points[scorer]++;this.score=this.points[0];this.victim=victim;this.phase='chase';this.chaseAge=0;this.carrier=null;this.lastKicker=-1;this.v.set(0,0,0);this.tagged=false;this.note(`${names[scorer]} nutmegged ${names[victim]} — one point! ${victim===0?'Run!':'Catch the nutmegged player!'} A brief tag-and-restart follows.`);this.ui.sound('point');return true;}
  hit({point}){this.input.target=point;}
  cycleCamera(){this.wide=!this.wide;this.world.setCamera(this.wide?[0,18,8,0,0,0]:[0,10,13,0,.5,0]);}
@@ -42,7 +42,7 @@ export class Sulia extends Mode{
    else if(d<1.4)target={x:p.position.x+away.z*2,z:p.position.z-away.x*2};
   }else if(p===challenger){target=carrier?{x:carrier.position.x+Math.sin(carrier.rotation.y)*.65,z:carrier.position.z+Math.cos(carrier.rotation.y)*.65}:this.b.position;speed=4.2;}
   else target=supportPosition(p,carrier,this.b,i);
-  p.userData.run=moveActor(p,avoidPlayers(p,target,this.players,1.25),speed,dt);
+  p.userData.run=moveActor(p,avoidPlayers(p,target,this.players,1.25),speed*this.difficultyTuning.speed,dt);
  }
  separatePlayers(this.players,1.02,8.5);
  // Only the closest defender challenges, with a recovery interval after a win.

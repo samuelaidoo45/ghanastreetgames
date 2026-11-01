@@ -1,0 +1,55 @@
+/* Shared match-day panels: dark frame, cream choices, one gold primary action. */
+dialog{--panel:#2b2016;--paper:#f3e3ba;--panel-ink:#30200e;--panel-gold:#f4b839;width:min(540px,calc(100vw - 24px));max-width:640px;max-height:calc(100dvh - 24px - env(safe-area-inset-top) - env(safe-area-inset-bottom));margin:auto;padding:0;background:var(--panel);color:var(--paper);border:1px solid #705438;border-radius:22px;box-shadow:0 6px 0 #150f0b,0 24px 80px #0008;overflow:auto;overscroll-behavior:contain;scrollbar-width:thin;scrollbar-color:#9a7b4e var(--panel)}
+dialog::backdrop{background:#130e0bc7;backdrop-filter:blur(5px)}
+dialog .dialog-content{padding:28px;min-width:0}
+dialog .dialog-content h2{font:400 clamp(20px,3vw,27px)/1.25 Bungee,sans-serif;color:#fff0d0;text-shadow:none;margin:0 44px 22px 0}
+dialog .dialog-content h3{font:400 14px/1.35 Bungee,sans-serif;color:var(--paper)}
+dialog .dialog-content p{font:500 14px/1.55 Shantell,sans-serif;margin:12px 0}
+dialog .eyebrow{color:#ceba91}
+dialog .dialog-close,#setup-dialog>.dialog-close{width:42px;height:42px;min-height:42px;border:1px solid #5c4023;background:var(--paper);color:var(--panel-ink);box-shadow:0 3px 0 #140d08;top:14px;right:14px;line-height:1;border-radius:50%;font:27px/1 sans-serif;cursor:pointer}
+dialog :is(button,a,summary,select,input):focus-visible{outline:3px solid #ffe19a;outline-offset:3px}
+dialog :is(.gold-button,.outline-button){min-height:48px;padding:12px 18px;border:2px solid var(--panel-ink);border-radius:999px;font:400 12px/1.35 Bungee,sans-serif;cursor:pointer;white-space:normal}
+dialog .gold-button{background:linear-gradient(115deg,#f9ce78,var(--panel-gold) 70%);color:var(--panel-ink);box-shadow:0 4px 0 #b64b2e}
+dialog .outline-button{background:var(--paper);color:var(--panel-ink);box-shadow:0 3px 0 #977f55}
+dialog .gold-button:hover{background:#ffd273}dialog .outline-button:hover{background:#fff0cd}
+dialog button:disabled{opacity:.5;cursor:default}
+dialog .small-copy,dialog .music-credit{color:#d4c3a1}dialog a{color:#ffcf70}
+#pause-dialog,#result-dialog{width:min(460px,calc(100vw - 24px))}
+#pause-dialog .pause-content,#result-dialog .result-content{display:flex;flex-direction:column;gap:18px;padding:26px;text-align:center}
+.modal-heading{display:grid;justify-items:center;gap:10px}
+.modal-symbol{display:grid;place-items:center;width:48px;height:48px;border:1px solid #8b693e;border-radius:50%;background:#402d18;color:var(--panel-gold);font:24px/1 Bungee,sans-serif}
+dialog .modal-heading h2{margin:0;max-width:100%;font-size:24px;overflow-wrap:anywhere}
+dialog .modal-heading p{margin:0;color:#d6c39c;font-size:14px}
+.modal-actions{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.modal-actions>.gold-button{grid-column:1/-1;min-height:52px;font-size:15px}
+#pause-dialog .modal-actions>#restart-game{grid-column:1/-1}
+.modal-exit{background:transparent;border:0;border-top:1px solid #735735;color:#ebd7ae;min-height:44px;padding:12px 8px 0;font:400 11px/1.4 Bungee,sans-serif;cursor:pointer}
+.modal-exit:hover{color:#ffcf70}
+#result-dialog .result-reward{margin:0;padding:12px 16px;border:1px dashed #967748;border-radius:12px;color:#f8cf72;background:#352717;font-size:13px}
+#result-points:empty{display:none}
+/* Option rows share the reference's paper panel and dashed dividers. */
+#settings-dialog .setting-row{display:flex;align-items:center;justify-content:space-between;gap:16px;min-height:60px;padding:12px 16px;margin:0;background:var(--paper);color:var(--panel-ink);border:0;border-bottom:1px dashed #b59a66;font:400 11px/1.4 Bungee,sans-serif}
+#settings-dialog .setting-row:first-of-type{border-radius:14px 14px 0 0}#settings-dialog .setting-row select{max-width:56%;width:auto;min-width:0;color:var(--panel-ink);border:0;background:transparent;font:600 14px/1.3 Shantell,sans-serif;min-height:44px}
+#settings-dialog input[type=checkbox]{width:22px;height:22px;flex-shrink:0;accent-color:#b77a1e}
+#settings-dialog .sound-mixer{background:var(--paper);color:var(--panel-ink);border:0;border-radius:14px;padding:16px;margin-top:18px}#settings-dialog .sound-mixer legend{color:var(--paper);padding:8px 0}#settings-dialog #save-settings{width:100%;margin-top:22px}
+#settings-dialog> .dialog-content>label:last-of-type{display:flex;align-items:center;gap:12px;font:14px/1.4 Shantell,sans-serif}
+#rules-dialog #rules-select{width:100%;min-height:48px;background:var(--paper);color:var(--panel-ink);border:0;border-radius:12px;padding:10px 14px;font:16px Shantell,sans-serif}
+#rules-body{line-height:1.6}#rules-body li{margin:8px 0}#rules-body h3{margin-top:24px}#rules-body a{overflow-wrap:anywhere}
+#replay-dialog video{max-width:100%;border-radius:12px}#replay-dialog #save-replay{display:block;text-align:center;margin-top:18px}
+#club-dialog .club-content>section{background:var(--paper);color:var(--panel-ink);border:0;border-radius:16px;padding:18px}
+#club-dialog section h3,#club-dialog section .small-copy,#club-dialog section .eyebrow{color:var(--panel-ink)}
+#club-dialog .club-stat strong,#club-dialog .club-room-code>strong{color:#9d3e24}
+#club-dialog .club-content input,#club-dialog .club-content select{background:#fff3d3;border:1px solid #b59a66;color:var(--panel-ink)}
+#club-dialog #club-message{border-radius:10px}#club-dialog #leaderboard-list li{border-color:#b59a66}
+#install-dialog .dialog-content{padding:26px}#install-dialog #install-title{margin-right:30px;font-size:23px}#install-dialog .install-icon{width:52px;height:52px}
+#setup-dialog .difficulty-hint{font:12px/1.5 Shantell,sans-serif;color:#d5c3a0;margin:10px 2px}
+#setup-dialog #setup-difficulty{font-family:Bungee,sans-serif;font-size:13px}
+body.full-window{min-height:100dvh}body.full-window #world{position:fixed;inset:0;width:100%;height:100dvh}
+@media(max-width:480px){dialog .dialog-content{padding:22px 18px}#pause-dialog .pause-content,#result-dialog .result-content{padding:24px 18px;gap:16px}.modal-actions{gap:10px}dialog .modal-heading h2{font-size:21px}dialog .modal-actions .outline-button{font-size:10px;padding:12px 8px}#settings-dialog .setting-row{padding:10px 12px;font-size:10px}#club-dialog .club-content{gap:14px}}
+@media(max-height:520px) and (min-width:600px){#pause-dialog,#result-dialog{width:min(680px,calc(100vw - 32px))}#pause-dialog .pause-content,#result-dialog .result-content{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.25fr);gap:12px 24px;padding:20px}.modal-heading{grid-column:1;grid-row:1;align-self:center}.modal-actions{grid-column:2;grid-row:1 / span 2;align-self:center}#pause-dialog .modal-exit{grid-column:1;grid-row:2}#result-dialog .result-reward{grid-column:1;grid-row:2}#result-dialog .modal-exit{grid-column:1/-1;grid-row:3}.modal-symbol{width:38px;height:38px;font-size:19px}dialog .modal-heading h2{font-size:20px}dialog .modal-actions>button{min-height:44px;padding:10px 14px}.modal-actions{gap:10px}#setup-dialog[open]{max-height:calc(100dvh - 16px)}}
+#setup-dialog #show-game-rules{color:var(--panel-ink);background:var(--paper);border-color:var(--panel-ink)}
+#settings-dialog .music-credit a{color:#ffcf70}
+#settings-dialog .sound-mixer legend{background:var(--paper);color:var(--panel-ink);padding:6px 12px;border-radius:8px}
+#settings-dialog label:has(+h3){border-radius:0 0 14px 14px}
+
+#rules-dialog #rules-body a{color:#ffcf70;text-underline-offset:3px}

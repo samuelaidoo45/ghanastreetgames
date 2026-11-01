@@ -1,3 +1,5 @@
+import {enterGameFullscreen} from '../dist/display-mode.js';
+import {difficultyHint} from '../dist/difficulty.js';
 import {initialGraphics} from '../dist/graphics-profile.js';
 import {actionLabel,actionIcon,padLayout,releaseQuickCharge} from '../dist/action-pad.js';
 // Runs the actual UI controller with pointer events and a small DOM substitute.
@@ -30,7 +32,7 @@ function setup(){
  const frames=[],window=new EventTarget();window.visualViewport=new EventTarget();
  class Sound{setScene(){}setEnabled(){}setVolume(){}setVisible(){}play(){}unlock(){return Promise.resolve();}}
  class Replay{supported(){return false;}finish(){return Promise.resolve();}pause(){}resume(){}}
- const ctx=vm.createContext({initialGraphics,actionLabel,actionIcon,padLayout,releaseQuickCharge,roomSettings,seeded,initClub:()=>({launchContext:null,attach(){},finishRound(){},leave(){},open(){}}),console,document:doc,window,navigator:{maxTouchPoints:5,hardwareConcurrency:4},matchMedia:()=>({matches:true}),innerWidth:390,innerHeight:844,performance,location:{search:''},localStorage:{getItem(){return null;},setItem(){}},requestAnimationFrame:f=>(frames.push(f),frames.length),setTimeout,clearTimeout,URLSearchParams,Soundscape:Sound,ReplayRecorder:Replay,clampVolume:Number,catalogue,categories,sources,formationFor,menuLayout,remapPage,mobileProfile,arrangeActions,joystickVector,RenderBudget,mobileMessage,bindChargeControl,bindTapControl,bindJoystick});
+ const ctx=vm.createContext({enterGameFullscreen:()=>enterGameFullscreen(doc),difficultyHint,initialGraphics,actionLabel,actionIcon,padLayout,releaseQuickCharge,roomSettings,seeded,initClub:()=>({launchContext:null,attach(){},finishRound(){},leave(){},open(){}}),console,document:doc,window,navigator:{maxTouchPoints:5,hardwareConcurrency:4},matchMedia:()=>({matches:true}),innerWidth:390,innerHeight:844,performance,location:{search:''},localStorage:{getItem(){return null;},setItem(){}},requestAnimationFrame:f=>(frames.push(f),frames.length),setTimeout,clearTimeout,URLSearchParams,Soundscape:Sound,ReplayRecorder:Replay,clampVolume:Number,catalogue,categories,sources,formationFor,menuLayout,remapPage,mobileProfile,arrangeActions,joystickVector,RenderBudget,mobileMessage,bindChargeControl,bindTapControl,bindJoystick});
  const source=readFileSync('dist/arcade.js','utf8').replace(/^import .*?;\n/gm,'');vm.runInContext(source,ctx);
  return {ctx,$,frames,run:code=>vm.runInContext(code,ctx)};
 }

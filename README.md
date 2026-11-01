@@ -1,5 +1,9 @@
 # Ghana Street Games — 3D Arcade
 
+## v4.24.0 — Compact dialogs, every-game difficulty and fullscreen
+
+All dialogs use a shared dark match frame, cream choices and a clear gold primary action. Pause and result panels fit phone portrait and short landscape viewports. Every game offers Easy, Normal and Hard: opponents, timing, accuracy or precision respond to the setting, with an explanation in setup. Board AI uses legal moves and bounded two-ply planning on Hard; dice and score awards stay unchanged. Private rooms retain the same Normal preset for all humans. Play and restart request fullscreen before loading; unsupported or denied browsers fill the available window instead. Verification: `research/verification-v424.md`.
+
 ## v4.23.0 — High Jump and Agawowa
 
 High Jump adds palm-wood uprights, a rising bar and sand landings. Agawowa adds the inclined block, three airborne styles and timed feet-first landings, with an optional somersault-over-the-bar combination. Both follow the player’s descriptions, with explicit digital judging and three attempts each. Play with CPU opponents, 2–4 friends sharing a phone, or 2–8 humans taking turns in a private room. Both games earn points and appear in the leaderboard. Launch audio attempts automatic playback, with a first-tap fallback where browsers require it. Verification: `research/verification-v423.md`.
