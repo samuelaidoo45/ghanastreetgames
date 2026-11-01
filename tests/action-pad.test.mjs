@@ -4,11 +4,11 @@ import {actionLabel,actionIcon,padLayout,releaseQuickCharge} from '../dist/actio
 import {arrangeActions} from '../dist/mobile-play.js';
 import {readFileSync} from 'node:fs';
 
-test('all live movement games cap the visible pad at three actions plus More without losing controls',()=>{
+test('all live movement games show every action without an overflow menu',()=>{
  const actions=['shoot','target','shield','look','sprint'].map(id=>({id,label:id,key:id,hold:id==='sprint'}));
  for(const game of ['football','fourcorners','laski','pampanaa','sulia','stay','pilolo','tyre','penalties'])for(const auto of [true,false]){
-  const {primary,secondary}=arrangeActions(game,actions,auto);assert.ok(primary.length<=3,game);const ids=[...primary,...secondary].map(a=>a.id);
-  for(const a of actions)assert.ok(ids.includes(a.id)||a.id==='sprint'&&auto&&game!=='penalties',game+': '+a.id);
+  const {primary,secondary}=arrangeActions(game,actions,auto);assert.equal(primary.length,actions.length,game);assert.equal(secondary.length,0,game);const ids=[...primary,...secondary].map(a=>a.id);
+  for(const a of actions)assert.ok(ids.includes(a.id),game+': '+a.id);
  }
 });
 test('rhythm and board choices keep equal prominence and every choice is reachable',()=>{
@@ -28,5 +28,5 @@ test('action labels stay concise and decorative icons cannot interpret room-play
  const icon=actionIcon({id:'out-1',label:'<img src=x onerror=alert(1)>'});assert.ok(icon.startsWith('<svg'));assert.ok(!icon.includes('onerror'));assert.ok(!icon.includes('<img'));
 });
 test('mobile styles preserve the existing joystick and maintain phone-sized action targets',()=>{
- const css=readFileSync('dist/mobile.css','utf8').split('/* Thumb action pad.')[1];assert.ok(css);assert.ok(!css.includes('#joystick'));assert.ok(css.includes('--action-size:82px'));assert.ok(css.includes('--support-size:60px'));assert.ok(css.includes('--support-size:52px'));assert.ok(css.includes('min-width:48px'));assert.ok(css.includes('[data-pad=choices]'));assert.ok(css.includes('focus-visible'));
+ const css=readFileSync('dist/mobile.css','utf8').split('/* Always-visible action grid.')[1];assert.ok(css);assert.ok(!css.includes('#joystick'));assert.ok(css.includes('--action-size:clamp(52px,15vw,62px)'));assert.ok(css.includes('repeat(4,var(--action-size))'));assert.ok(!css.includes('overflow:auto'));assert.ok(css.includes('min-width:48px'));assert.ok(css.includes('[data-pad=choices]'));assert.ok(css.includes('focus-visible'));
 });

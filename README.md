@@ -1,5 +1,9 @@
 # Ghana Street Games — 3D Arcade
 
+## v4.21.0 — All mobile actions visible
+
+Every game action now appears directly on the phone action pad, including Sprint. The More menu is removed. Portrait uses a compact three-column grid; landscape spreads actions across four columns. The movement joystick and automatic sprint remain available.
+
 ## v4.20.0 — Install on your phone
 
 The launch screen and game menu now include Install game. Supported browsers offer native PWA installation; iPhone and iPad users get Safari home-screen instructions. Includes standalone app metadata, original Ghana-colour icons, and a small offline reconnect page. Games and multiplayer still require an internet connection; the service worker never caches game code or account/API traffic.

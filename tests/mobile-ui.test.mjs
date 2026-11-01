@@ -41,7 +41,8 @@ test('mobile app boots without a rendering loop; real control wiring survives pa
  createMode=ctx=>{const m={...ctx,actions:[{id:'shoot',label:'Shoot',key:'Space',charge:true},{id:'low',label:'Low shot',key:'F'},{id:'chip',label:'Chip',key:'R'},{id:'pass',label:'Pass',key:'E'},{id:'switch',label:'Switch',key:'Q'},{id:'sprint',label:'Sprint',key:'Shift',hold:true}],calls:[],hold(id){this.calls.push('hold:'+id);},action(id){this.calls.push(id);},dispose(){}};ctx.ui.actions(m.actions);return m;};
  $('#setup-dialog').open=true;$('#team-size').value='3';$('#goal-size').value='big';$('#formation').value='balanced';`);
  await h.run('startGame()');
- const buttons=h.$('#action-buttons').children;assert.deepEqual(buttons.filter(b=>b.tagName==='BUTTON').map(b=>b.dataset.action),['shoot','pass','switch']);assert.equal(buttons.at(-1).tagName,'DETAILS');assert.ok(h.frames.length>0);
+ const buttons=h.$('#action-buttons').children;assert.deepEqual(buttons.filter(b=>b.tagName==='BUTTON').map(b=>b.dataset.action),['shoot','pass','low','chip','switch','sprint']);assert.ok(buttons.every(b=>b.tagName==='BUTTON'));assert.equal(h.$('#action-buttons').dataset.count,'6');assert.ok(h.frames.length>0);
+ const chip=buttons.find(b=>b.dataset.action==='chip');send(chip,'pointerdown',8);send(chip,'pointerup',8);assert.equal(h.run('active.calls.join()'),'chip');h.run('active.calls=[]');
  const shoot=buttons[0],stick=h.$('#joystick');send(stick,'pointerdown',1);assert.equal(h.run('input.sprint'),true);
  send(shoot,'pointerdown',2);send(shoot,'pointerup',1);assert.equal(h.run('active.calls.join()'),'hold:shoot');
  h.run('clearInput()');assert.equal(h.run('input.sprint'),false);send(shoot,'pointerup',2);assert.equal(h.run('active.calls.join()'),'hold:shoot');

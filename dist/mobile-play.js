@@ -4,8 +4,8 @@ const aiming=new Set(['penalties','onepole','rubberband','chaskele','kpitinge','
 const sprinting=new Set([...movement].filter(id=>id!=='zanzama'));
 export const touchHints={
  abedemu:'Pass around the middle player. Tap Pass or hold for power; Target chooses a teammate. In the middle, tap Press to close the passing lane, then Tackle. Steer to take over. Close pressure can force a bad pass or loose touch. An interception swaps the last toucher into the middle.',
- football:'Keeper save is beside Shoot in big-poles matches. Without the ball, Pass becomes Press. Move with the stick; push to its edge to sprint. Hold Shoot, then release. More has Low shot, Chip and Switch when Save is visible.',
- fourcorners:'Move to collect the ball. Tap Shoot for a quick strike, or hold for power. Without the ball it tackles. Target changes goal; Dodge slips past a challenge. Chip is in More.',
+ football:'Keeper save is beside Shoot in big-poles matches. Without the ball, Pass becomes Press. Move with the stick; push to its edge to sprint. Hold Shoot, then release. Low shot, Chip, Switch and Sprint are all on screen.',
+ fourcorners:'Move to collect the ball. Tap Shoot for a quick strike, or hold for power. Without the ball it tackles. Target changes goal; Dodge slips past a challenge. Tap Chip for a lifted shot.',
  penalties:'Tap Lock aim, then Set power. In free-aim mode, tap the goal or use AIM, then hold and release Shoot. In goal, tap a dive button.',
  onepole:'Use AIM or tap the target to aim. Step left/right changes your position. Hold Strike for power, then release.',
  laski:'Chase the keeper’s throw with MOVE. Push to the edge to sprint. Hold Shoot, release to strike; Volley meets an airborne ball. In goal, move and use Dive.',
@@ -40,12 +40,11 @@ export const touchHints={
 };
 export function mobileProfile(id){return {stick:movement.has(id)?'move':aiming.has(id)?'aim':'none',autoSprint:sprinting.has(id),hint:touchHints[id]||'Tap the labelled actions to play.'};}
 export function arrangeActions(id,actions,autoSprint=true){
- const visible=actions.filter(a=>!(autoSprint&&mobileProfile(id).autoSprint&&a.hold&&a.id==='sprint'));
- if(id==='football'||id==='fourcorners'){const extra=id==='football'?['low','chip','sprint']:['chip','sprint'];const preferred=id==='football'&&visible.some(a=>a.id==='save')?['shoot','pass','save']:null;const primary=preferred?preferred.map(id=>visible.find(a=>a.id===id)).filter(Boolean):visible.filter(a=>!extra.includes(a.id)).slice(0,3);return {primary,secondary:visible.filter(a=>!primary.includes(a))};}
- // Movement games keep the three most useful actions in reach. Choices and
- // timed rhythm actions stay visible together, never buried in a menu.
- if(mobileProfile(id).stick!=='none'&&visible.length>3)return {primary:visible.slice(0,3),secondary:visible.slice(3)};
- return {primary:visible,secondary:[]};
+ // Every action stays visible, including manual sprint when auto-sprint is on.
+ // Keep the frequently paired football controls beside each other.
+ const order=id==='football'?['shoot','pass','save','low','chip','switch','sprint']:[];
+ const primary=[...order.map(key=>actions.find(a=>a.id===key)).filter(Boolean),...actions.filter(a=>!order.includes(a.id))];
+ return {primary,secondary:[]};
 }
 export function joystickVector(dx,dy,radius,deadzone=.12){
  const distance=Math.hypot(dx,dy),raw=Math.min(1,distance/Math.max(1,radius));

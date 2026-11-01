@@ -25,13 +25,13 @@ test('all 33 games have phone instructions and the correct movement category',()
  for(const id of ['penalties','chaskele','rubberband','onepole','alasa','kpitinge']){assert.equal(mobileProfile(id).stick,'aim');assert.equal(mobileProfile(id).autoSprint,false);}
  for(const id of ['counters','tumatu','oware','antoakyire'])assert.equal(mobileProfile(id).stick,'none');
 });
-test('mobile layouts preserve every game action, with a one-thumb sprint alternative only where usable',()=>{
+test('mobile layouts preserve every game action, including sprint even when joystick auto-sprint is enabled',()=>{
  for(const game of catalogue){const h=harness(game.id),all=h.mode.actions;
   for(const automatic of [true,false]){const {primary,secondary}=arrangeActions(game.id,all,automatic),ids=[...primary,...secondary].map(a=>a.id);
-   for(const a of all)assert.ok(ids.includes(a.id)||(automatic&&mobileProfile(game.id).autoSprint&&a.id==='sprint'&&a.hold),game.id+': '+a.id);
-   assert.equal(new Set(ids).size,ids.length);
+   for(const a of all)assert.ok(primary.some(button=>button.id===a.id),game.id+': '+a.id);
+   assert.equal(new Set(ids).size,ids.length);assert.equal(secondary.length,0);
   }
-  if(game.id==='football'){const layout=arrangeActions(game.id,all);assert.deepEqual(layout.primary.map(a=>a.id),['shoot','pass','save']);assert.deepEqual(layout.secondary.map(a=>a.id),['low','chip','switch']);}
+  if(game.id==='football'){const layout=arrangeActions(game.id,all);assert.deepEqual(layout.primary.map(a=>a.id),['shoot','pass','save','low','chip','switch','sprint']);assert.deepEqual(layout.secondary,[]);}
   if(game.id==='antoakyire')assert.ok(arrangeActions(game.id,all).primary.some(a=>a.hold&&a.id==='sprint'));
   h.close();
  }
