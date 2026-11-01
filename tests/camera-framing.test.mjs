@@ -2,7 +2,7 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import * as THREE from '../dist/vendor/three.module.js';
 import {footballCamera} from '../dist/football-physics.js';
-import {gameActionCamera} from '../dist/camera-framing.js';
+import {gameActionCamera,cameraPresetFrame,mobileSceneBounds,fitMobileScene} from '../dist/camera-framing.js';
 
 function projection(frame,width,height){
  const camera=new THREE.PerspectiveCamera(width/height<1?65:52,width/height,.08,180);
@@ -29,7 +29,7 @@ test('default player with nearby ball is large enough to read on phones and desk
  }
 });
 test('Four Corners, Stay, Laski and Sulia follow the action without replacing overview choices',()=>{
- for(const id of ['fourcorners','stay','laski','sulia'])for(const [width,height]of screens){
+ for(const id of ['fourcorners','stay','laski','sulia','abedemu'])for(const [width,height]of screens){
   const mode={game:{id},you:{position:new THREE.Vector3(-6,0,0)},b:{position:new THREE.Vector3(4,.13,3)},cameraView:0};
   const frame=gameActionCamera(mode,width/height),project=projection(frame,width,height);
   for(const point of [mode.you.position,mode.b.position]){const ndc=project(point);assert.ok(Math.abs(ndc.x)<.8&&Math.abs(ndc.y)<.7);}
@@ -83,7 +83,7 @@ test('portrait framing does not undo the neighbourhood camera wall clearance',as
  }
 });
 
- test('Ab3d3mu keeps every passing option visible on phone and desktop',()=>{for(const [width,height]of screens){const players=Array.from({length:5},(_,i)=>({position:new THREE.Vector3(Math.sin(i*Math.PI*2/5)*6,0,Math.cos(i*Math.PI*2/5)*6)}));players.push({position:new THREE.Vector3()});const mode={game:{id:'abedemu'},you:players[0],players,b:{position:players[0].position.clone()}};const frame=gameActionCamera(mode,width/height,width<600),project=projection(frame,width,height);for(const player of players)for(const y of [0,2.4]){const p=project(player.position.clone().add(new THREE.Vector3(0,y,0)));assert.ok(Math.abs(p.x)<.94);assert.ok(Math.abs(p.y)<.85);}}});
+ test('Ab3d3mu tactical view keeps every passing option visible on phone and desktop',()=>{for(const [width,height]of screens){const players=Array.from({length:5},(_,i)=>({position:new THREE.Vector3(Math.sin(i*Math.PI*2/5)*6,0,Math.cos(i*Math.PI*2/5)*6)}));players.push({position:new THREE.Vector3()});const mode={game:{id:'abedemu'},you:players[0],players,b:{position:players[0].position.clone()}};const frame=cameraPresetFrame(mode,'tactical',width/height),project=projection(frame,width,height);for(const player of players)for(const y of [0,2.4]){const p=project(player.position.clone().add(new THREE.Vector3(0,y,0)));assert.ok(Math.abs(p.x)<.94);assert.ok(Math.abs(p.y)<.85);}}});
 
 test('One Pole clears both end views of buildings after phone fitting, zoom and camera transitions',async()=>{
  const {World}=await import('../dist/world.js');
@@ -115,4 +115,16 @@ test('named camera angles frame action and tactical views include every corner g
 test('manual side views rise over a building between camera and action',async()=>{
  const {clearCameraObstacles}=await import('../dist/camera-framing.js');const p=clearCameraObstacles(new THREE.Vector3(14,4,0),[{x:0,z:0}],[{x:10,z:0,w:4,d:8,h:5}]);
  assert.ok(p.y>10);assert.equal(p.x,14);
+});
+
+test('field games share the Street Football angle and Ab3d3mu no longer fits distant players by default',()=>{
+ for(const id of ['fourcorners','laski','sulia','stay','abedemu'])for(const [width,height]of screens){
+  const p={position:new THREE.Vector3()},ball={position:new THREE.Vector3(.5,.12,0)},mode={game:{id},you:p,b:ball,players:[p,{position:new THREE.Vector3(9,0,-9)}]};
+  const frame=gameActionCamera(mode,width/height),expected=footballCamera(p,ball,width/height);assert.ok(frame.position.distanceTo(expected.position)<1e-8);
+  const offset=frame.position.clone().sub(frame.look);assert.ok(Math.atan2(offset.y,Math.hypot(offset.x,offset.z))<Math.PI/4,'default should be angled, not overhead');
+  const bounds=mobileSceneBounds(mode);assert.ok(bounds[3]<2&&bounds[2]>-2,'distant players must not force an overview');
+  const fitted=fitMobileScene(frame.position,frame.look,bounds,{width,height,top:55,bottom:110},width/height<1?65:52),project=projection(fitted,width,height);
+  const feet=project(p.position),head=project(new THREE.Vector3(0,2.3,0));assert.ok(Math.abs(head.y-feet.y)/2>.075,'player must remain readable with touch-control space');
+  mode.liveFocus={position:new THREE.Vector3(3,0,1)};assert.ok(gameActionCamera(mode,width/height).look.x>1.5,'friend camera follows its own player');
+ }
 });

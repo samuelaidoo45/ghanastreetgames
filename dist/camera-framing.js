@@ -18,12 +18,14 @@ export function frameAction(player, ball, aspect, offset, fov=aspect<1?65:52) {
  return {position:direction.multiplyScalar(distance).add(look),look};
 }
 
+// Shared with Street Football: an angled view of bodies and the ball, not a map.
+export function fieldCameraOffset(aspect,direction=1){return aspect<.85?[-direction*8,7.2,3]:[-2,7.2,9.5];}
+
 export function gameActionCamera(mode,aspect,mobile=false){
  if(!mode?.you||!mode.b||mode.wide||mode.cameraWide||(mode.cameraView||0)!==0)return null;
  if(!['fourcorners','laski','sulia','stay','abedemu'].includes(mode.game.id))return null;
  // Default framing follows play; full-court views remain explicit choices.
- if(mode.game.id==='abedemu'&&mode.players?.length){const bounds=passingBounds(mode);return fitMobileScene(new THREE.Vector3(0,14,10),new THREE.Vector3(0,.7,0),bounds,{width:1000*aspect,height:1000,top:80,bottom:160},aspect<1?65:52);}
- const offset=aspect<.85?[0,8.2,7.2]:[1.5,7.2,9];
+ const offset=fieldCameraOffset(aspect);
  return frameAction(mode.liveFocus||mode.you,mode.b,aspect,offset);
 }
 
@@ -44,7 +46,7 @@ const phoneBounds={
 };
 export function mobileSceneBounds(mode){
  if(!mode||mode.overview||mode.cameraWide||mode.wide||(mode.cameraView||0)!==0)return null;
- const id=mode.game.id;if(id==='abedemu'&&mode.players?.length)return passingBounds(mode);
+ const id=mode.game.id;
  if(phoneBounds[id])return phoneBounds[id];
  if(['football','fourcorners','laski','sulia','stay','abedemu'].includes(id)){
   const p=(mode.liveFocus||mode.teams?.[0]?.[mode.selected]||mode.you)?.position,b=mode.b?.position;

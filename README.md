@@ -255,3 +255,12 @@ Four Corners replaces Target with one contextual action: Dodge while carrying, D
 A successful close-range Press now gives controlled possession in Four Corners, Laski and small/big-poles Street Football. The assisted pursuit stops in the winning frame, and movement steers the player and ball immediately. Sulia uses the same immediate handoff. Physical contact, shields, tackle cooldowns and one-touch restrictions remain; a brief settling window prevents an instant steal-back, and rivals can tackle afterward. Manual Tackles still produce loose balls where that game previously did so.
 
 Verification: 540 tests and 65 module syntax checks plus asset/import validation. Coverage includes 30/60 fps steering after a Press win, sprint turns, human friend-room possession, subsequent opponent tackles, one-touch restrictions, automatic goal resolution and contextual actions. A landscape touch-emulated browser check confirmed the three-button Four Corners layout with Defend in place of Target; no physical phone was used.
+
+
+## 4.32.0 — Angled field cameras and quiet match launches
+
+Ab3d3mu, Four Corners, Laski, Sulia and Stay now share Street Football's default angled camera offset. Ab3d3mu follows the active player and ball instead of fitting every passer into an overhead view; distant players no longer force the mobile camera to zoom out. Tactical and Top Down remain explicit choices, with Tactical retaining the full passing group. Default action views also apply building-obstruction clearance.
+
+Starting, restarting or returning to a match fills the visible browser window without requesting native fullscreen. This avoids triggering the browser-owned “drag from the top to exit fullscreen” notice automatically. Full screen and orientation-lock buttons still explicitly request native fullscreen, where the browser may display its own notice; site code cannot hide it. Installed PWA standalone mode remains supported. Source: https://developer.mozilla.org/en-US/docs/Web/API/Fullscreen_API/Guide.
+
+Verification: 542 automated tests, including shared field-camera angles, readable framing at phone/tablet/desktop sizes, independent friend-seat focus, preserved tactical views, and no native-fullscreen requests on repeated automatic launches. Landscape touch-emulated browser inspection confirmed Ab3d3mu's angled view, visible controls and full-window play with no native fullscreen active. Physical-device notification behavior was not tested.

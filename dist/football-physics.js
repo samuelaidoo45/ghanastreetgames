@@ -1,4 +1,4 @@
-import {frameAction} from './camera-framing.js';
+import {frameAction,fieldCameraOffset} from './camera-framing.js';
 import * as THREE from './vendor/three.module.js';
 const clamp=THREE.MathUtils.clamp;
 function sphereHit(start,delta,center,radius){const m=start.clone().sub(center),a=delta.lengthSq(),b=2*m.dot(delta),c=m.lengthSq()-radius*radius;if(c<=0)return 0;if(a<1e-12)return null;const disc=b*b-4*a*c;if(disc<0)return null;const t=(-b-Math.sqrt(disc))/(2*a);return t>=0&&t<=1?t:null;}
@@ -10,7 +10,7 @@ export function crossedGoal(before,after,goal,radius=.12){const from=before.clon
 export function shootoutWinner(shots,scores){if(shots[0]<5||shots[1]<5){if(scores[0]>scores[1]+Math.max(0,5-shots[1]))return 0;if(scores[1]>scores[0]+Math.max(0,5-shots[0]))return 1;}if(shots[0]===shots[1]&&shots[0]>=5&&scores[0]!==scores[1])return scores[0]>scores[1]?0:1;return null;}
 export function footballCamera(player,ball,aspect=1.5,view='broadcast',direction=1){
  const p=player.position||player,b=ball.position||ball;
- const offset=view==='high'?[-2,24,17]:view==='behind'?[-direction*9,6.5,4]:aspect<.85?[-direction*8,7.2,3]:[-2,7.2,9.5];
+ const offset=view==='high'?[-2,24,17]:view==='behind'?[-direction*9,6.5,4]:fieldCameraOffset(aspect,direction);
  const frame=frameAction(p,b,aspect,offset);
  if((view==='behind'||(view==='broadcast'&&aspect<.85))&&Math.abs(frame.look.x)>12){frame.position.x=clamp(frame.position.x,-21,21);frame.position.y=Math.max(9,frame.position.y);}
  return frame;

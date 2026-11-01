@@ -17,7 +17,7 @@ test('fullscreen keeps the whole game root and synchronises controls on entry an
  const styles=new Map(),win={innerWidth:390,innerHeight:720};
  const doc={body:{classList:{add(){}}},documentElement:{style:{setProperty:(k,v)=>styles.set(k,v)},requestFullscreen(){assert.equal(this,doc.documentElement);doc.fullscreenElement=this;win.innerHeight=844;return Promise.resolve();}}};
  syncGameViewport(doc,win);assert.equal(styles.get('--game-view-height'),'720px');
- assert.equal(await enterGameFullscreen(doc),true);syncGameViewport(doc,win);assert.equal(styles.get('--game-view-height'),'844px');
+ assert.equal(await enterGameFullscreen(doc,{native:true}),true);syncGameViewport(doc,win);assert.equal(styles.get('--game-view-height'),'844px');
  doc.fullscreenElement=null;win.innerHeight=720;syncGameViewport(doc,win);assert.equal(styles.get('--game-view-height'),'720px');
 });
 
@@ -34,4 +34,10 @@ test('Auto unlocks without entering fullscreen and blocked browsers fail gracefu
  assert.equal(await requestGameOrientation('landscape',doc,{}),false);
  assert.equal(await requestGameOrientation('portrait',doc,{orientation:{lock(){return Promise.reject(Error('Unsupported'));}}}),false);
  assert.equal(await requestGameOrientation('invalid',doc,{}),false);
+});
+
+test('automatic game starts and restarts fill the window without requesting native fullscreen',async()=>{
+ let requests=0,filled=0;const doc={body:{classList:{add(name){assert.equal(name,'full-window');filled++;}}},documentElement:{requestFullscreen(){requests++;return Promise.resolve();}}};
+ for(let i=0;i<3;i++)assert.equal(await enterGameFullscreen(doc),false);
+ assert.equal(requests,0);assert.equal(filled,3);doc.fullscreenElement=doc.documentElement;assert.equal(await enterGameFullscreen(doc),true);assert.equal(requests,0);
 });

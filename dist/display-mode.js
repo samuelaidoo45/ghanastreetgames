@@ -1,7 +1,9 @@
-// Must be called synchronously from Play: requesting after assets load loses user activation.
-export async function enterGameFullscreen(doc=document){
+// Match starts fill the available window without triggering browser fullscreen UI.
+// Native fullscreen is reserved for an explicit display/orientation action.
+export async function enterGameFullscreen(doc=document,{native=false}={}){
  doc.body.classList.add('full-window');
  if(doc.fullscreenElement||doc.webkitFullscreenElement)return true;
+ if(!native)return false;
  const root=doc.documentElement,request=root.requestFullscreen||root.webkitRequestFullscreen;
  if(!request)return false;
  try{await request.call(root);return true;}catch{return false;}
@@ -28,7 +30,7 @@ export async function requestGameOrientation(mode,doc=document,screenObject=wind
  try{
   if(mode==='auto'){orientation?.unlock?.();return true;}
   if(typeof orientation?.lock!=='function')return false;
-  await enterGameFullscreen(doc);
+  await enterGameFullscreen(doc,{native:true});
   await orientation.lock(mode);
   return true;
  }catch{return false;}
