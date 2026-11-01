@@ -12,7 +12,7 @@ import vm from 'node:vm';
 import {roomSettings,seeded} from '../dist/multiplayer-games.js';
 import {catalogue,categories,sources} from '../dist/catalogue.js';
 import {formationFor} from '../dist/football-formations.js';
-import {menuLayout,remapPage} from '../dist/menu-layout.js';
+import {menuLayout,remapPage,menuOrder} from '../dist/menu-layout.js';
 import {mobileProfile,arrangeActions,joystickVector,RenderBudget,mobileMessage} from '../dist/mobile-play.js';
 import {bindChargeControl,bindTapControl,bindJoystick} from '../dist/touch-controls.js';
 class Element extends EventTarget{
@@ -33,7 +33,7 @@ function setup(){
  const frames=[],window=new EventTarget();window.visualViewport=new EventTarget();
  class Sound{setScene(){}setEnabled(){}setVolume(){}setVisible(){}play(){}unlock(){return Promise.resolve();}}
  class Replay{supported(){return false;}finish(){return Promise.resolve();}pause(){}resume(){}}
- const ctx=vm.createContext({SoloChallenge,enterGameFullscreen:()=>enterGameFullscreen(doc),syncGameViewport:()=>syncGameViewport(doc,{innerWidth:390,innerHeight:844}),difficultyHint,initialGraphics,actionLabel,actionIcon,padLayout,releaseQuickCharge,roomSettings,seeded,initClub:()=>({launchContext:null,attach(){},finishRound(){},leave(){},open(){}}),console,document:doc,window,navigator:{maxTouchPoints:5,hardwareConcurrency:4},matchMedia:()=>({matches:true}),innerWidth:390,innerHeight:844,performance,location:{search:''},localStorage:{getItem(){return null;},setItem(){}},requestAnimationFrame:f=>(frames.push(f),frames.length),setTimeout,clearTimeout,URLSearchParams,Soundscape:Sound,ReplayRecorder:Replay,clampVolume:Number,catalogue,categories,sources,formationFor,menuLayout,remapPage,mobileProfile,arrangeActions,joystickVector,RenderBudget,mobileMessage,bindChargeControl,bindTapControl,bindJoystick});
+ const ctx=vm.createContext({SoloChallenge,enterGameFullscreen:()=>enterGameFullscreen(doc),syncGameViewport:()=>syncGameViewport(doc,{innerWidth:390,innerHeight:844}),difficultyHint,initialGraphics,actionLabel,actionIcon,padLayout,releaseQuickCharge,roomSettings,seeded,initClub:()=>({launchContext:null,attach(){},finishRound(){},leave(){},open(){}}),console,document:doc,window,navigator:{maxTouchPoints:5,hardwareConcurrency:4},matchMedia:()=>({matches:true}),innerWidth:390,innerHeight:844,performance,location:{search:''},localStorage:{getItem(){return null;},setItem(){}},requestAnimationFrame:f=>(frames.push(f),frames.length),setTimeout,clearTimeout,URLSearchParams,Soundscape:Sound,ReplayRecorder:Replay,clampVolume:Number,catalogue,categories,sources,formationFor,menuLayout,remapPage,menuOrder,mobileProfile,arrangeActions,joystickVector,RenderBudget,mobileMessage,bindChargeControl,bindTapControl,bindJoystick});
  const source=readFileSync('dist/arcade.js','utf8').replace(/^import .*?;\n/gm,'');vm.runInContext(source,ctx);
  return {ctx,$,frames,run:code=>vm.runInContext(code,ctx)};
 }

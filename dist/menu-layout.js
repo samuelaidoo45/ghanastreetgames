@@ -5,3 +5,11 @@ export function menuLayout(width,height){
  return {viewport,columns,pageSize:viewport?columns*2:6};
 }
 export function remapPage(page,oldSize,newSize,total){return Math.max(0,Math.min(Math.floor(page*oldSize/newSize),Math.max(0,Math.ceil(total/newSize)-1)));}
+
+// Keep the requested games together on page two at every responsive capacity.
+export function menuOrder(games,pageSize){
+ const featured=['stay','sulia','counters','agawowa','highjump','pampanaa'];
+ const rest=games.filter(game=>!featured.includes(game.id));
+ const second=featured.map(id=>games.find(game=>game.id===id)).filter(Boolean);
+ return [...rest.slice(0,pageSize),...second,...rest.slice(pageSize)];
+}
