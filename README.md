@@ -246,3 +246,12 @@ Phones and tablets now default to Simple controls: a compact cluster of larger r
 View → Touch controls and Settings offer Full controls for optional moves. The preference persists, left-hand placement is supported, and switching layouts cancels held input without releasing a shot. Keyboard actions remain available.
 
 Verification: 528 automated tests and 65 application-module syntax checks plus asset/import validation. Browser checks confirmed Simple/Full switching and visible, non-overlapping joystick/action bounds at 390×844 portrait and 844×390 landscape with touch emulation. Physical-phone testing was not performed.
+
+
+## 4.31.0 — Dodge/Defend and controlled Press wins
+
+Four Corners replaces Target with one contextual action: Dodge while carrying, Defend without possession (E on keyboard). Defend briefly guides the player back to cover their own goal; steering immediately takes over. One-touch matches offer Defend. Shooting resolves an active open goal automatically at release, including friend-room seats, so no goal-cycling button is needed.
+
+A successful close-range Press now gives controlled possession in Four Corners, Laski and small/big-poles Street Football. The assisted pursuit stops in the winning frame, and movement steers the player and ball immediately. Sulia uses the same immediate handoff. Physical contact, shields, tackle cooldowns and one-touch restrictions remain; a brief settling window prevents an instant steal-back, and rivals can tackle afterward. Manual Tackles still produce loose balls where that game previously did so.
+
+Verification: 540 tests and 65 module syntax checks plus asset/import validation. Coverage includes 30/60 fps steering after a Press win, sprint turns, human friend-room possession, subsequent opponent tackles, one-touch restrictions, automatic goal resolution and contextual actions. A landscape touch-emulated browser check confirmed the three-button Four Corners layout with Defend in place of Target; no physical phone was used.

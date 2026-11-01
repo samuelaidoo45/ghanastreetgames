@@ -103,3 +103,15 @@ test('CPU shot has a visible wind-up and can be interrupted by a tackle',()=>{
  m.update(0);assert.equal(m.carrier,1);assert.ok(m.players[1].userData.shotAt>m.age);assert.ok(m.players[1].userData.kick>0);
  m.you.position.set(0,0,-6.5);m.you.rotation.y=0;m.action('tackle');assert.equal(m.carrier,null);h.close();
 });
+
+test('Four Corners replaces target cycling with Dodge/Defend in solo and friend controls',()=>{
+ const h=harness(),m=h.m;assert.ok(!m.actions.some(a=>a.id==='target'));assert.equal(m.actions.find(a=>a.id==='feint').label,'Defend');
+ const a=liveAdapter(m,{game:'fourcorners',type:'live',players:m.players.map((_,i)=>({id:String(i),name:'Friend'})),state:{seat:0,scores:[0,0,0,0]}});
+ assert.ok(!a.controls(2).some(b=>b.id==='target'));assert.equal(a.controls(2).find(b=>b.id==='feint').label,'Defend');m.carrier=2;assert.equal(a.controls(2).find(b=>b.id==='feint').label,'Dodge');h.close();
+ const one=harness({cornersTouch:'one'});assert.equal(one.m.actions.find(a=>a.id==='recover').label,'Defend');one.close();
+});
+test('shooting automatically resolves an active goal at release without a Target button',()=>{
+ const h=harness(),m=h.m;m.you.position.set(0,0,0);m.b.position.set(0,.12,.5);m.carrier=0;m.cool=0;m.age=1;m.aim=1;m.active[1]=false;m.active[2]=false;
+ m.action('kick');assert.equal(m.lastTouch,0);assert.equal(m.shotHistory[0][3],1);assert.equal(m.aim,3);
+ m.networked=true;m.players[2].userData.liveTarget=1;m.players[2].userData.liveAimUntil=0;assert.equal(m.shotGoal(2),m.pickGoal(2));h.close();
+});

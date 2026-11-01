@@ -8,7 +8,7 @@ export const touchHints={
  agawowa:'Choose your style, Run up, then Jump on the inclined block. Tuck to rotate; Open when your feet point down. Tap Land just before the sand.',
  abedemu:'Pass around the middle player. Tap Pass or hold for power; Target chooses a teammate. In the middle, tap Press to close the passing lane, then Tackle. Steer to take over. Close pressure can force a bad pass or loose touch. An interception swaps the last toucher into the middle.',
  football:'Build the attack and get close before shooting. Keeper save is beside Shoot in big-poles matches. Without the ball, Pass becomes Press. Move with the stick; push to its edge to sprint. Hold Shoot, then release. Tap Switch to change player. Extra shots are in View → Full controls.',
- fourcorners:'Dribble close to goal for an accurate finish. Move to collect the ball. Tap Shoot for a quick strike, or hold for power. Tap Press to chase and challenge; steer to take over. Shoot becomes Tackle without the ball. Target changes goal. Dodge, Recover and Chip are available in View → Full controls.',
+ fourcorners:'Dribble close to goal for an accurate finish. Move to collect the ball. Tap Shoot for a quick strike, or hold for power. Tap Press to chase and challenge; steer to take over. Shoot becomes Tackle without the ball. Shots automatically aim at an open goal. Dodge protects your turn with the ball; it becomes Defend to run back to your goal. Steer to take over. Chip is available in Full controls.',
  penalties:'Tap Lock aim, then Set power. In free-aim mode, tap the goal or use AIM, then hold and release Shoot. In goal, tap a dive button.',
  onepole:'Use AIM or tap the target to aim. Step left/right changes your position. Hold Strike for power, then release.',
  laski:'Tap Press to chase the ball and challenge, or steer with MOVE. Dribble closer to goal. Push to the edge to sprint. Hold Shoot, release to strike. Shoot becomes Tackle without the ball. Volley is available in Full controls. In goal, move and use Dive.',
@@ -44,7 +44,7 @@ export const touchHints={
 export function mobileProfile(id){return {stick:movement.has(id)?'move':aiming.has(id)?'aim':'none',autoSprint:sprinting.has(id),hint:touchHints[id]||'Tap the labelled actions to play.'};}
 // Only optional alternatives are omitted. Choice rounds and essential actions
 // are never truncated by count; Full restores the original action set.
-const optionalActions={football:['low','chip'],fourcorners:['chip','feint','recover'],laski:['volley'],sulia:['shield'],abedemu:['lob'],pampanaa:['left','right'],shooting:['left','right']};
+const optionalActions={football:['low','chip'],fourcorners:['chip','target'],laski:['volley'],sulia:['shield'],abedemu:['lob'],pampanaa:['left','right'],shooting:['left','right']};
 export function arrangeActions(id,actions,autoSprint=true,style='simple'){
  const order=id==='football'?['shoot','pass','switch','save','low','chip','sprint']:[];
  const sorted=[...order.map(key=>actions.find(a=>a.id===key)).filter(Boolean),...actions.filter(a=>!order.includes(a.id))];

@@ -15,7 +15,7 @@ export class Sulia extends Mode{
  press(i){return startBallPress(this,this.players[i],this.players[this.carrier]);}
  pressInput(i,raw){const p=this.players[i];return steerBallPress(this,p,raw,this.players[this.carrier],this.v,()=>{
   if(this.carrier===null||this.cool>0||this.age<(p.userData.pressTackleUntil||0)||this.carrier===0&&this.age<this.shieldUntil||distance(p,this.players[this.carrier])>1.15)return;
-  p.userData.pressTackleUntil=this.age+.65;p.userData.kick=.3;this.carrier=i;this.lastKicker=-1;this.cool=.4;this.ui.sound('kick');
+  p.userData.pressTackleUntil=this.age+.65;p.userData.kick=.3;this.carrier=i;this.lastKicker=-1;this.cool=.4;this.placeBall();this.ui.sound('kick');return true;
  });}
  poke(i,target,power=.4){if(this.carrier!==i||this.cool>0)return false;const p=this.players[i],q=this.players[target];this.placeBall();const d=q.position.clone().sub(this.b.position);d.y=0;if(i!==0&&!this.networked){const range=d.length(),error=(Math.random()-.5)*(.35+range*.09)*this.difficultyTuning.error;d.addScaledVector(new THREE.Vector3(d.z,0,-d.x).normalize(),error);}this.v.copy(d.normalize().multiplyScalar(7+power*8));this.v.y=.12;this.carrier=null;this.lastKicker=i;this.cool=.32;p.userData.kick=.38;this.ui.sound('kick');return true;}
  nutmeg(scorer,victim){if(this.phase!=='play'||scorer<0||scorer===victim)return false;this.points[scorer]++;this.score=this.points[0];this.victim=victim;this.phase='chase';this.chaseAge=0;this.carrier=null;this.lastKicker=-1;this.v.set(0,0,0);this.tagged=false;this.note(`${names[scorer]} nutmegged ${names[victim]} — one point! ${victim===0?'Run!':'Catch the nutmegged player!'} A brief tag-and-restart follows.`);this.ui.sound('point');return true;}

@@ -60,7 +60,7 @@ export function liveAdapter(m,room){
    if(a.action==='tackle'){m.tackle(i);return;}if(a.action==='recover'||a.action==='feint'&&m.carrier!==i){m.recover(i);return;}if(a.action==='feint'){m.feint(i,{x:a.x||0,z:a.z||0});return;}
    if(!['kick','chip'].includes(a.action))return;
    if(m.carrier!==null&&m.carrier!==i){m.tackle(i);return;}
-   const goal=m.active[p.userData.liveTarget]&&p.userData.liveTarget!==i?p.userData.liveTarget:m.pickGoal(i),g=m.goals[goal],steer=-g.normal.z*(a.x||0)+g.normal.x*(a.z||0);
+   const goal=m.shotGoal(i),g=m.goals[goal],steer=-g.normal.z*(a.x||0)+g.normal.x*(a.z||0);
    if(!m.kick(i,goal,power,a.action==='chip',steer))m.tackle(i);
   }
   else if(id==='laski'){
@@ -99,7 +99,7 @@ export function liveAdapter(m,room){
  function controls(slot){if(room.type==='turns')return m.baseActions;
   if(id==='football'&&people[slot]?.userData.keeper)return[button('shoot','Throw / clear','Space',true),button('pass','Roll to teammate','E'),button('dive','Save','G')];
   if(id==='football')return[button('shoot','Shoot / tackle','Space',true),button('pass','Pass / press','E'),button('chip','Chip','R',true)];
-  if(id==='fourcorners')return[button('kick',m.carrier===slot||m.oneTouch?'Shoot':'Tackle','Space',true),button('press','Press','F'),button('target','Next goal','E'),m.oneTouch?button('recover','Recover','Q'):button('feint',m.carrier===slot?'Dodge':'Recover','Q'),button('chip','Chip','R')];
+  if(id==='fourcorners')return[button('kick',m.carrier===slot||m.oneTouch?'Shoot':'Tackle','Space',true),button('press','Press','F'),m.oneTouch?button('recover','Defend','E'):button('feint',m.carrier===slot?'Dodge':'Defend','E'),button('chip','Chip','R')];
   if(id==='laski'){if(slot===n-1)return[button('throw','Throw in'),button('dive','Dive','E')];if(m.phase==='choose')return m.active.flatMap((yes,i)=>yes&&i!==slot?[{...button('out-'+i,'Out: '+room.players[i]?.name,String(i+1)),disabled:slot!==m.lastScorer}]:[]);return[button('shoot',m.possessor===people[slot]?'Shoot':'Tackle','Space',true),button('volley','Volley','E'),button('press','Press','F')];}
   if(id==='abedemu')return slot===m.middleIndex?[button('pass','Tackle'),button('press','Press','Q')]:[button('pass','Pass','Space',true),button('target','Next player','E'),button('press','Call for ball','Q'),button('lob','Lob pass','R')];
   if(id==='sulia')return[button('nutmeg',m.carrier===slot?'Nutmeg':'Tackle','Space',true),button('press','Press','F')];

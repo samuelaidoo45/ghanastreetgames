@@ -35,7 +35,7 @@ test('Simple football controls keep core actions, preserve manual sprint when ne
  const actions=['shoot','pass','save','low','chip','switch','sprint'].map(id=>({id,label:id,key:id}));
  assert.deepEqual(arrangeActions('football',actions).primary.map(a=>a.id),['shoot','pass','switch','save']);
  assert.ok(arrangeActions('football',actions,false).primary.some(a=>a.id==='sprint'));
- for(const [id,ids,want]of [['fourcorners',['kick','press','target','feint','chip','sprint'],['kick','press','target']],['laski',['shoot','volley','press','sprint'],['shoot','press']],['sulia',['nutmeg','target','shield','press','sprint'],['nutmeg','target','press']]]){
+ for(const [id,ids,want]of [['fourcorners',['kick','press','feint','chip','sprint'],['kick','press','feint']],['laski',['shoot','volley','press','sprint'],['shoot','press']],['sulia',['nutmeg','target','shield','press','sprint'],['nutmeg','target','press']]]){
   const all=ids.map(id=>({id}));assert.deepEqual(arrangeActions(id,all).primary.map(a=>a.id),want);
   assert.equal(arrangeActions(id,all,true,'full').primary.length,all.length);
  }
