@@ -49,3 +49,28 @@ test('a passer continues a give-and-go run after the receiving player controls t
  const received=plan(players,{carrier:receiver,ball:{x:4,z:0},previous:flight,now:1.6});const next=plan(players,{carrier:receiver,ball:{x:4,z:0},previous:received,now:1.8});
  assert.equal(next.runner,passer);assert.ok(next.targets.get(passer).x>6);
 });
+
+test('both teams recover goal-side after a turnover instead of leaving forwards upfield',()=>{
+ for(const team of [0,1])for(const style of ['balanced','defensive','attacking'])for(const n of [3,5,7]){
+  const direction=team===0?1:-1,players=make(n,team,style),opponents=make(n,1-team),carrier=opponents.at(-1),ball={x:-5*direction,z:3};carrier.position=ball;
+  players.forEach((p,i)=>p.position={x:(5+i*.2)*direction,z:(i-2)*2});
+  const attack=plan(players,{carrier:players.at(-1),opponents,ball:{x:8*direction,z:0}});
+  const defense=plan(players,{carrier,opponents,ball,previous:attack,now:2});
+  const covering=players.filter(p=>defense.targets.get(p).duty==='Cover');
+  assert.ok(covering.length>=n-2);
+  for(const p of covering){const t=defense.targets.get(p);assert.ok(t.x*direction<ball.x*direction,'recover behind the ball');assert.equal(t.recover,true);}
+  assert.equal(defense.runner,null,'cancel attacking runs on a turnover');
+ }
+});
+test('an attack retains a deep defender and a central midfield screen',()=>{
+ for(const team of [0,1]){const players=make(5,team),direction=team?-1:1,carrier=players.at(-1),p=plan(players,{carrier,ball:{x:10*direction,z:6},opponents:make(5,1-team)});
+  const cb=players.find(x=>x.userData.slot.position==='CB'),dm=players.find(x=>x.userData.slot.position==='DM');
+  assert.ok(p.targets.get(cb).x*direction<0);assert.ok(p.targets.get(dm).x*direction<=1.8);assert.ok(Math.abs(p.targets.get(dm).z)<3);
+  assert.ok(players.some(x=>p.targets.get(x).x*direction>10),'still offer forward passing options');
+ }
+});
+test('central cover stays in the shooting lane when defending near goal',()=>{
+ const players=make(5),opponents=make(5,1),carrier=opponents.at(-1);carrier.position={x:-12,z:0};players.at(-1).position={x:-11.5,z:0};
+ const p=plan(players,{carrier,opponents,ball:carrier.position});const dm=players.find(x=>x.userData.slot.position==='DM');
+ assert.equal(p.targets.get(dm).duty,'Cover');assert.ok(p.targets.get(dm).x<-12);assert.ok(Math.abs(p.targets.get(dm).z)<.1);
+});

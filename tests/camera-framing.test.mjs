@@ -82,3 +82,20 @@ test('portrait framing does not undo the neighbourhood camera wall clearance',as
 });
 
  test('Ab3d3mu keeps every passing option visible on phone and desktop',()=>{for(const [width,height]of screens){const players=Array.from({length:5},(_,i)=>({position:new THREE.Vector3(Math.sin(i*Math.PI*2/5)*6,0,Math.cos(i*Math.PI*2/5)*6)}));players.push({position:new THREE.Vector3()});const mode={game:{id:'abedemu'},you:players[0],players,b:{position:players[0].position.clone()}};const frame=gameActionCamera(mode,width/height,width<600),project=projection(frame,width,height);for(const player of players)for(const y of [0,2.4]){const p=project(player.position.clone().add(new THREE.Vector3(0,y,0)));assert.ok(Math.abs(p.x)<.94);assert.ok(Math.abs(p.y)<.85);}}});
+
+test('One Pole clears both end views of buildings after phone fitting, zoom and camera transitions',async()=>{
+ const {World}=await import('../dist/world.js');
+ const solids=[{x:0,z:-19.5,w:6.2,d:4,h:4.1},{x:-11.4,z:0,w:4,d:6.7,h:3.3},{x:11.4,z:0,w:4,d:6.7,h:3.3}];
+ for(const [width,height]of screens)for(const turn of [0,1])for(const zoom of [1,1.5]){
+  const world=Object.create(World.prototype),camera=new THREE.PerspectiveCamera(width/height<1?65:52,width/height,.08,180);
+  Object.assign(world,{camera,desired:new THREE.Vector3(),targetLook:new THREE.Vector3(),look:new THREE.Vector3(),stage:new THREE.Group(),environment:{visible:false},renderer:{render(){}},quality:'low',cameraZoom:zoom,venueSolids:solids,mobileViewport:{width,height,top:55,bottom:95}});
+  world.gameMode={game:{id:'onepole'},cameraView:0};world.setCamera([1.6,9,turn?-16.5:16.5,0,.7,0]);camera.position.set(1.6,4,turn?-25:25);
+  for(let frame=0;frame<60;frame++){
+   world.render(1/30,frame/30);
+   for(const x of [-3,3])for(const z of [-10.5,10.5]){
+    const target=new THREE.Vector3(x,0,z),direction=camera.position.clone().sub(target).normalize(),ray=new THREE.Ray(target,direction);
+    for(const s of solids){const bounds=new THREE.Box3(new THREE.Vector3(s.x-s.w/2,0,s.z-s.d/2),new THREE.Vector3(s.x+s.w/2,s.h+.3,s.z+s.d/2)),hit=ray.intersectBox(bounds,new THREE.Vector3());assert.ok(!hit||target.distanceTo(hit)>target.distanceTo(camera.position),'building obstructed the pole lane');}
+   }
+  }
+ }
+});

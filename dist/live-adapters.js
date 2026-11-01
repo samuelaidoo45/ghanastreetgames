@@ -66,10 +66,10 @@ export function liveAdapter(m,room){
   else if(id==='laski'){
    if(i===n-1){if(m.phase==='serve'&&a.action==='throw')m.throwIn();else if(m.phase==='play'&&a.action==='dive'){m.dive=.6;m.keeper.userData.pose='keeperDive';}return;}
    if(m.phase==='choose'){if(i===m.lastScorer&&a.action.startsWith('out-'))m.eliminate(Number(a.action.slice(4)));return;}
-   if(m.phase!=='play')return;if(m.possessor&&m.possessor!==p&&distance(p,m.possessor)<1.3){m.possessor=p;m.cool=.5;return;}if(distance(p,m.b)<1.2)m.strike(i,clamp(a.x*2.2,-2.2,2.2),power,a.action==='volley');
+   if(m.phase!=='play'||!['shoot','volley'].includes(a.action))return;if(m.possessor&&m.possessor!==p&&distance(p,m.possessor)<1.3){m.possessor=p;m.cool=.5;return;}if(distance(p,m.b)<1.2)m.strike(i,clamp(a.x*2.2,-2.2,2.2),power,a.action==='volley');
   }else if(id==='counters')people.forEach(p=>p.visible=false);
  if(id==='sulia'){
-   if(m.phase!=='play')return;if(m.carrier===i){const j=target(i);if(j!==undefined)m.poke(i,j,power);}else if(m.carrier!==null&&distance(p,people[m.carrier])<1.3&&m.cool<=0){m.carrier=i;m.cool=.5;m.placeBall();}
+   if(m.phase!=='play'||a.action!=='nutmeg')return;if(m.carrier===i){const j=target(i);if(j!==undefined)m.poke(i,j,power);}else if(m.carrier!==null&&distance(p,people[m.carrier])<1.3&&m.cool<=0){m.carrier=i;m.cool=.5;m.placeBall();}
   }else if(id==='stay'){
    if(i===m.throwerIndex){if(a.action==='ball'){if(m.phase==='held')m.launch();else if(m.phase==='rebound')m.catchWindow=.65;}else if(a.action==='play'){m.targetIndex=(m.targetIndex+1)%n;if(m.targetIndex===i)m.targetIndex=(i+1)%n;}}
    else if(a.action==='play')m.kickLoose(i);

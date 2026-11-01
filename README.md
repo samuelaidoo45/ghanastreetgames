@@ -1,5 +1,11 @@
 # Ghana Street Games — 3D Arcade
 
+## v4.25.1 — Sprint control, defensive recovery and One Pole visibility
+
+Sprinting retains close ball control through turns and slow frames. Football action handlers reject Sprint as a shot, including friend-room Laski and Sulia. Both street-football teams now recover goal-side after losing possession, track runners and keep a defender and central midfield screen behind attacks. One Pole uses a higher end view and checks building clearance after phone framing, zoom and camera transitions.
+
+Validation: 460 tests passed; 61 application modules passed syntax and asset checks. The local landscape-phone view was inspected, but the opponent-turn browser capture was blocked by the approval-review usage limit. Camera obstruction regression tests cover both ends across phone and desktop sizes.
+
 ## v4.24.0 — Compact dialogs, every-game difficulty and fullscreen
 
 All dialogs use a shared dark match frame, cream choices and a clear gold primary action. Pause and result panels fit phone portrait and short landscape viewports. Every game offers Easy, Normal and Hard: opponents, timing, accuracy or precision respond to the setting, with an explanation in setup. Board AI uses legal moves and bounded two-ply planning on Hard; dice and score awards stay unchanged. Private rooms retain the same Normal preset for all humans. Play and restart request fullscreen before loading; unsupported or denied browsers fill the available window instead. Verification: `research/verification-v424.md`.

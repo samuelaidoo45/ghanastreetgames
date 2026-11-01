@@ -22,16 +22,20 @@ export function goalLane(origin,goal,defenders,history=0){
 }
 export function rollingTouch(ball,velocity,player,dt,time){
  const u=player.userData,p=player.position,travel=u.velocity||new THREE.Vector3(),speed=travel.length();
- if(Math.hypot(ball.position.x-p.x,ball.position.z-p.z)>1.9)return false;
+ // Allow for this frame’s movement before checking an already displaced ball.
+ if(Math.hypot(ball.position.x-p.x,ball.position.z-p.z)>1.9+speed*dt)return false;
  u.footTimer=Math.max(0,(u.footTimer||0)-dt);
  const fx=Math.sin(player.rotation.y),fz=Math.cos(player.rotation.y),rolling=Math.hypot(velocity.x,velocity.z);
- if(u.footTimer<.07&&rolling>1&&velocity.x*fx+velocity.z*fz<rolling*.35)u.footTimer=0;
+ if(rolling>1&&velocity.x*fx+velocity.z*fz<rolling*.35)u.footTimer=0;
  if(u.footTimer===0){
   const lead=speed>5.5?.94:speed>.5?.63:.45;
   velocity.set(travel.x+(p.x+fx*lead-ball.position.x)*5.5,0,travel.z+(p.z+fz*lead-ball.position.z)*5.5);
   u.footTimer=speed>5.5?.23:speed>.5?.16:.1;
  }
  const before=ball.position.clone();ball.position.addScaledVector(velocity,dt);ball.position.y=.12;
+ // Keep each touch within a stride, including abrupt joystick turns and slow frames.
+ const dx=ball.position.x-p.x,dz=ball.position.z-p.z,gap=Math.hypot(dx,dz);
+ if(gap>.95){ball.position.x=p.x+dx/gap*.95;ball.position.z=p.z+dz/gap*.95;velocity.copy(travel);u.footTimer=0;}
  velocity.multiplyScalar(Math.exp(-(speed<.3?8:1.5)*dt));
  ball.rotation.x+=(ball.position.z-before.z)/.12;ball.rotation.z-=(ball.position.x-before.x)/.12;
  u.dribble=speed>.4?Math.max(0,Math.sin(time*13)):0;

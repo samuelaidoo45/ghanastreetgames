@@ -45,7 +45,7 @@ export function planTeam({players,opponents,ball,carrier,receiver,controlled,hal
    // Attacking runs respond to ball progress, with one player screening a counter.
    if(p===guard)x=Math.min(bx-6,-halfX*.15);
    else if(slot.role==='Centre-back')x=bx-3.8;
-   else if(slot.role==='Defensive midfielder'){x=bx-3;z=clamp(ball.z*.18,-halfZ*.22,halfZ*.22);}
+   else if(slot.role==='Defensive midfielder'){x=Math.min(bx-3,halfX*.12);z=clamp(ball.z*.18,-halfZ*.22,halfZ*.22);}
    else if(slot.role==='Forward')x=Math.max(slot.x*halfX,bx+3.8);
    else x=bx+(index%2?2.4:-2.8);
    z=slot.z*halfZ*.8+ball.z*.25+Math.sin(now*.85+index*1.7)*1.1;
@@ -55,11 +55,22 @@ export function planTeam({players,opponents,ball,carrier,receiver,controlled,hal
    duty='Support';
   }else if(carrier){
    const mark=threats[cover++%Math.max(1,threats.length)];
-   if(mark){x=x*.35+(mark.position.x*direction-1.5)*.65;z=z*.3+mark.position.z*.7;}
+   if(mark){
+    // Track runs from the goal side, keeping the centre protected as they move.
+    const mv=mark.userData.velocity||{x:0,z:0},mx=mark.position.x*direction+clamp(mv.x*direction*.35,-1.4,1.4),mz=mark.position.z+clamp(mv.z*.35,-1.4,1.4);
+    x=x*.25+(mx-1.6)*.75;z=z*.3+mz*.7;
+   }
+   // Every line defends: forwards also drop behind a dangerous counterattack.
+   x=Math.min(x,bx-(slot.role==='Forward'?1:2));
    if(slot.role==='Centre-back'){x=Math.min(x,bx-2.2);z=slot.z*halfZ+clamp(ball.z*.18,-1.2,1.2);}if(slot.role==='Defensive midfielder'){x=Math.min(x,bx-1.2);z=clamp(ball.z*.35,-halfZ*.3,halfZ*.3);}
   }
   const target={x:clamp(x,-halfX+1.5,halfX-2)*direction,z:clamp(z,-halfZ+1,halfZ-1),duty};
-  if(dist(target,ball)<2.5)target.z=clamp(target.z+(slot.z>=0?2.8:-2.8),-halfZ+1,halfZ-1);
+  if(dist(target,ball)<2.5){
+   if(!own&&carrier&&['Centre-back','Defensive midfielder'].includes(slot.role))target.x=clamp(bx-2.8,-halfX+.8,halfX-2)*direction;
+   else target.z=clamp(target.z+(slot.z>=0?2.8:-2.8),-halfZ+1,halfZ-1);
+  }
+  // Recovery runs use urgency, not fixed formation speed, until goal-side again.
+  target.recover=!!(carrier&&!own&&p.position.x*direction>target.x*direction+1.5);
   targets.set(p,target);
  }
  return {presser,since,targets,carrier,runner,runUntil};

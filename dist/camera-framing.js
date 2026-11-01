@@ -70,3 +70,20 @@ export function fitMobileScene(position,look,bounds,viewport,fov){
  }
  return {position:direction.multiplyScalar(distance).add(centre),look:centre};
 }
+
+// Lift the One Pole camera above roofs intersecting the view of either end.
+// Run after zoom, phone fitting and smoothing: those can pull a safe camera
+// back behind a building even when the original camera preset is unobstructed.
+export function clearPoleCamera(position,solids=[]){
+ const result=position.clone();
+ for(const x of [-3,3])for(const z of [-10.5,10.5])for(const solid of solids){
+  let enter=0,exit=1;
+  for(const [start,end,centre,size]of [[x,result.x,solid.x,solid.w],[z,result.z,solid.z,solid.d]]){
+   const delta=end-start,min=centre-size/2-.35,max=centre+size/2+.35;
+   if(Math.abs(delta)<1e-8){if(start<min||start>max){exit=-1;break;}}
+   else{const a=(min-start)/delta,b=(max-start)/delta;enter=Math.max(enter,Math.min(a,b));exit=Math.min(exit,Math.max(a,b));}
+  }
+  if(exit>=enter&&enter>0&&enter<=1)result.y=Math.max(result.y,((solid.h||4)+1.2)/enter);
+ }
+ return result;
+}
