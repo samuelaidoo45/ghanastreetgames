@@ -1,5 +1,9 @@
 # Ghana Street Games — 3D Arcade
 
+## v4.20.0 — Install on your phone
+
+The launch screen and game menu now include Install game. Supported browsers offer native PWA installation; iPhone and iPad users get Safari home-screen instructions. Includes standalone app metadata, original Ghana-colour icons, and a small offline reconnect page. Games and multiplayer still require an internet connection; the service worker never caches game code or account/API traffic.
+
 A fullscreen Three.js arcade with 34 playable interpretations of Ghanaian street and childhood games. Its textured compound, rigged human players, natural sky lighting, gold lettering, woven trim and parchment menus take visual direction from Four Corners GH. No proprietary Four Corners code, custom models or artwork are included. The three football modes use independently converted Gameplay Football assets from the same licensed upstream family identified in the reference.
 
 ## Run and verify

@@ -1,0 +1,36 @@
+{
+  "id": "/",
+  "name": "Ghana Street Games",
+  "short_name": "Street Games",
+  "description": "Ghanaian street games, in your pocket.",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "background_color": "#241a13",
+  "theme_color": "#241a13",
+  "lang": "en",
+  "categories": [
+    "games",
+    "sports"
+  ],
+  "icons": [
+    {
+      "src": "icons/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "icons/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "icons/maskable-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    }
+  ]
+}
