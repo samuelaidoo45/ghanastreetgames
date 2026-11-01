@@ -14,5 +14,10 @@ export const difficultyEffects = {
  skipping:'Rope pace', alasa:'Opponent flick accuracy', chempe:'Time before the rival calls', kyekyekule:'Time to copy the pose', pempenaa:'Counting pace and time to fold', mbobagor:'Passing rhythm and timing window',
  highjump:'Bar height and take-off tolerance', agawowa:'Take-off and feet-first landing tolerance',
 };
-export function difficultyProfile(value){return Object.hasOwn(levels,value)?levels[value]:levels.normal;}
-export function difficultyHint(game,level){return `${level==='easy'?'Easy':level==='hard'?'Hard':'Normal'} · ${difficultyEffects[game]||'Standard challenge'}. Friend rooms use the same Normal rules for everyone.`;}
+export function difficultyProfile(value,balance=0){
+ const base=Object.hasOwn(levels,value)?levels[value]:levels.normal;
+ if(value!=='normal'||!Number.isFinite(balance)||balance===0)return base;
+ const b=Math.max(-1,Math.min(1,balance));
+ return Object.freeze({...base,speed:1+b*.1,window:1-b*.12,error:1-b*.25,bar:b*.04});
+}
+export function difficultyHint(game,level){return `${level==='easy'?'Easy':level==='hard'?'Hard':'Normal'} · ${difficultyEffects[game]||'Standard challenge'}.${level==='normal'&&game!=='pretend'?' Adjusts gently between solo rounds.':''} Friend rooms use fixed Normal rules.`;}

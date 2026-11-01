@@ -65,7 +65,10 @@ export class FourCorners extends Mode{
  }
  kick(i,target,power=.5,chip=false,steer=0){
   if(this.phase!=='play'||!this.active[i]||!this.active[target]||target===i||this.oneTouch&&this.lastTouch===i||this.cool>0||this.carrier!==null&&this.carrier!==i||distance(this.players[i],this.b)>1.15||this.b.position.y>1.3)return false;
-  const aim=this.shotPoint(i,target,steer).sub(this.b.position);aim.y=0;this.v.copy(aim.normalize().multiplyScalar(chip?10+power*6:12+power*11));
+  const point=this.shotPoint(i,target,steer);
+  // CPU feet are not a laser: distance and nearby pressure make placement harder.
+  if(i!==0&&!this.networked){const g=this.goals[target],range=point.distanceTo(this.b.position),pressure=this.players.some((p,j)=>j!==i&&this.active[j]&&distance(p,this.players[i])<1.6);point.addScaledVector(new THREE.Vector3(-g.normal.z,0,g.normal.x),(Math.random()-.5)*(.3+range*.055+(pressure?.35:0))*this.difficultyTuning.error);}
+  const aim=point.sub(this.b.position);aim.y=0;this.v.copy(aim.normalize().multiplyScalar(chip?10+power*6:12+power*11));
   this.v.y=chip?3+power*1.3:.25+power*.3;this.carrier=null;this.lastTouch=i;this.cool=.2;
   this.shotHistory[i][target]++;this.players[i].userData.kick=.38;this.players[i].userData.carryTime=0;this.ui.sound('kick');return true;
  }
@@ -159,9 +162,9 @@ export class FourCorners extends Mode{
    if(this.networked)continue;
    if(i===0){const raw=this.world.movementVector?.(this.input.vector())||this.input.vector(),target=raw.x||raw.z?{x:p.position.x+raw.x*3,z:p.position.z+raw.z*3}:this.input.target||p.position,run=this.input.sprint&&u.stamina>.08;if(run)u.stamina=Math.max(0,u.stamina-dt*.34);this.advance(p,target,run?6.4:4.5,dt);continue;}
    const plan=this.plans[i];if(!plan)continue;
-   this.advance(p,avoidPlayers(p,plan.target,field,1.1),plan.speed*(this.settings.difficulty==='easy'?.87:this.settings.difficulty==='hard'?1.06:1),dt);
+   this.advance(p,avoidPlayers(p,plan.target,field,1.1),plan.speed*(this.settings.difficulty==='easy'?.87:this.settings.difficulty==='hard'?1.06:this.difficultyTuning.speed),dt);
    if(this.carrier===i){u.carryTime+=dt;const lane=this.lane(i,plan.goal),blocked=lane.openness<.55,goalDistance=lane.distance;
-    if(u.carryTime>.65&&(!blocked&&goalDistance<12||u.carryTime>3.2))this.kick(i,plan.goal,.5+Math.min(.32,goalDistance/35));
+    if(u.carryTime>.65*this.difficultyTuning.window&&(!blocked&&goalDistance<12||u.carryTime>3.2))this.kick(i,plan.goal,.5+Math.min(.32,goalDistance/35));
    }else if(plan.press&&this.carrier!==null&&distance(p,this.b)<1.15)this.tackle(i);
    else if(this.oneTouch&&distance(p,this.b)<1.05&&this.b.position.y<1.2)this.kick(i,this.pickGoal(i),.6);
   }

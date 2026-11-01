@@ -36,6 +36,12 @@ export class JumpGames extends Mode{
   this.barHeight=.7+this.round*.2+this.difficultyTuning.bar;this.bar.position.set(0,this.barHeight,0);this.bar.rotation.set(0,0,Math.PI/2);
   this.players.forEach((p,i)=>{p.position.set(-4-i*.8,0,3);p.rotation.set(0,Math.PI,0);Object.assign(p.userData,{run:0,pose:'idle',jump:0,lean:0});});
   this.you=this.players[this.turn];this.you.position.set(0,0,6.5);this.speed=0;
+  // A CPU commits to its own timing before the run, instead of reading the
+  // player's result or executing the same perfect sequence every attempt.
+  const error=this.difficultyTuning.error;
+  this.cpuJumpAt=(this.agawowa?1.65:1.5)+(Math.random()-.5)*.42*error;
+  this.cpuOpenAt=5.72+(Math.random()-.5)*.24*error;
+  this.cpuBraceHeight=.42+(Math.random()-.5)*.36*error;
   this.note(`${this.name()} · attempt ${this.round+1}/3. ${this.agawowa?jumpStyles[this.style]+': run onto the block, tuck, open and land on your feet.':'Run to the gold mark, jump over the palm bar, then land in the sand.'}`);this.controls();
  }
  controls(){
@@ -72,7 +78,7 @@ export class JumpGames extends Mode{
  }
  next(){
   this.turn++;if(this.turn>=this.count){this.turn=0;this.round++;}
-  if(this.round>=3){const best=Math.max(...this.scores),winners=this.scores.flatMap((s,i)=>s===best?[i]:[]);this.score=this.scores[0];this.finish(best===0?'TRY THE NEXT JUMP':winners.map(i=>this.name(i)).join(' & ')+' WIN',this.scores.map((s,i)=>this.name(i)+': '+s+' points').join(' · '),best>0&&winners.includes(0));return;}
+  if(this.round>=3){const best=Math.max(...this.scores),winners=this.scores.flatMap((s,i)=>s===best?[i]:[]);this.score=this.scores[0];this.finish(best===0?'TRY THE NEXT JUMP':winners.map(i=>this.name(i)).join(' & ')+' WIN',this.scores.map((s,i)=>this.name(i)+': '+s+' points').join(' · '),best>0&&winners.includes(0),best>0&&winners.includes(0)&&winners.length>1?'draw':undefined);return;}
   this.prepare();
  }
  update(dt){
@@ -83,7 +89,7 @@ export class JumpGames extends Mode{
   if(this.phase==='run'){
    this.speed=Math.min(5,this.speed+dt*5);p.position.z-=this.speed*dt;p.userData.run=this.speed/5;
    const good=Math.abs(p.position.z-(this.agawowa?1.65:1.5))<.45;this.takeoff.material.color.set(good?0x74b66d:0xf4be44);this.ui.power?.(good?1:clamp(this.speed/6,0,1));
-   if(this.isCPU()&&p.position.z<(this.agawowa?1.65:1.5)+.1*Math.sin(this.turn+this.round))this.launch();
+   if(this.isCPU()&&p.position.z<this.cpuJumpAt)this.launch();
    else if(p.position.z<.5)this.resolve(false,'Ran past the take-off mark',0);
    return;
   }
@@ -91,9 +97,9 @@ export class JumpGames extends Mode{
   const previous=p.position.clone();this.flightTime+=dt;this.vy-=9.8*dt;p.position.y+=this.vy*dt;p.position.z+=this.vz*dt;this.peak=Math.max(this.peak,p.position.y);
   if(this.agawowa){
    const target=this.opened?0:[8.8,8.4,7.9][this.style];this.omega+= (target-this.omega)*Math.min(1,dt*(this.opened?18:16));this.angle+=this.omega*dt;p.userData.lean=this.angle;
-   if(this.isCPU()&&this.angle>5.8-.08*this.turn)this.perform('open');
+   if(this.isCPU()&&!this.opened&&this.angle>this.cpuOpenAt)this.perform('open');
   }
-  if(this.isCPU()&&this.vy<0&&p.position.y<.8)this.perform('land');
+  if(this.isCPU()&&this.braceTime===null&&this.vy<0&&p.position.y<this.cpuBraceHeight)this.perform('land');
   const upright=Math.abs(Math.atan2(Math.sin(this.angle),Math.cos(this.angle)));this.mark.material.color.set(this.opened&&upright<.48?0x68b767:0xf4bd45);
   if(this.agawowa&&!this.opened&&this.angle>5.35&&this.angle<6.1)this.note('OPEN now to slow your rotation.');
   if(this.opened&&this.vy<0&&p.position.y<.75)this.note('LAND now — feet into the sand.');

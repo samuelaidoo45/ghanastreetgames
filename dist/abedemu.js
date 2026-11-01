@@ -144,7 +144,7 @@ export class Abedemu extends Mode{
     if(i===0){const manual=this.world.movementVector?.(this.input.vector())||this.input.vector(),raw=this.pressInput(i,manual),pressing=i===this.middleIndex&&this.age<p.userData.pressUntil;
      if(Math.hypot(raw.x,raw.z)>.05)target={x:p.position.x+raw.x*3,z:p.position.z+raw.z*3};else target=this.input.target||p.position;
      speed=this.input.sprint?6.8:pressing?(this.age-p.userData.pressStarted<.55?6.2:5.5):5.1;
-    }else if(i===this.middleIndex){target=this.pressTarget(i);speed=this.settings.difficulty==='easy'?4.8:this.settings.difficulty==='hard'?6.2:5.6;}
+    }else if(i===this.middleIndex){target=this.pressTarget(i);speed=this.settings.difficulty==='easy'?4.8:this.settings.difficulty==='hard'?6.2:5.6*this.difficultyTuning.speed;}
     else{target=i===this.carrier?this.carryTarget(i):this.supportTarget(i);speed=(i===this.carrier?3.8:this.age<p.userData.runUntil?4.9:4.1)*this.difficultyTuning.speed;}
     this.moveRunner(p,target,speed,dt,i!==this.carrier&&i!==this.middleIndex);
     if(i===this.middleIndex&&(i!==0||this.age<p.userData.pressUntil)&&distance(p,this.b)<1.2)this.tackle(i);
@@ -172,6 +172,6 @@ export class Abedemu extends Mode{
   const focus=this.liveFocus||this.you;this.marker.position.set(focus.position.x,.03,focus.position.z);const mid=this.players[this.middleIndex];this.middleMarker.position.set(mid.position.x,.025,mid.position.z);
   const target=this.players[this.receiver(this.liveSeat||0)];this.targetMarker.visible=!!target&&(this.liveSeat||0)!==this.middleIndex;if(target)this.targetMarker.position.set(target.position.x,.025,target.position.z);
   this.score=this.points[0];this.refreshActions();this.status(`${this.streak} ${this.streak===1?'PASS':'PASSES'} · ${Math.ceil(Math.max(0,this.limit-this.time))}s`,`${this.name(this.middleIndex)} IN THE MIDDLE · YOU ${this.points[0]} POINTS`);
-  if(this.time>=this.limit){const best=Math.max(...this.points);this.liveWinners=this.points.flatMap((p,i)=>p===best?[i]:[]);this.finish(this.points[0]===best?'PASSING CHAMPION':'ROUND COMPLETE',this.points.map((p,i)=>this.name(i)+': '+p).join(' · '),this.points[0]===best);}
+  if(this.time>=this.limit){const best=Math.max(...this.points);this.liveWinners=this.points.flatMap((p,i)=>p===best?[i]:[]);this.finish(this.points[0]===best?'PASSING CHAMPION':'ROUND COMPLETE',this.points.map((p,i)=>this.name(i)+': '+p).join(' · '),this.points[0]===best,this.liveWinners.includes(0)&&this.liveWinners.length>1?'draw':undefined);}
  }
 }

@@ -19,7 +19,7 @@ export class Stay extends Mode {
  launch(){if(this.phase!=='held')return;const p=this.players[this.targetIndex];this.thrower.rotation.y=Math.atan2(p.position.x-this.thrower.position.x,p.position.z-this.thrower.position.z);this.attachBall();const duration=THREE.MathUtils.clamp(distance(p,this.thrower)/13,.25,1.2);const lead=p.userData.stayVelocity||{x:0,z:0};this.v.set((p.position.x+lead.x*duration*.6-this.b.position.x)/duration,(1.05-this.b.position.y+4*duration*duration)/duration,(p.position.z+lead.z*duration*.6-this.b.position.z)/duration);this.phase='flight';this.flightTime=0;this.hitIndex=null;this.catchWindow=0;this.thrower.userData.pose='keeperThrow';this.thrower.userData.poseUntil=this.age+.45;this.ui.sound('throw');this.note(this.throwerIndex===0?'Follow the ball. If it hits, move under the rebound and press Catch.':'Dodge the throw. If it lands loose, kick it away from the thrower.');}
  action(id){if(id==='ball'){if(this.throwerIndex!==0)return this.note('Keep clear of the throw. E kicks a loose ball away.');if(this.phase==='held')this.launch();else if(this.phase==='rebound'||this.phase==='flight'){this.catchWindow=.6*this.difficultyTuning.window;this.you.userData.pose='reach';this.you.userData.poseUntil=this.age+.6;}else this.note('Run to the loose ball to collect it.');}else if(id==='play'){if(this.phase==='held'&&this.throwerIndex===0){do{this.targetIndex=(this.targetIndex+1)%this.players.length;}while(this.targetIndex===0);}else if(this.phase==='loose'&&this.throwerIndex!==0)this.kickLoose(0);}}
  hit({point}){if(this.phase==='held'&&this.throwerIndex===0){let best=Infinity;this.players.forEach((p,i)=>{const d=distance(p,point);if(i!==0&&d<best){best=d;this.targetIndex=i;}});}else this.input.target=point;}
- rebound(index){if(this.phase!=='flight')return;this.hitIndex=index;this.phase='rebound';
+ rebound(index){if(this.phase!=='flight')return;this.hitIndex=index;this.phase='rebound';this.catchWindow=0;this.cpuCatchTried=false;this.cpuCatchReady=this.age+(.18+Math.random()*.18)*this.difficultyTuning.window;
   const victim=this.players[index],normal=this.b.position.clone().sub(victim.position);normal.y=0;if(normal.lengthSq()<.0025)normal.set(-this.v.x,0,-this.v.z);if(normal.lengthSq()<.0025)normal.copy(this.thrower.position).sub(this.b.position);normal.y=0;normal.normalize();
   const impact=this.v.x*normal.x+this.v.z*normal.z;
   this.v.set((this.v.x-2*impact*normal.x)*.62,2.8,(this.v.z-2*impact*normal.z)*.62);
@@ -53,11 +53,19 @@ export class Stay extends Mode {
    const x=p.position.x,z=p.position.z;p.userData.run=speed>0?moveActor(p,avoidPlayers(p,target,this.players),speed*this.difficultyTuning.speed,dt):0;if(speed===0)p.rotation.y=Math.atan2(target.x-p.position.x,target.z-p.position.z);p.userData.stayVelocity.set((p.position.x-x)/Math.max(dt,.001),0,(p.position.z-z)/Math.max(dt,.001));
   });
   separatePlayers(this.players,1.02,{x:11,z:9});
-  if(!this.networked&&kicker&&kicker!==this.you)this.kickLoose(this.players.indexOf(kicker));
+  if(!this.networked&&kicker&&kicker!==this.you){
+   if(this.cpuKicker!==kicker){this.cpuKicker=kicker;this.cpuKickAt=this.age+.25*this.difficultyTuning.window;}
+   // A human arriving first gets a fair chance to collect, rather than losing
+   // the ball to an instantaneous CPU kick on the same frame.
+   if(this.age>=this.cpuKickAt&&distance(this.thrower,this.b)>1.05)this.kickLoose(this.players.indexOf(kicker));
+  }else this.cpuKicker=null;
+  if(!this.networked&&this.throwerIndex!==0&&this.phase==='rebound'&&!this.cpuCatchTried&&this.age>=this.cpuCatchReady&&distance(this.thrower,this.b)<1.65){
+   this.cpuCatchTried=true;this.catchWindow=.48;this.thrower.userData.pose='reach';this.thrower.userData.poseUntil=this.age+.48;
+  }
   this.youMarker.position.set(this.you.position.x,.03,this.you.position.z);this.labels.forEach((l,i)=>l.position.set(this.players[i].position.x,2.45,this.players[i].position.z));
   this.marker.position.set(this.thrower.position.x,.025,this.thrower.position.z);this.targetMarker.visible=this.phase==='held'&&this.throwerIndex===0;this.targetMarker.position.set(this.players[this.targetIndex].position.x,.02,this.players[this.targetIndex].position.z);
   this.status(this.throwerIndex===0?'YOU HAVE THE THROW':`PLAYER ${this.throwerIndex+1} HAS THE THROW`,`${this.players.length} PLAYERS · ${this.transfers.reduce((a,b)=>a+b,0)} ROLE CHANGES · ${this.phase==='rebound'?'CATCH BEFORE IT LANDS':this.phase==='loose'?'CHASE THE BALL':'HIT + CATCH TO SWITCH'}`);
-  if(this.time>=150||this.transfers.some(n=>n>=5)){this.score=this.transfers[0];this.finish('STAY ROUND COMPLETE',this.transfers.map((n,i)=>'Player '+(i+1)+': '+n+' successful transfers').join(' · '),this.score===Math.max(...this.transfers));return;}
+  if(this.time>=150||this.transfers.some(n=>n>=5)){this.score=this.transfers[0];this.finish('STAY ROUND COMPLETE',this.transfers.map((n,i)=>'Player '+(i+1)+': '+n+' successful transfers').join(' · '),this.score>0&&this.score===Math.max(...this.transfers),this.transfers.filter(n=>n===Math.max(...this.transfers)).length>1?'draw':this.score===Math.max(...this.transfers)?'win':'loss');return;}
   if(this.phase==='held'){this.attachBall();if(!this.networked&&this.throwerIndex!==0&&this.roleTime>2){this.targetIndex=this.chooseTarget();this.launch();}return;}
   const steps=Math.max(1,Math.ceil(dt/(1/120))),step=dt/steps;
   for(let n=0;n<steps;n++){if(this.advanceBall(step))break;}
@@ -66,7 +74,7 @@ export class Stay extends Mode {
   this.flightTime=(this.flightTime||0)+dt;this.b.position.addScaledVector(this.v,dt);this.v.y-=8*dt;
   for(const axis of ['x','z']){const bound=axis==='x'?11.5:9.5;if(Math.abs(this.b.position[axis])>bound){this.b.position[axis]=Math.sign(this.b.position[axis])*bound;this.v[axis]*=-.65;if(this.phase!=='loose')this.loose();this.ui.sound('bounce');}}
   if(this.phase==='flight'){const hit=this.players.findIndex((p,i)=>i!==this.throwerIndex&&distance(p,this.b)<.55&&this.b.position.y>.22&&this.b.position.y<1.7);if(hit>=0)this.rebound(hit);}
-  if(this.phase==='rebound'&&distance(this.b,this.thrower)<.9&&this.b.position.y>.3&&this.b.position.y<1.8&&((!this.networked&&this.throwerIndex!==0)||this.catchWindow>0)){this.catchRebound();return true;}
+  if(this.phase==='rebound'&&distance(this.b,this.thrower)<.9&&this.b.position.y>.3&&this.b.position.y<1.8&&this.catchWindow>0){this.catchRebound();return true;}
   if(this.b.position.y<=.13){this.b.position.y=.13;if(this.phase!=='loose')this.loose();if(Math.abs(this.v.y)>.5)this.ui.sound('bounce');this.v.y=Math.abs(this.v.y)>.5?Math.abs(this.v.y)*.35:0;this.v.x*=Math.exp(-dt*4);this.v.z*=Math.exp(-dt*4);}
   if(this.phase==='loose'){this.v.x*=Math.exp(-dt*.35);this.v.z*=Math.exp(-dt*.35);if(distance(this.b,this.thrower)<.8&&this.b.position.y<.65){this.phase='held';this.v.set(0,0,0);this.roleTime=0;this.targetIndex=this.chooseTarget();this.attachBall();this.ui.sound('catch');this.note(this.throwerIndex===0?'Collected. Aim, hit a player, and catch the rebound.':'The thrower collected it. Stay alert for the next throw.');return true;}}
  }
