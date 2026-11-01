@@ -28,8 +28,6 @@
 #setup-dialog #begin-game{position:static;margin:0;width:100%;font:20px Bungee,sans-serif;min-height:56px;border:2px solid #30200e;box-shadow:0 5px 0 #b4492d;background:#f4b839}
 #setup-dialog #show-game-rules{color:#f2dfb7;border-color:#a88d61;min-height:48px;padding:9px 14px}
 #setup-dialog .control-note{display:none}
-.launch-music-button{border:1px solid #f1d8aa66;border-radius:22px;background:#23180bbb;color:#f5dfb0;padding:10px 18px;min-height:44px;font:600 13px Shantell,sans-serif;cursor:pointer}
-.launch-music-button:focus-visible{outline:3px solid #f5bd46;outline-offset:3px}
 @media(min-width:740px){#setup-dialog[open]{display:grid;grid-template-columns:1fr 1fr;grid-template-rows:80px minmax(0,1fr);overflow:hidden;max-height:90dvh}#setup-dialog>.dialog-close{position:absolute;top:0;left:0}#setup-dialog .setup-header{grid-column:1/-1;padding-left:68px}#setup-dialog .setup-preview{grid-column:1;grid-row:2;height:auto;min-height:0;margin:0 0 20px 20px}#setup-dialog .dialog-content{grid-column:2;grid-row:2;overflow:auto;min-height:0;padding-top:0}#setup-dialog .setup-actions{bottom:-18px}#setup-title{font-size:28px}}
 @media(max-width:430px){#setup-dialog{width:calc(100vw - 16px);max-height:calc(100dvh - 16px);border-radius:19px}.setup-header{min-height:70px}#setup-title{font-size:20px}#setup-dialog .setup-preview{height:176px;margin:0 12px}.setup-venue-copy{left:14px;bottom:14px}#setup-venue-name{font-size:20px}#setup-dialog .dialog-content{padding:18px 12px 14px}.setup-versus{padding:12px}.versus-player,.versus-cpu{width:42px;height:42px}#setup-dialog select{font-size:14px}#setup-dialog .setup-actions{bottom:-14px}#setup-dialog #show-game-rules{font-size:9px;padding:8px}}
 /* Quiet labels, touch-sized silhouettes, all actions visible. */

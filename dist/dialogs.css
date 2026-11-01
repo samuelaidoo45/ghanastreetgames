@@ -32,7 +32,6 @@ dialog .modal-heading p{margin:0;color:#d6c39c;font-size:14px}
 #settings-dialog .setting-row:first-of-type{border-radius:14px 14px 0 0}#settings-dialog .setting-row select{max-width:56%;width:auto;min-width:0;color:var(--panel-ink);border:0;background:transparent;font:600 14px/1.3 Shantell,sans-serif;min-height:44px}
 #settings-dialog input[type=checkbox]{width:22px;height:22px;flex-shrink:0;accent-color:#b77a1e}
 #settings-dialog .sound-mixer{background:var(--paper);color:var(--panel-ink);border:0;border-radius:14px;padding:16px;margin-top:18px}#settings-dialog .sound-mixer legend{color:var(--paper);padding:8px 0}#settings-dialog #save-settings{width:100%;margin-top:22px}
-#settings-dialog> .dialog-content>label:last-of-type{display:flex;align-items:center;gap:12px;font:14px/1.4 Shantell,sans-serif}
 #rules-dialog #rules-select{width:100%;min-height:48px;background:var(--paper);color:var(--panel-ink);border:0;border-radius:12px;padding:10px 14px;font:16px Shantell,sans-serif}
 #rules-body{line-height:1.6}#rules-body li{margin:8px 0}#rules-body h3{margin-top:24px}#rules-body a{overflow-wrap:anywhere}
 #replay-dialog video{max-width:100%;border-radius:12px}#replay-dialog #save-replay{display:block;text-align:center;margin-top:18px}
@@ -53,3 +52,8 @@ body.full-window{min-height:100dvh}body.full-window #world{position:fixed;inset:
 #settings-dialog label:has(+h3){border-radius:0 0 14px 14px}
 
 #rules-dialog #rules-body a{color:#ffcf70;text-underline-offset:3px}
+
+#setup-dialog .setup-replay{display:flex;align-items:center;justify-content:space-between;gap:16px;min-height:64px;margin:12px 0;padding:12px 16px;background:var(--paper);color:var(--panel-ink);border-radius:16px;cursor:pointer;font:400 11px/1.4 Bungee,sans-serif}
+#setup-dialog .setup-replay span{display:grid;gap:4px}#setup-dialog .setup-replay small{font:500 12px/1.3 Shantell,sans-serif}
+#setup-dialog .setup-replay input{width:22px;height:22px;margin:0;flex-shrink:0;accent-color:#b77a1e}
+#setup-dialog .setup-replay input:focus-visible{outline:3px solid #9d3e24;outline-offset:4px}
