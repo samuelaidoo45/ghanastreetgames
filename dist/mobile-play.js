@@ -1,9 +1,10 @@
 // Phone controls are explicit for every game: an aiming stick must never sprint.
-const movement=new Set(['football','fourcorners','laski','pampanaa','shooting','pilolo','stay','sulia','sansankroma','tyre','zanzama','pretend','police']);
+const movement=new Set(['abedemu','football','fourcorners','laski','pampanaa','shooting','pilolo','stay','sulia','sansankroma','tyre','zanzama','pretend','police']);
 const aiming=new Set(['penalties','onepole','rubberband','chaskele','kpitinge','alasa']);
 const sprinting=new Set([...movement].filter(id=>id!=='zanzama'));
 export const touchHints={
- football:'Move with the stick; push to its edge to sprint. Hold Shoot, then release. Pass and Switch are beside it; More has Low shot and Chip.',
+ abedemu:'Pass around the middle player. Tap Pass or hold for power; Target chooses a teammate. In the middle, tap Tackle or Press. An interception swaps the last toucher into the middle.',
+ football:'Keeper save is beside Shoot in big-poles matches. Without the ball, Pass becomes Press. Move with the stick; push to its edge to sprint. Hold Shoot, then release. More has Low shot, Chip and Switch when Save is visible.',
  fourcorners:'Move to collect the ball. Tap Shoot for a quick strike, or hold for power. Without the ball it tackles. Target changes goal; Dodge slips past a challenge. Chip is in More.',
  penalties:'Tap Lock aim, then Set power. In free-aim mode, tap the goal or use AIM, then hold and release Shoot. In goal, tap a dive button.',
  onepole:'Use AIM or tap the target to aim. Step left/right changes your position. Hold Strike for power, then release.',
@@ -40,7 +41,7 @@ export const touchHints={
 export function mobileProfile(id){return {stick:movement.has(id)?'move':aiming.has(id)?'aim':'none',autoSprint:sprinting.has(id),hint:touchHints[id]||'Tap the labelled actions to play.'};}
 export function arrangeActions(id,actions,autoSprint=true){
  const visible=actions.filter(a=>!(autoSprint&&mobileProfile(id).autoSprint&&a.hold&&a.id==='sprint'));
- if(id==='football'||id==='fourcorners'){const extra=id==='football'?['low','chip','sprint']:['chip','sprint'];const primary=visible.filter(a=>!extra.includes(a.id)).slice(0,3);return {primary,secondary:visible.filter(a=>!primary.includes(a))};}
+ if(id==='football'||id==='fourcorners'){const extra=id==='football'?['low','chip','sprint']:['chip','sprint'];const preferred=id==='football'&&visible.some(a=>a.id==='save')?['shoot','pass','save']:null;const primary=preferred?preferred.map(id=>visible.find(a=>a.id===id)).filter(Boolean):visible.filter(a=>!extra.includes(a.id)).slice(0,3);return {primary,secondary:visible.filter(a=>!primary.includes(a))};}
  // Movement games keep the three most useful actions in reach. Choices and
  // timed rhythm actions stay visible together, never buried in a menu.
  if(mobileProfile(id).stick!=='none'&&visible.length>3)return {primary:visible.slice(0,3),secondary:visible.slice(3)};
@@ -66,5 +67,5 @@ export function mobileMessage(text,actions,id,autoSprint=true){
  if(autoSprint&&mobileProfile(id).autoSprint)labels.set('Shift','MOVE edge');
  const stick=mobileProfile(id).stick==='aim'?'AIM':'MOVE';
  return text.replace(/WASD\s*\/\s*(?:arrows|joystick)|arrows\s*\/\s*WASD|WASD|arrow keys/g,stick)
-  .replace(/\b(?:Space|Shift|Q|E|R|F|C)\b/g,key=>labels.has(key)?'“'+labels.get(key)+'”':key);
+  .replace(/\b(?:Space|Shift|Q|E|R|F|G|C)\b/g,key=>labels.has(key)?'“'+labels.get(key)+'”':key);
 }

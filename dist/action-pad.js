@@ -16,7 +16,7 @@ const paths={
  turn:'M6 8a8 8 0 1 1-1 9M3 3v6h6'
 };
 const labels={
- 'Shoot / tackle':'Shoot','One-touch kick':'Shoot','Next goal':'Target','Next player':'Target',
+ 'Pass / tackle':'Pass','Keeper save':'Save','Shoot / tackle':'Shoot','One-touch kick':'Shoot','Next goal':'Target','Next player':'Target',
  'Hold / shoot':'Shoot','Hold / strike':'Strike','Palm strike':'Strike','Set strength':'Power',
  'Next cap':'Next','Drop / pick cloth':'Cloth','Pick up / chase':'Chase','Drop cloth':'Drop',
  'Search / collect':'Search','Pick / use':'Use','Pɛw! Shoot':'Pɛw!',

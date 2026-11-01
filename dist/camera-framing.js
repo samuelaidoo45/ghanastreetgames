@@ -20,15 +20,17 @@ export function frameAction(player, ball, aspect, offset, fov=aspect<1?65:52) {
 
 export function gameActionCamera(mode,aspect,mobile=false){
  if(!mode?.you||!mode.b||mode.wide||mode.cameraWide||(mode.cameraView||0)!==0)return null;
- if(!['fourcorners','laski','sulia','stay'].includes(mode.game.id))return null;
+ if(!['fourcorners','laski','sulia','stay','abedemu'].includes(mode.game.id))return null;
  // Four-way defence needs every side goal visible on landscape displays.
  if(mode.game.id==='fourcorners'&&aspect>=1.2&&!mobile)return {position:new THREE.Vector3(0,13.8,16.5),look:new THREE.Vector3(0,.4,0)};
+ if(mode.game.id==='abedemu'&&mode.players?.length){const bounds=passingBounds(mode);return fitMobileScene(new THREE.Vector3(0,14,10),new THREE.Vector3(0,.7,0),bounds,{width:1000*aspect,height:1000,top:80,bottom:160},aspect<1?65:52);}
  const offset=aspect<.85?[0,11,8]:[1.5,10,12];
  return frameAction(mode.liveFocus||mode.you,mode.b,aspect,offset);
 }
 
 // Bounds describe equipment and play, not decorative buildings. This keeps tiny
 // floor games close and fits wide groups on narrow phones without scaling people.
+function passingBounds(mode){const points=mode.players.map(p=>p.position);if(mode.b)points.push(mode.b.position);return [Math.min(...points.map(p=>p.x))-.6,0,Math.min(...points.map(p=>p.z))-.6,Math.max(...points.map(p=>p.x))+.6,2.6,Math.max(...points.map(p=>p.z))+.6];}
 const phoneBounds={
  penalties:[-3,0,-9.6,3,2.8,4],onepole:[-2,0,-10.4,2,2.6,10.4],rubberband:[-1.3,0,-4.3,1.3,2.6,3.8],
  counters:[-.34,0,-.22,.34,.055,.22],oware:[-.94,.75,-.43,.94,.9,.43],dame:[-.9,.72,-.9,.9,.9,.9],ludo:[-.62,.67,-.62,.62,.88,.62],
@@ -42,9 +44,9 @@ const phoneBounds={
 };
 export function mobileSceneBounds(mode){
  if(!mode||mode.overview||mode.cameraWide||mode.wide||(mode.cameraView||0)!==0)return null;
- const id=mode.game.id;
+ const id=mode.game.id;if(id==='abedemu'&&mode.players?.length)return passingBounds(mode);
  if(phoneBounds[id])return phoneBounds[id];
- if(['football','fourcorners','laski','sulia','stay'].includes(id)){
+ if(['football','fourcorners','laski','sulia','stay','abedemu'].includes(id)){
   const p=(mode.liveFocus||mode.teams?.[0]?.[mode.selected]||mode.you)?.position,b=mode.b?.position;
   if(p&&b)return [Math.min(p.x-1,b.x-.4),0,Math.min(p.z-1,b.z-.4),Math.max(p.x+1,b.x+.4),Math.max(2.6,b.y+.3),Math.max(p.z+1,b.z+.4)];
  }

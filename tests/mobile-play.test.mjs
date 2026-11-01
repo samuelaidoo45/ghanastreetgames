@@ -31,7 +31,7 @@ test('mobile layouts preserve every game action, with a one-thumb sprint alterna
    for(const a of all)assert.ok(ids.includes(a.id)||(automatic&&mobileProfile(game.id).autoSprint&&a.id==='sprint'&&a.hold),game.id+': '+a.id);
    assert.equal(new Set(ids).size,ids.length);
   }
-  if(game.id==='football'){const layout=arrangeActions(game.id,all);assert.deepEqual(layout.primary.map(a=>a.id),['shoot','pass','switch']);assert.deepEqual(layout.secondary.map(a=>a.id),['low','chip']);}
+  if(game.id==='football'){const layout=arrangeActions(game.id,all);assert.deepEqual(layout.primary.map(a=>a.id),['shoot','pass','save']);assert.deepEqual(layout.secondary.map(a=>a.id),['low','chip','switch']);}
   if(game.id==='antoakyire')assert.ok(arrangeActions(game.id,all).primary.some(a=>a.hold&&a.id==='sprint'));
   h.close();
  }

@@ -80,3 +80,5 @@ test('portrait framing does not undo the neighbourhood camera wall clearance',as
   world.render(1,1);assert.ok(world.camera.position.distanceTo(world.desired)<.0001);
  }
 });
+
+ test('Ab3d3mu keeps every passing option visible on phone and desktop',()=>{for(const [width,height]of screens){const players=Array.from({length:5},(_,i)=>({position:new THREE.Vector3(Math.sin(i*Math.PI*2/5)*6,0,Math.cos(i*Math.PI*2/5)*6)}));players.push({position:new THREE.Vector3()});const mode={game:{id:'abedemu'},you:players[0],players,b:{position:players[0].position.clone()}};const frame=gameActionCamera(mode,width/height,width<600),project=projection(frame,width,height);for(const player of players)for(const y of [0,2.4]){const p=project(player.position.clone().add(new THREE.Vector3(0,y,0)));assert.ok(Math.abs(p.x)<.94);assert.ok(Math.abs(p.y)<.85);}}});

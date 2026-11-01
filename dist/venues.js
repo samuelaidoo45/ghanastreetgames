@@ -4,7 +4,7 @@ import {THREE,box,cylinder,sphere} from './world.js';
 import {surface} from './surfaces.js';
 import {detailedHome,neighbourhoodDetails,streetCourtDetails,compactVenueGeometry,footballStreetscape,venueTree,venueLife} from './venue-details.js';
 
-export const venueFor=id=>['pampanaa','shooting','pilolo'].includes(id)?'neighbourhood':id==='rubberband'?'wall':id==='onepole'?'lane':['laski','stay'].includes(id)?'streetcourt':['fourcorners','penalties','football','sulia'].includes(id)?'pitch':['oware','dame','ludo','counters','chempe','pretend'].includes(id)?'veranda':['alikoto','kpitinge','alasa'].includes(id)?'sand':id==='tyre'?'lane':'schoolyard';
+export const venueFor=id=>['pampanaa','shooting','pilolo'].includes(id)?'neighbourhood':id==='rubberband'?'wall':id==='onepole'?'lane':['laski','stay'].includes(id)?'streetcourt':['fourcorners','penalties','football','sulia','abedemu'].includes(id)?'pitch':['oware','dame','ludo','counters','chempe','pretend'].includes(id)?'veranda':['alikoto','kpitinge','alasa'].includes(id)?'sand':id==='tyre'?'lane':'schoolyard';
 export function clearVenue(world){
  if(world.venue){world.venue.traverse(o=>{if(o.isInstancedMesh)o.dispose();o.geometry?.dispose();for(const m of Array.isArray(o.material)?o.material:[o.material]){if(!m)continue;for(const k of ['map','normalMap','roughnessMap'])if(m[k]&&!m[k].userData.sharedAsset)m[k].dispose();m.dispose();}});world.scene?.remove(world.venue);}
  world.venue=null;world.venueShadow=null;if(world.environment)world.environment.visible=true;
@@ -20,7 +20,7 @@ function home(g,x,z,w,d,h,tint){
 }
 export function buildVenue(world,game,settings={}){
  clearVenue(world);const kind=venueFor(game.id);world.venueKind=kind;
- if(['pitch','lane','streetcourt'].includes(kind)&&['football','fourcorners','penalties','onepole','laski','sulia'].includes(game.id))return buildFootballVenue(world,game,settings,kind);
+ if(['pitch','lane','streetcourt'].includes(kind)&&['football','fourcorners','penalties','onepole','laski','sulia','abedemu'].includes(game.id))return buildFootballVenue(world,game,settings,kind);
  const g=new THREE.Group();world.venue=g;world.scene?.add(g);if(world.environment)world.environment.visible=false;
  const ground=new THREE.Mesh(new THREE.PlaneGeometry(160,160),surface(kind==='veranda'?'plastered_wall_02':'red_dirt_mud_01',kind==='veranda'?0xaaa391:0xe9c4a4,100));ground.rotation.x=-Math.PI/2;ground.receiveShadow=true;g.add(ground);
  const solids=[];let houseIndex=0;const solid=(x,z,w,d,h=3.4,tint=0xc1a782,front=0)=>{if(['neighbourhood','lane','streetcourt'].includes(kind)&&w<=10&&d<=10)detailedHome(g,x,z,w,d,h,tint,houseIndex++,front);else home(g,x,z,w,d,h,tint);solids.push({x,z,w,d,h});};
@@ -81,8 +81,8 @@ export function routeTo(start,end,solids){
 function buildFootballVenue(world,game,settings,kind){
  const theme=pitchType(game.id,settings.pitchSurface),g=new THREE.Group();g.name='venue-'+theme;world.venue=g;world.scene?.add(g);if(world.environment)world.environment.visible=false;
  const teamSize=Math.max(1,Math.min(7,Number(settings.teamSize)||3));
- const halfX=game.id==='football'?11+teamSize*1.15:game.id==='onepole'?4.4:game.id==='penalties'?7.5:['laski','sulia'].includes(game.id)?9:10;
- const halfZ=game.id==='football'?7+teamSize*.7:game.id==='sulia'?9:game.id==='fourcorners'?10:['penalties','laski'].includes(game.id)?12:12.5;
+ const halfX=game.id==='football'?11+teamSize*1.15:game.id==='onepole'?4.4:game.id==='penalties'?7.5:['laski','sulia','abedemu'].includes(game.id)?9:10;
+ const halfZ=game.id==='football'?7+teamSize*.7:['sulia','abedemu'].includes(game.id)?9:game.id==='fourcorners'?10:['penalties','laski'].includes(game.id)?12:12.5;
  const edgeX=halfX+5,edgeZ=halfZ+5;
  // Terrain has a real opening for the playable surface: no stacked planes or depth bias.
  const outline=new THREE.Shape();outline.moveTo(-90,-90);outline.lineTo(90,-90);outline.lineTo(90,90);outline.lineTo(-90,90);outline.closePath();

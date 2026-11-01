@@ -2,7 +2,7 @@
 // AMB Outside 1 noise bed is deliberately excluded from preload and playback.
 const FILES={music:'v43/menu-loop.mp3',street:'street-ambience.ogg',crowd:'crowd-ambience.ogg',cap:'impactGeneric_light_000.ogg',throw:'impactGeneric_light_000.ogg',catch:'impactSoft_medium_000.ogg',ballHit:'impactSoft_medium_000.ogg',bounce:'impactSoft_medium_000.ogg',start:'rewards/ready.mp3',mouth:'pampanaa-mouth.mp3',band:'impactGeneric_light_000.ogg',kick:'football-kick.mp3',clap:'v43/soft-clap.mp3',call:'whistle.mp3',goalFanfare:'rewards/goal-fanfare.mp3',woodPoint:'rewards/wood-point.mp3',rhythmPoint:'rewards/rhythm-point.mp3',discoveryPoint:'rewards/discovery-point.mp3',victory:'rewards/victory.mp3',miss:'impactSoft_medium_000.ogg',stone:'impactWood_light_000.ogg',swing:'impactGeneric_light_000.ogg',jump:'footstep-dirt-1.mp3',step1:'footstep-dirt-1.mp3',step2:'footstep-dirt-2.mp3',step3:'footstep-dirt-3.mp3',concrete:'footstep_concrete_000.ogg',grass:'footstep_grass_000.ogg',wood:'footstep_wood_000.ogg'};
 export function audioProfile(game='',venue='pitch',surface='dirt'){
- const sport=['football','fourcorners','penalties','laski','onepole','sulia','chaskele'].includes(game);
+ const sport=['football','fourcorners','penalties','laski','onepole','sulia','abedemu','chaskele'].includes(game);
  const rhythm=['ampe','skipping','kyekyekule','pempenaa','mbobagor','antoakyire','tumatu','zanzama'].includes(game);
  const chase=['stay','pilolo','pampanaa','shooting','police','sansankroma','tyre'].includes(game);
  return {bed:sport?'crowd':'street',ambienceScale:sport?.55:rhythm?.32:chase?.42:.2,footstep:surface==='grass'?'grass':surface==='concrete'||venue==='veranda'?'concrete':'step',small:['counters','alikoto','alasa','oware','ludo','dame','kpitinge'].includes(game)};

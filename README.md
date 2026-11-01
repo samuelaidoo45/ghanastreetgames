@@ -1,6 +1,6 @@
 # Ghana Street Games — 3D Arcade
 
-A fullscreen Three.js arcade with 33 playable interpretations of Ghanaian street and childhood games. Its textured compound, rigged human players, natural sky lighting, gold lettering, woven trim and parchment menus take visual direction from Four Corners GH. No proprietary Four Corners code, custom models or artwork are included. The three football modes use independently converted Gameplay Football assets from the same licensed upstream family identified in the reference.
+A fullscreen Three.js arcade with 34 playable interpretations of Ghanaian street and childhood games. Its textured compound, rigged human players, natural sky lighting, gold lettering, woven trim and parchment menus take visual direction from Four Corners GH. No proprietary Four Corners code, custom models or artwork are included. The three football modes use independently converted Gameplay Football assets from the same licensed upstream family identified in the reference.
 
 ## Run and verify
 
@@ -28,7 +28,7 @@ The runtime and fonts are vendored in `dist`; the hosted game requires no extern
 
 ## Cultural accuracy and scope
 
-This is a growing collection of 33 games, not an exhaustive census of every Ghanaian children's game. Digital scoring, timers and several mechanics are original arcade adaptations. Research sources remain accessible in Rules & stories.
+This is a growing collection of 34 games, not an exhaustive census of every Ghanaian children's game. Digital scoring, timers and several mechanics are original arcade adaptations. Research sources remain accessible in Rules & stories.
 
 **Sulia for Beatings** now follows the nutmeg-and-score rule supplied by the user. The ball must cross between a rival’s legs; the nutmegged player receives a brief non-graphic chase-and-tag reaction. The five-player, five-point/two-minute preset is a digital adaptation. **Shooting/Pampanana**, One Pole, Laski and the rubber-band Tyre variant follow the local rules supplied by the user; published corroboration and selected digital presets are distinguished in the rules.  Sources document remembered and present-day practices; they do not establish nationwide current participation.
 
@@ -41,7 +41,7 @@ REA was attempted against the reference's public bundle in the initial investiga
 - `dist/goal-markers.js`, `counter-assets.js`, `venue-details.js`: original street equipment and detailed neighbourhood geometry.
 - `dist/sulia.js`: geometric nutmeg scoring and chase/restart phases.
 - `dist/football-assets.js`, `football-physics.js`: reusable upstream goal/ball/surface assets, continuous frame collisions, shootout rules and ball-aware cameras.
-- `dist/stay.js`, `football.js`, `football-variants.js`, `neighbourhood-games.js`, `venues.js`, `traditional.js`, `modes.js`, `motion-modes.js`, `board-modes.js`: 33 game adaptations.
+- `dist/stay.js`, `football.js`, `football-variants.js`, `neighbourhood-games.js`, `venues.js`, `traditional.js`, `modes.js`, `motion-modes.js`, `board-modes.js`: 34 game adaptations.
 - `dist/audio.js`, `replay.js`: game-specific sound profiles and local gameplay video.
 - `dist/assets/CREDITS.txt`: media attribution and licence provenance.
 - `dist/board-rules.js`, `oware.js`: pure board rules.
@@ -118,7 +118,7 @@ The 3D engine loads only after Play, with loading progress. Menus, paused games 
 
 ## Private friend rooms and saved progress (4.15)
 
-All 33 games have private rooms and completion points. A player profile is created automatically on the first round. Open **Play with friends** to rename it, save the private recovery key, create a room, or join with an eight-character code. The host starts after the game's minimum human count joins. No computer opponents fill vacant seats.
+All 34 games have private rooms and completion points. A player profile is created automatically on the first round. Open **Play with friends** to rename it, save the private recovery key, create a room, or join with an eight-character code. The host starts after the game's minimum human count joins. No computer opponents fill vacant seats.
 
 Football, chase and group games share one live simulation. Counters Ball, One Pole and other alternating games share the same match. Individual skill games (including Tumatu, Alikoto, Kpitinge, Numbers, Skipping, Zanzama, Tyre and pretend play) give each friend a live turn while everyone watches the shared arena. Turn rounds last at most 90 seconds. Street football requires equal teams; four or more friends include human keepers. Four Corners requires four friends.
 
@@ -148,3 +148,13 @@ Afternoon lighting, contact shadows, worn sand/concrete/grass surfaces, painted 
 Static textured architecture is batched by material and source texture, with UV repeats baked into vertices. Low graphics keeps its reduced asset downloads and avoids shadow maps/postprocessing; a single baked building-shadow layer and small shared player shadows provide grounding. Original surface detail is generated locally using cached 512px textures, without additional downloads.
 
 Verification: 339 tests, 50 module checks, browser rendering of 33 games plus three surface variants at both high and low quality, and desktop/390px touch-viewport visual checks. Browser emulation is not a physical-phone frame-rate benchmark. Reproduce the scene sweep by temporarily copying `research/graphics-review-v417.html` to `dist/_graphics-review.html`, running the local server and clicking Render; remove that local QA page before deployment.
+
+## 4.18.0 — Central roles, kick-offs and Ab3d3mu
+
+Street football now has explicit centre-back and defensive-midfielder roles from three outfield players, with central cover, support runs, pressing and recovery. Three-player presets remain 2–1 / 1–2. Both small and big poles begin at the centre spot and the conceding team restarts there after a goal. The ball waits for a legal kick-off instead of starting in a defender’s possession away from centre.
+
+Press **E** without possession to close down and challenge; steering overrides the assist. **Space** tackles with a cooldown and facing check. Big-poles **G / Save** triggers a timed keeper dive with physical reach and recovery, not a guaranteed save. Save stays on the primary mobile pad; Switch, Low shot and Chip remain in More. Human keeper seats use G too.
+
+**Ab3d3mu** adds passing around one middle defender, physical ground/lob passes, interceptions and role swaps. Space passes or tackles; E selects a teammate; Q calls for a pass or presses; R lobs. The two-minute scoring preset awards one point per completed pass and two for an interception. Private rooms support 3–6 real players with shared scores and persistent completion points. The group camera keeps passing options in view on portrait phones. These scoring, turnover and timer conventions are digital adaptations of the core rules supplied by the user.
+
+Verification details: `research/verification-v418.md`.

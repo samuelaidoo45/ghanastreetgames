@@ -7,6 +7,14 @@ const clamp=(v,a,b)=>Math.max(a,Math.min(b,v));
 export function formationFor(count,style='balanced'){
  const n=clamp(Math.round(Number(count)||3),1,7),key=shapes[style]?style:'balanced',lines=shapes[key][n-1],slots=[];
  lines.forEach((number,row)=>{for(let i=0;i<number;i++)slots.push({role:lines.length===1?'All-rounder':row===0?'Defender':row===lines.length-1?'Forward':'Midfielder',x:lines.length===1?0:-.58+row/(lines.length-1)*1.05,z:number===1?0:(i/(number-1)*2-1)*.65,row});});
+ // A central defensive spine exists even in small-sided football. Three-a-side
+ // keeps the requested 2–1 / 1–2 shape, with an advanced DM rather than 1–1–1.
+ if(n>=2){const back=slots.filter(s=>s.row===0);back.forEach((s,i)=>{s.role='Centre-back';s.position='CB';s.x=-.62;s.z=back.length===1?0:(i/(back.length-1)*2-1)*.3;});}
+ if(n>=3){let dm=slots.find(s=>s.row>0&&s.row<lines.length-1&&Math.abs(s.z)<.1)||slots.find(s=>s.row===1);if(n===3)dm=slots[1];dm.role='Defensive midfielder';dm.position='DM';dm.x=-.14;dm.z=0;
+  for(const s of slots)if(s!==dm&&s.row===dm.row&&Math.abs(s.z)<.15)s.z=.5;
+ }
+ const backs=slots.filter(s=>s.position==='CB');backs.forEach((s,i)=>s.z=backs.length===1?0:(i/(backs.length-1)*2-1)*.3);
+ for(const s of slots){s.position??=s.role==='Forward'?'FW':s.role==='Midfielder'?'CM':'ALL';}
  return {style:key,label:n===1?'Solo':lines.join('–'),slots};
 }
 const dist=(a,b)=>Math.hypot(a.x-b.x,a.z-b.z);
@@ -36,18 +44,19 @@ export function planTeam({players,opponents,ball,carrier,receiver,controlled,hal
   if(own){
    // Attacking runs respond to ball progress, with one player screening a counter.
    if(p===guard)x=Math.min(bx-6,-halfX*.15);
-   else if(slot.role==='Defender')x=bx-3.8;
+   else if(slot.role==='Centre-back')x=bx-3.8;
+   else if(slot.role==='Defensive midfielder'){x=bx-3;z=clamp(ball.z*.18,-halfZ*.22,halfZ*.22);}
    else if(slot.role==='Forward')x=Math.max(slot.x*halfX,bx+3.8);
    else x=bx+(index%2?2.4:-2.8);
    z=slot.z*halfZ*.8+ball.z*.25+Math.sin(now*.85+index*1.7)*1.1;
-   if(slot.z===0)z+=(index%2?1:-1)*2.5;
+   if(slot.role==='Centre-back')z=slot.z*halfZ+clamp(ball.z*.12,-.7,.7);else if(slot.role==='Defensive midfielder')z=clamp(ball.z*.2,-halfZ*.22,halfZ*.22);else if(slot.z===0)z+=(index%2?1:-1)*2.5;
    // Give-and-go: the player who just released a pass continues upfield.
    if(runner===p)x=Math.max(x,bx+2.8);
    duty='Support';
   }else if(carrier){
    const mark=threats[cover++%Math.max(1,threats.length)];
    if(mark){x=x*.35+(mark.position.x*direction-1.5)*.65;z=z*.3+mark.position.z*.7;}
-   if(slot.role==='Defender')x=Math.min(x,bx-2.2);
+   if(slot.role==='Centre-back'){x=Math.min(x,bx-2.2);z=slot.z*halfZ+clamp(ball.z*.18,-1.2,1.2);}if(slot.role==='Defensive midfielder'){x=Math.min(x,bx-1.2);z=clamp(ball.z*.35,-halfZ*.3,halfZ*.3);}
   }
   const target={x:clamp(x,-halfX+1.5,halfX-2)*direction,z:clamp(z,-halfZ+1,halfZ-1),duty};
   if(dist(target,ball)<2.5)target.z=clamp(target.z+(slot.z>=0?2.8:-2.8),-halfZ+1,halfZ-1);

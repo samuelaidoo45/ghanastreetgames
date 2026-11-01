@@ -10,7 +10,7 @@ export function liveAdapter(m,room){
  const truncate=(array,count)=>{array.slice(count).forEach(p=>p.visible=false);return array.slice(0,count);};
  const take=(array,count=n)=>{const p=truncate(array,count);while(p.length<count)p.push(m.player((p.length-count/2)*1.2,7,0x458477));return p;};
  if(id==='football'){m.selected=0;for(let i=0;i<m.teamSize;i++)people.push(m.teams[0][i],m.teams[1][i]);people.push(...m.keepers);}
- else if(['fourcorners','onepole','laski','sulia','stay','pampanaa','shooting'].includes(id))people=id==='laski'?[...m.players.slice(0,n-1),m.keeper]:take(m.players);
+ else if(['abedemu','fourcorners','onepole','laski','sulia','stay','pampanaa','shooting'].includes(id))people=id==='laski'?[...m.players.slice(0,n-1),m.keeper]:take(m.players);
  else if(id==='penalties')people=[m.shooter,m.keeper];
  else if(id==='chaskele')people=[m.you,m.thrower];
  else if(id==='pilolo')people=take([m.you,...m.seekers]);
@@ -32,8 +32,8 @@ export function liveAdapter(m,room){
  if(id==='pilolo'){m.seekers=people.slice(1);m.scores=Array(3).fill(0);}
  // No movement happens unless that seat sends input. Physical collisions are retained.
  function movement(dt){
-  const moving=new Set(['football','fourcorners','laski','sulia','stay','chaskele','pampanaa','shooting','pilolo','sansankroma','police']);if(!moving.has(id))return;
-  people.forEach((p,i)=>{if(!p.visible)return;const v=m.liveInputs[i]||neutral;let x=v.x,z=v.z;const len=Math.hypot(x,z)||1;if(len>1){x/=len;z/=len;}const speed=v.sprint?6.5:4.5,old=p.position.clone();
+  const moving=new Set(['abedemu','football','fourcorners','laski','sulia','stay','chaskele','pampanaa','shooting','pilolo','sansankroma','police']);if(!moving.has(id)||(id==='football'&&(m.pause>0||m.kickoff)))return;
+  people.forEach((p,i)=>{if(!p.visible)return;const v=m.liveInputs[i]||neutral;let x=v.x,z=v.z;if(id==='football')({x,z}=m.pressingInput(p,{x,z}));if(id==='abedemu'&&i===m.middleIndex&&m.age<p.userData.pressUntil){if(Math.hypot(x,z)>.2)p.userData.pressUntil=0;else{const dx=m.b.position.x-p.position.x,dz=m.b.position.z-p.position.z,d=Math.hypot(dx,dz);x=d>.5?dx/d:0;z=d>.5?dz/d:0;if(d<1.05)m.tackle(i);}}const len=Math.hypot(x,z)||1;if(len>1){x/=len;z/=len;}const speed=v.sprint?6.5:4.5,old=p.position.clone();
    if(id==='chaskele'&&i===0)z=0;
    if(id==='laski'&&i===n-1)z=0;
    const velocity=new THREE.Vector3(x*speed,0,z*speed);if(id==='fourcorners'&&m.age<(p.userData.burstUntil||0))velocity.copy(p.userData.velocity);
@@ -42,16 +42,17 @@ export function liveAdapter(m,room){
    p.position.x=clamp(p.position.x,-bound.x,bound.x);p.position.z=clamp(p.position.z,-bound.z,bound.z);
    if(id==='laski'&&i===n-1){p.position.z=-8.2;p.position.x=clamp(p.position.x,-2.6,2.6);}
    if(id==='chaskele'&&i===0)p.position.z=4;
-   if((id==='pampanaa'||id==='shooting')&&Number.isFinite(v.heading))p.rotation.y=v.heading;else if(x||z)p.rotation.y=Math.atan2(x,z);p.userData.run=distance(old,p.position)/Math.max(dt*6,.001);p.userData.stayVelocity?.copy(p.position).sub(old).divideScalar(dt||1);
+   if((id==='pampanaa'||id==='shooting')&&Number.isFinite(v.heading))p.rotation.y=v.heading;else if(x||z)p.rotation.y=Math.atan2(x,z);p.userData.run=distance(old,p.position)/Math.max(dt*6,.001);p.userData.velocity?.copy(p.position).sub(old).divideScalar(dt||1);p.userData.stayVelocity?.copy(p.position).sub(old).divideScalar(dt||1);
   });
  }
  function target(i,exclude=i){const p=people[i],candidates=people.map((q,j)=>({j,q,d:distance(p,q)})).filter(o=>o.j!==exclude&&o.q.visible);return candidates.sort((a,b)=>a.d-b.d)[0]?.j;}
  function ballAction(i,a){const p=people[i],power=a.power??.4;
   if(id==='football'){
-   if(m.pause>0)return;if(a.action==='dive'&&p.userData.keeper){p.userData.saveUntil=m.age+.5;p.userData.diveSide=Math.sign(a.z)||1;p.userData.lean=-p.userData.diveSide*.8;return;}if(m.possessor!==p&&distance(p,m.b)>1.1){if(a.action==='shoot')m.tackle(p);return;}
+   if(m.pause>0)return;if(a.action==='dive'&&p.userData.keeper){m.keeperSave(p,a.z);return;}if(m.kickoff&&m.kickoff.taker!==p)return;if(m.possessor!==p){if(a.action==='shoot')m.tackle(p);else if(a.action==='pass')m.press(p);return;}if(!['shoot','pass','chip'].includes(a.action))return;
    const team=p.userData.team,direction=team? -1:1;
    if(a.action==='pass'){const mate=people.filter(q=>q!==p&&q.userData.team===team).sort((x,y)=>distance(p,x)-distance(p,y))[0];if(mate)m.kick(p,mate.position,12);}
    else{const aim={x:direction*(m.halfX+1),z:clamp((Math.abs(a.z)>.1?a.z:Math.sin(p.rotation.y+Math.PI/2))*(m.goalWidth*.45),-m.goalWidth*.45,m.goalWidth*.45)};m.kick(p,aim,14+power*16,true);m.velocity.y=a.action==='chip'?5:1+power*2.2;}
+  }else if(id==='abedemu'){m.actionFor(i,a.action,power,a);
   }else if(id==='fourcorners'){
    if(m.phase!=='play')return;
    if(a.action==='target'){m.selectTarget(i);return;}
@@ -95,10 +96,11 @@ export function liveAdapter(m,room){
   m.people=people;m.stones.slice(n).flat().forEach(o=>o.visible=false);m.stones=m.stones.slice(0,n);m.piles=Array(n).fill(1);customAction=(i,a)=>{if(a.action==='pass'&&(clock<.32||clock>1.22)&&!passed.has(i)){passed.add(i);people[i].userData.pose='reach';}};customUpdate=dt=>{clock+=dt;if(clock>=1.5){clock-=1.5;beat++;if(beat>1)people.forEach((p,i)=>{if(passed.has(i)){scores[i]++;m.piles[i]=Math.max(1,m.piles[i]-1);}else m.piles[i]++;p.userData.pose='knees';});passed.clear();m.ui.sound('clap');if(beat>=17)return m.finish('PASSING CIRCLE COMPLETE','Human passes on the shared beat.');}m.stones.forEach((pile,i)=>pile.forEach((stone,j)=>stone.visible=j<Math.min(3,m.piles[i])));m.status('PASS ON THE CLAP',`${Math.min(16,beat)} / 16 BEATS`);};
  }
  function controls(slot){if(room.type==='turns')return m.baseActions;
-  if(id==='football'&&people[slot]?.userData.keeper)return[button('shoot','Throw / clear','Space',true),button('pass','Roll to teammate','E'),button('dive','Dive','R')];
-  if(id==='football')return[button('shoot','Shoot / tackle','Space',true),button('pass','Pass','E'),button('chip','Chip','R',true)];
+  if(id==='football'&&people[slot]?.userData.keeper)return[button('shoot','Throw / clear','Space',true),button('pass','Roll to teammate','E'),button('dive','Save','G')];
+  if(id==='football')return[button('shoot','Shoot / tackle','Space',true),button('pass','Pass / press','E'),button('chip','Chip','R',true)];
   if(id==='fourcorners')return[button('kick','Shoot / tackle','Space',true),button('target','Next goal','E'),...(!m.oneTouch?[button('feint','Dodge','Q')]:[]),button('chip','Chip','R')];
   if(id==='laski'){if(slot===n-1)return[button('throw','Throw in'),button('dive','Dive','E')];if(m.phase==='choose')return m.active.flatMap((yes,i)=>yes&&i!==slot?[{...button('out-'+i,'Out: '+room.players[i]?.name,String(i+1)),disabled:slot!==m.lastScorer}]:[]);return[button('shoot','Shoot / tackle','Space',true),button('volley','Volley','E')];}
+  if(id==='abedemu')return slot===m.middleIndex?[button('pass','Tackle'),button('press','Press','Q')]:[button('pass','Pass','Space',true),button('target','Next player','E'),button('press','Call for ball','Q'),button('lob','Lob pass','R')];
   if(id==='sulia')return[button('nutmeg','Nutmeg / tackle','Space',true)];
   if(id==='stay')return[button('ball',slot===m.throwerIndex?(m.phase==='held'?'Throw':'Catch'):'Dodge'),button('play',slot===m.throwerIndex?'Next target':'Kick loose ball','E')];
   if(id==='penalties')return slot===m.turn?[button('shoot','Shoot','Space',true)]:[button('left','Dive left','Q'),button('center','Centre'),button('right','Dive right','E')];
@@ -115,9 +117,9 @@ export function liveAdapter(m,room){
  }
  const neutralInput={target:null,sprint:false,vector:()=>({x:0,z:0})};
  return {people,controls,
- scores(){if(id==='football')return people.map(p=>m.scores[p.userData.team]);if(['penalties','onepole','counters','alasa','rubberband','pilolo'].includes(id))return m.scores.slice(0,n);if(id==='fourcorners')return m.active.map((alive,i)=>alive?10+m.lives[i]:0);if(id==='laski')return people.map((_,i)=>i===n-1?0:m.active[i]?3:0);if(id==='sulia')return m.points;if(id==='stay')return m.transfers.slice(0,n);if(id==='chaskele')return[m.score,m.conceded];if(room.type==='turns'){turnScores[room.state.seat]=Math.max(0,m.score||0);return turnScores;}return scores;},
+ scores(){if(id==='football')return people.map(p=>m.scores[p.userData.team]);if(['penalties','onepole','counters','alasa','rubberband','pilolo'].includes(id))return m.scores.slice(0,n);if(id==='fourcorners')return m.active.map((alive,i)=>alive?10+m.lives[i]:0);if(id==='laski')return people.map((_,i)=>i===n-1?0:m.active[i]?3:0);if(id==='sulia'||id==='abedemu')return m.points;if(id==='stay')return m.transfers.slice(0,n);if(id==='chaskele')return[m.score,m.conceded];if(room.type==='turns'){turnScores[room.state.seat]=Math.max(0,m.score||0);return turnScores;}return scores;},
  action(i,a){if(!people[i]&&room.type!=='turns')return;const p=people[i];if(p&&!p.visible&&['fourcorners','laski','sulia','stay','pampanaa','shooting'].includes(id))return;if(room.type==='turns'){if(i!==room.state.seat)return;m.input=inputFor(i);m.charge=m.age-(a.power??.4);if(a.point)original.hit({point:new THREE.Vector3(a.point.x,a.point.y,a.point.z),id:a.pick});if(a.action)original.action(a.action);return;}
-  if(customAction){customAction(i,a);return;}if(['football','fourcorners','laski','sulia','stay'].includes(id)){if(a.action)ballAction(i,a);return;}
+  if(customAction){customAction(i,a);return;}if(['abedemu','football','fourcorners','laski','sulia','stay'].includes(id)){if(a.action)ballAction(i,a);return;}
   if(id==='pampanaa'||id==='shooting'){if(a.action!=='shoot'||m.phase!=='play'||!m.alive[i]||m.age<(p.userData.liveCool||0))return;p.userData.liveCool=m.age+.8;const j=people.findIndex((_,j)=>m.canSee(i,j,13,.85));m.call(i);if(j>=0)m.eliminate(j,i);return;}
   if(id==='pilolo'){if(a.action!=='search')return;if(m.phase!=='search')return;if(p.userData.liveCarry){if(distance(p,m.home)<1.5){p.userData.liveCarry=null;m.endRound(i);}return;}const q=m.places.find(q=>!q.opened&&distance(p,q)<1.5);if(q){m.open(q);if(q.has){q.has=false;p.userData.liveCarry=q.stick;q.stick.visible=true;}}return;}
   if(id==='penalties'){if(i===m.turn&&a.point&&m.phase==='aim'){m.aimX=clamp(a.point.x,-3.3,3.3);m.aimY=clamp(a.point.y,.15,3.1);}if(i===m.turn&&a.action==='shoot'&&m.phase==='aim')m.launch(m.aimX,m.aimY,a.power??.5);else if(i!==m.turn&&['left','center','right'].includes(a.action)){m.dive=a.action==='left'?-1:a.action==='right'?1:2;m.diveActive=true;m.diveAge=0;}return;}
