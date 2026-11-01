@@ -29,3 +29,8 @@ test('launch music starts while slower effect downloads are still pending',async
  const oldFetch=globalThis.fetch;globalThis.AudioContext=Context;let release;const rest=new Promise(r=>release=r);globalThis.fetch=async url=>{if(!url.endsWith('menu-loop.mp3'))await rest;return {ok:true,arrayBuffer:async()=>new ArrayBuffer(2)};};
  const s=new Soundscape();try{const loading=s.unlock();for(let i=0;i<15&&!s.loops.has('music');i++)await new Promise(r=>setImmediate(r));assert.ok(s.loops.has('music'));assert.equal(s.buffers.kick,undefined);release();await loading;assert.ok(s.buffers.kick);}finally{release();globalThis.fetch=oldFetch;s.dispose();}
 });
+
+test('blocked automatic launch audio recovers on the first permitted interaction without duplicate music',async()=>{
+ const s=sound();class BlockedContext extends Context{resume(){this.resumed=true;if(!this.allowed)return Promise.reject(new Error('Autoplay blocked'));this.state='running';return Promise.resolve();}}globalThis.AudioContext=BlockedContext;
+ try{await s.unlock();assert.equal(s.context.state,'suspended');const source=s.loops.get('music').source;s.context.allowed=true;await s.unlock();assert.equal(s.context.state,'running');assert.equal(s.loops.get('music').source,source);s.setEnabled(false);assert.equal(s.master.gain.value,0);}finally{s.dispose();globalThis.AudioContext=Context;}
+});

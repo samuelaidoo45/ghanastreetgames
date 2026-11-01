@@ -4,7 +4,7 @@ import {THREE,box,cylinder,sphere} from './world.js';
 import {surface} from './surfaces.js';
 import {detailedHome,neighbourhoodDetails,streetCourtDetails,compactVenueGeometry,footballStreetscape,venueTree,venueLife} from './venue-details.js';
 
-export const venueFor=id=>['pampanaa','shooting','pilolo'].includes(id)?'neighbourhood':id==='rubberband'?'wall':id==='onepole'?'lane':['laski','stay'].includes(id)?'streetcourt':['fourcorners','penalties','football','sulia','abedemu'].includes(id)?'pitch':['oware','dame','ludo','counters','chempe','pretend'].includes(id)?'veranda':['alikoto','kpitinge','alasa'].includes(id)?'sand':id==='tyre'?'lane':'schoolyard';
+export const venueFor=id=>['pampanaa','shooting','pilolo'].includes(id)?'neighbourhood':id==='rubberband'?'wall':id==='onepole'?'lane':['laski','stay'].includes(id)?'streetcourt':['fourcorners','penalties','football','sulia','abedemu'].includes(id)?'pitch':['oware','dame','ludo','counters','chempe','pretend'].includes(id)?'veranda':['alikoto','kpitinge','alasa','highjump','agawowa'].includes(id)?'sand':id==='tyre'?'lane':'schoolyard';
 export function clearVenue(world){
  if(world.venue){world.venue.traverse(o=>{if(o.isInstancedMesh)o.dispose();o.geometry?.dispose();for(const m of Array.isArray(o.material)?o.material:[o.material]){if(!m)continue;for(const k of ['map','normalMap','roughnessMap'])if(m[k]&&!m[k].userData.sharedAsset)m[k].dispose();m.dispose();}});world.scene?.remove(world.venue);}
  world.venue=null;world.venueShadow=null;if(world.environment)world.environment.visible=true;

@@ -30,13 +30,13 @@ export class Soundscape{
  constructor(){this.enabled=true;this.active=false;this.scene='menu';this.venue='pitch';this.game='';this.surface='dirt';this.visible=true;this.volumes={music:.55,ambience:.7,effects:.85};this.buffers={};this.raw={};this.context=null;this.loops=new Map();this.initializing=null;}
  preload(){return this.preloading??=(()=>{const downloads=new Map();return Promise.all(Object.entries(FILES).map(async([key,name])=>{try{if(!downloads.has(name))downloads.set(name,fetch('assets/audio/'+name).then(r=>r.ok?r.arrayBuffer():null));const data=await downloads.get(name);if(data){this.raw[key]=data;if(key==='music'&&this.context){this.buffers.music=await this.context.decodeAudioData(data.slice(0));this.sync();}}}catch{}}));})();}
  unlock(){
-  if(this.context){const resumed=this.context.resume();return (this.initializing||Promise.resolve()).then(()=>resumed).then(()=>this.sync());}
+  if(this.context){const resumed=this.context.resume().catch(()=>{});return (this.initializing||Promise.resolve()).then(()=>resumed).then(()=>this.sync());}
   const Context=globalThis.AudioContext||globalThis.webkitAudioContext;
   if(!Context)return Promise.resolve(false);
   try{this.context=new Context();}catch{return Promise.resolve(false);}
   const c=this.context;this.master=c.createGain();this.master.gain.value=0;this.effects=c.createGain();this.effects.connect(this.master);this.limiter=c.createDynamicsCompressor();this.limiter.threshold.value=-5;this.limiter.knee.value=12;this.limiter.ratio.value=4;this.master.connect(this.limiter);this.limiter.connect(c.destination);this.recordDestination=c.createMediaStreamDestination();this.limiter.connect(this.recordDestination);
-  // Resume synchronously inside the first trusted click, before decoding awaits.
-  const resumed=c.resume();
+  // Resume immediately to retain tap activation; a boot attempt may be blocked.
+  const resumed=c.resume().catch(()=>{});
   this.initializing=(async()=>{await this.preload();const decoded=new Map();await Promise.all(Object.entries(this.raw).map(async([key,data])=>{try{if(this.buffers[key])return;const file=FILES[key]||key;if(!decoded.has(file))decoded.set(file,c.decodeAudioData(data.slice(0)));this.buffers[key]=await decoded.get(file);}catch{}finally{delete this.raw[key];}}));await resumed;this.sync();return true;})().catch(()=>false).finally(()=>this.initializing=null);
   return this.initializing;
  }

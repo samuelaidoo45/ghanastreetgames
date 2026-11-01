@@ -31,7 +31,7 @@ const labels={
 export function actionLabel(label){return labels[label]||String(label).replace(/^Eliminate /,'Out: ');}
 export function actionIcon(action){
  const text=(action.id+' '+action.label).toLowerCase();
- const name=/search|collect/.test(text)?'search':/target|aim|lock/.test(text)?'target':/shield|tackle|save/.test(text)?'shield':/switch|next|piece|prev/.test(text)?'swap':/power|strength/.test(text)?'tune':/chip|hop|jump|volley/.test(text)?'jump':/sprint|chase|run/.test(text)?'run':/roll/.test(text)?'dice':/left|right|foot/.test(text)?'foot':/pass|throw|flick|release/.test(text)?'arrow':/shoot|kick|nutmeg|strike/.test(text)?'ball':/dodge|feint/.test(text)?'turn':/select|sit|yes|claim/.test(text)?'check':'hand';
+ const name=/search|collect/.test(text)?'search':/target|aim|lock/.test(text)?'target':/shield|tackle|save/.test(text)?'shield':/switch|next|piece|prev/.test(text)?'swap':/power|strength/.test(text)?'tune':/chip|hop|jump|volley/.test(text)?'jump':/sprint|chase|run/.test(text)?'run':/roll/.test(text)?'dice':/left|right|foot|land/.test(text)?'foot':/pass|throw|flick|release/.test(text)?'arrow':/shoot|kick|nutmeg|strike/.test(text)?'ball':/dodge|feint|tuck|pike|layout/.test(text)?'turn':/select|sit|yes|claim/.test(text)?'check':'hand';
  return `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="${paths[name]}"/></svg>`;
 }
 export function padLayout(game,actions){

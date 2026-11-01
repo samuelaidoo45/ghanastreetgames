@@ -3,6 +3,8 @@ const movement=new Set(['abedemu','football','fourcorners','laski','pampanaa','s
 const aiming=new Set(['penalties','onepole','rubberband','chaskele','kpitinge','alasa']);
 const sprinting=new Set([...movement].filter(id=>id!=='zanzama'));
 export const touchHints={
+ highjump:'Tap Run up, then Jump on the gold mark. Tap Land just before touching the sand. Clear the palm bar; it rises after each round.',
+ agawowa:'Choose your style, Run up, then Jump on the inclined block. Tuck to rotate; Open when your feet point down. Tap Land just before the sand.',
  abedemu:'Pass around the middle player. Tap Pass or hold for power; Target chooses a teammate. In the middle, tap Press to close the passing lane, then Tackle. Steer to take over. Close pressure can force a bad pass or loose touch. An interception swaps the last toucher into the middle.',
  football:'Keeper save is beside Shoot in big-poles matches. Without the ball, Pass becomes Press. Move with the stick; push to its edge to sprint. Hold Shoot, then release. Low shot, Chip, Switch and Sprint are all on screen.',
  fourcorners:'Move to collect the ball. Tap Shoot for a quick strike, or hold for power. Without the ball it tackles. Target changes goal; Dodge slips past a challenge. Tap Chip for a lifted shot.',

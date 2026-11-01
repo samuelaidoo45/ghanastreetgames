@@ -5,7 +5,7 @@ const button=(id,label,key='Space',charge=false)=>({id,label,key,charge});
 export function liveAdapter(m,room){
  const id=room.game,n=room.players.length;let people=[],scores=Array(n).fill(0),customUpdate=null,customAction=null;
  const original={update:m.update.bind(m),action:m.action.bind(m),hit:m.hit.bind(m),finish:m.finish.bind(m)};
- m.networked=true;m.online=true;m.baseActions=[...m.actions];m.settings.opponent='local';m.liveInputs=Array.from({length:n},()=>({...neutral}));
+ m.networked=true;m.online=true;m.turnOwner=room.state.seat;m.baseActions=[...m.actions];m.settings.opponent='local';m.liveInputs=Array.from({length:n},()=>({...neutral}));
  const inputFor=i=>{const v=m.liveInputs[i]||neutral;return{...v,target:null,vector:()=>({x:v.x,z:v.z})};};
  const truncate=(array,count)=>{array.slice(count).forEach(p=>p.visible=false);return array.slice(0,count);};
  const take=(array,count=n)=>{const p=truncate(array,count);while(p.length<count)p.push(m.player((p.length-count/2)*1.2,7,0x458477));return p;};

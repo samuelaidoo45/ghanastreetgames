@@ -1,5 +1,9 @@
 # Ghana Street Games — 3D Arcade
 
+## v4.23.0 — High Jump and Agawowa
+
+High Jump adds palm-wood uprights, a rising bar and sand landings. Agawowa adds the inclined block, three airborne styles and timed feet-first landings, with an optional somersault-over-the-bar combination. Both follow the player’s descriptions, with explicit digital judging and three attempts each. Play with CPU opponents, 2–4 friends sharing a phone, or 2–8 humans taking turns in a private room. Both games earn points and appear in the leaderboard. Launch audio attempts automatic playback, with a first-tap fallback where browsers require it. Verification: `research/verification-v423.md`.
+
 ## v4.22.0 — Mobile match presentation and Four Corners play
 
 A cleaner venue-first setup with a friend-play shortcut, direct CPU level selection, readable setting rows and a sticky Play button. All phone actions stay visible with round, translucent controls. Capable phones now use balanced rendering with antialiasing, directional shadows and compressed surface detail; weaker devices retain a lighter preset and automatic fallback. Launch music starts after the first tap without waiting for every effect file.
@@ -14,7 +18,7 @@ Every game action now appears directly on the phone action pad, including Sprint
 
 The launch screen and game menu now include Install game. Supported browsers offer native PWA installation; iPhone and iPad users get Safari home-screen instructions. Includes standalone app metadata, original Ghana-colour icons, and a small offline reconnect page. Games and multiplayer still require an internet connection; the service worker never caches game code or account/API traffic.
 
-A fullscreen Three.js arcade with 34 playable interpretations of Ghanaian street and childhood games. Its textured compound, rigged human players, natural sky lighting, gold lettering, woven trim and parchment menus take visual direction from Four Corners GH. No proprietary Four Corners code, custom models or artwork are included. The three football modes use independently converted Gameplay Football assets from the same licensed upstream family identified in the reference.
+A fullscreen Three.js arcade with 36 playable interpretations of Ghanaian street and childhood games. Its textured compound, rigged human players, natural sky lighting, gold lettering, woven trim and parchment menus take visual direction from Four Corners GH. No proprietary Four Corners code, custom models or artwork are included. The three football modes use independently converted Gameplay Football assets from the same licensed upstream family identified in the reference.
 
 ## Run and verify
 
@@ -42,7 +46,7 @@ The runtime and fonts are vendored in `dist`; the hosted game requires no extern
 
 ## Cultural accuracy and scope
 
-This is a growing collection of 34 games, not an exhaustive census of every Ghanaian children's game. Digital scoring, timers and several mechanics are original arcade adaptations. Research sources remain accessible in Rules & stories.
+This is a growing collection of 36 games, not an exhaustive census of every Ghanaian children's game. Digital scoring, timers and several mechanics are original arcade adaptations. Research sources remain accessible in Rules & stories.
 
 **Sulia for Beatings** now follows the nutmeg-and-score rule supplied by the user. The ball must cross between a rival’s legs; the nutmegged player receives a brief non-graphic chase-and-tag reaction. The five-player, five-point/two-minute preset is a digital adaptation. **Shooting/Pampanana**, One Pole, Laski and the rubber-band Tyre variant follow the local rules supplied by the user; published corroboration and selected digital presets are distinguished in the rules.  Sources document remembered and present-day practices; they do not establish nationwide current participation.
 
