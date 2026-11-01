@@ -1,0 +1,43 @@
+/* Match day: a venue photograph, the opponents, then short match choices. */
+#setup-dialog{width:min(860px,calc(100vw - 24px));max-width:860px;background:#2b2016;color:#f2dfb7;border:0;border-radius:24px;overflow-y:auto;scrollbar-width:thin;scrollbar-color:#b89b65 #2b2016}
+#setup-dialog>.dialog-close{position:sticky;top:16px;left:18px;float:left;margin:16px 0 0 18px;width:46px;height:46px;border-radius:50%;background:#f2dfb7;box-shadow:0 4px 0 #120c08;font-size:30px}
+.setup-header{min-height:80px;display:flex;align-items:center;justify-content:center;padding:18px 68px 12px 12px}
+#setup-title{color:#fff0d0;font:24px/1.1 Bungee,sans-serif;text-align:center}
+#setup-dialog .setup-preview{height:230px;margin:0 20px;border-radius:20px;border:2px solid #5b4328;box-shadow:0 7px 0 #170f09;isolation:isolate}
+#setup-dialog .setup-preview:after{background:linear-gradient(transparent 35%,#201307ed);z-index:0;pointer-events:none}
+.setup-venue-copy{position:absolute;bottom:18px;left:20px;right:14px;z-index:1;display:grid;gap:5px}
+#setup-venue-name{font:24px/1.1 Bungee,sans-serif;color:#f4b839}
+#setup-mode{font:600 14px/1.3 Shantell,sans-serif;color:#fff0d0}
+#setup-change-venue{position:absolute;z-index:2;right:12px;top:12px;min-height:44px;padding:9px 15px;color:#f5bd46;background:#23180bd9;border:2px solid #f5bd46}
+#setup-dialog .dialog-content{padding:22px 20px 18px}
+#setup-tagline{display:none}
+.setup-versus{display:grid;grid-template-columns:1fr 40px 1fr;align-items:center;background:#f2dfb7;color:#30200e;border-radius:20px;border:2px solid #614523;padding:16px;gap:10px;margin-bottom:16px}
+.setup-versus>div{display:grid;justify-items:center;gap:6px;font:14px Bungee,sans-serif}.setup-versus i{font:italic 28px Bungee,sans-serif;color:#b14a2e;text-align:center}
+.versus-player,.versus-cpu{width:52px;height:52px;border-radius:50%;display:grid;place-items:center;background:var(--red);color:#f2dfb7;font:30px sans-serif;border:3px solid #30200e}.versus-cpu{background:#30200e}
+#setup-friends{grid-column:1/-1;width:100%;min-height:48px;font:13px Bungee,sans-serif;background:#f6e7c3;border:2px solid #49311a;box-shadow:0 4px 0 #bba378}
+#setup-dialog .setup-help{margin:0 0 15px;color:#ead5ac;border:1px solid #f1d8aa33;border-radius:14px;padding:11px 14px;font:13px Shantell,sans-serif}
+.setup-help summary{cursor:pointer;min-height:24px;font-weight:700}.setup-help p{margin-top:12px}
+#setup-dialog fieldset,#setup-dialog .setup-difficulty{border:0;border-radius:16px;background:#f2dfb7;color:#30200e;padding:4px 16px;margin:10px 0;min-width:0}
+#setup-dialog fieldset legend,#setup-dialog fieldset>.small-copy{display:none}
+#setup-dialog fieldset label,#setup-dialog .setup-difficulty{display:flex;align-items:center;justify-content:space-between;gap:10px;min-height:58px;font:11px/1.3 Bungee,sans-serif}
+#setup-dialog fieldset label+label{border-top:1px dashed #a48b5b}
+#setup-dialog select{color:#352413;background:transparent;border:0;border-radius:6px;padding:10px 4px;max-width:60%;width:auto;font:600 14px Shantell,sans-serif;min-height:44px;text-align:right}
+#setup-dialog select:focus-visible,#setup-dialog button:focus-visible{outline:3px solid #db8c20;outline-offset:3px}
+#setup-dialog .setup-actions{position:sticky;bottom:-18px;display:grid;grid-template-columns:1fr auto;gap:8px;align-items:center;margin:12px -2px -2px;padding:10px 2px 14px;background:#2b2016;z-index:4}
+#setup-loading{grid-column:1/-1;color:#f5bc40;margin:0;min-height:0}#setup-loading:empty{display:none}
+#setup-dialog #begin-game{position:static;margin:0;width:100%;font:20px Bungee,sans-serif;min-height:56px;border:2px solid #30200e;box-shadow:0 5px 0 #b4492d;background:#f4b839}
+#setup-dialog #show-game-rules{color:#f2dfb7;border-color:#a88d61;min-height:48px;padding:9px 14px}
+#setup-dialog .control-note{display:none}
+.launch-music-button{border:1px solid #f1d8aa66;border-radius:22px;background:#23180bbb;color:#f5dfb0;padding:10px 18px;min-height:44px;font:600 13px Shantell,sans-serif;cursor:pointer}
+.launch-music-button:focus-visible{outline:3px solid #f5bd46;outline-offset:3px}
+@media(min-width:740px){#setup-dialog[open]{display:grid;grid-template-columns:1fr 1fr;grid-template-rows:80px minmax(0,1fr);overflow:hidden;max-height:90dvh}#setup-dialog>.dialog-close{position:absolute;top:0;left:0}#setup-dialog .setup-header{grid-column:1/-1;padding-left:68px}#setup-dialog .setup-preview{grid-column:1;grid-row:2;height:auto;min-height:0;margin:0 0 20px 20px}#setup-dialog .dialog-content{grid-column:2;grid-row:2;overflow:auto;min-height:0;padding-top:0}#setup-dialog .setup-actions{bottom:-18px}#setup-title{font-size:28px}}
+@media(max-width:430px){#setup-dialog{width:calc(100vw - 16px);max-height:calc(100dvh - 16px);border-radius:19px}.setup-header{min-height:70px}#setup-title{font-size:20px}#setup-dialog .setup-preview{height:176px;margin:0 12px}.setup-venue-copy{left:14px;bottom:14px}#setup-venue-name{font-size:20px}#setup-dialog .dialog-content{padding:18px 12px 14px}.setup-versus{padding:12px}.versus-player,.versus-cpu{width:42px;height:42px}#setup-dialog select{font-size:14px}#setup-dialog .setup-actions{bottom:-14px}#setup-dialog #show-game-rules{font-size:9px;padding:8px}}
+/* Quiet labels, touch-sized silhouettes, all actions visible. */
+.touch-ui #game-hud #action-buttons>button{border-radius:50%;background:#2b2019c9;box-shadow:0 3px 0 #22150e80;border:1.5px solid #f2deacb3}
+.touch-ui #game-hud #action-buttons>button[data-role=primary]{background:#f6c354e8;border:2px solid #ffe5a4;box-shadow:0 4px 0 #ae4a2f}
+.touch-ui #game-hud #action-buttons strong{font:400 9px/1.15 Bungee,sans-serif}
+.touch-ui #game-hud #action-buttons .control-icon{width:19px;height:19px}
+.touch-ui #game-hud[data-game=football] #charge-meter,.touch-ui #game-hud[data-game=fourcorners] #charge-meter{display:none}
+.touch-ui #game-hud .score-panel{background:#23190dba;border:1px solid #f5ddaa33;box-shadow:none}
+#setup-dialog fieldset{display:block}
+#setup-dialog fieldset label{width:100%}

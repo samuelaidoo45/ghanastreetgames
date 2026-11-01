@@ -57,3 +57,22 @@ test('four human seats use the shared possession, tackle and skill rules without
  m.b.position.copy(m.players[2].position).setY(.12);m.tick(1/60,1);assert.equal(m.carrier,2);a.action(2,{action:'feint',x:0,z:1});m.tick(.05,2);assert.ok(m.players[2].position.z>positions[2].z);m.cool=0;
  a.action(2,{action:'kick',power:.7,x:0,z:0});assert.equal(m.carrier,null);assert.equal(m.lastTouch,2);assert.ok(m.v.length()>10);assert.ok(a.controls(2).some(x=>x.id==='feint'));h.close();
 });
+
+test('four-corner dribbling rolls between touches and releases a ball outside control range',()=>{
+ const h=harness(),m=h.m;m.networked=true;const p=m.you;p.position.set(0,0,0);p.rotation.y=0;m.b.position.set(0,.12,.45);m.takeBall(0);p.userData.velocity.set(0,0,5);
+ for(let n=0;n<8;n++){p.position.z+=5/60;m.tick(1/60,n/60);}
+ assert.ok(m.v.z>0);assert.ok(m.b.position.z>p.position.z);assert.equal(m.carrier,0);
+ m.b.position.z=p.position.z+2.2;m.tick(1/60,1);assert.equal(m.carrier,null);assert.ok(m.v.z>0);h.close();
+});
+test('an early tackle stays active briefly so moving into reach can win the ball',()=>{
+ const h=harness(),m=h.m;m.networked=true;m.you.position.set(0,0,0);m.you.rotation.y=0;m.players[1].position.set(0,0,1.5);m.b.position.set(0,.12,1.4);m.carrier=1;m.cool=0;
+ assert.equal(m.tackle(0),false);m.you.position.z=.3;m.age=.08;assert.equal(m.challenge(0),true);assert.equal(m.carrier,null);assert.equal(m.lastTouch,0);assert.equal(m.tackle(0),false);h.close();
+});
+test('attack selection values a clear lane over the nearest defended goal',()=>{
+ const h=harness(),m=h.m;m.you.position.set(0,0,0);m.players[1].position.set(0,0,6);m.players[2].position.set(6,0,0);m.players[3].position.set(0,0,-6);
+ const exposed=m.lane(0,3).score;m.players[3].position.set(6,0,-3);assert.ok(m.lane(0,3).score>exposed);assert.equal(m.pickGoal(0),3);h.close();
+});
+test('off-ball defenders step into distinct lanes instead of camping beside their goals',()=>{
+ const h=harness(),m=h.m;m.b.position.set(0,.12,0);m.think();const covers=m.plans.map((plan,i)=>({plan,i})).filter(x=>x.i&& !x.plan.press);
+ for(const {plan,i} of covers)assert.ok(plan.target.distanceTo(m.goals[i].center)>3);assert.ok(covers[0].plan.target.distanceTo(covers[1].plan.target)>2);h.close();
+});

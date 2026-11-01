@@ -1,3 +1,4 @@
+import {initialGraphics} from '../dist/graphics-profile.js';
 import {actionLabel,actionIcon,padLayout,releaseQuickCharge} from '../dist/action-pad.js';
 // Runs the actual UI controller with pointer events and a small DOM substitute.
 // It is an integration check, not a claim of browser CSS or device validation.
@@ -29,14 +30,14 @@ function setup(){
  const frames=[],window=new EventTarget();window.visualViewport=new EventTarget();
  class Sound{setScene(){}setEnabled(){}setVolume(){}setVisible(){}play(){}unlock(){return Promise.resolve();}}
  class Replay{supported(){return false;}finish(){return Promise.resolve();}pause(){}resume(){}}
- const ctx=vm.createContext({actionLabel,actionIcon,padLayout,releaseQuickCharge,roomSettings,seeded,initClub:()=>({launchContext:null,attach(){},finishRound(){},leave(){},open(){}}),console,document:doc,window,navigator:{maxTouchPoints:5,hardwareConcurrency:4},matchMedia:()=>({matches:true}),innerWidth:390,innerHeight:844,performance,location:{search:''},localStorage:{getItem(){return null;},setItem(){}},requestAnimationFrame:f=>(frames.push(f),frames.length),setTimeout,clearTimeout,URLSearchParams,Soundscape:Sound,ReplayRecorder:Replay,clampVolume:Number,catalogue,categories,sources,formationFor,menuLayout,remapPage,mobileProfile,arrangeActions,joystickVector,RenderBudget,mobileMessage,bindChargeControl,bindTapControl,bindJoystick});
+ const ctx=vm.createContext({initialGraphics,actionLabel,actionIcon,padLayout,releaseQuickCharge,roomSettings,seeded,initClub:()=>({launchContext:null,attach(){},finishRound(){},leave(){},open(){}}),console,document:doc,window,navigator:{maxTouchPoints:5,hardwareConcurrency:4},matchMedia:()=>({matches:true}),innerWidth:390,innerHeight:844,performance,location:{search:''},localStorage:{getItem(){return null;},setItem(){}},requestAnimationFrame:f=>(frames.push(f),frames.length),setTimeout,clearTimeout,URLSearchParams,Soundscape:Sound,ReplayRecorder:Replay,clampVolume:Number,catalogue,categories,sources,formationFor,menuLayout,remapPage,mobileProfile,arrangeActions,joystickVector,RenderBudget,mobileMessage,bindChargeControl,bindTapControl,bindJoystick});
  const source=readFileSync('dist/arcade.js','utf8').replace(/^import .*?;\n/gm,'');vm.runInContext(source,ctx);
  return {ctx,$,frames,run:code=>vm.runInContext(code,ctx)};
 }
 function send(element,type,id=1,extra={}){const event=new Event(type,{cancelable:true});Object.assign(event,{pointerId:id,button:0,clientX:95,clientY:50,...extra});element.dispatchEvent(event);}
 test('mobile app boots without a rendering loop; real control wiring survives pause and multitouch',async()=>{
  const h=setup();assert.equal(h.frames.length,0,'menu must not run a WebGL frame loop');
- h.run(`world={quality:'low',canvas:{clientWidth:390,clientHeight:844},desired:{toArray:()=>[0,10,10]},targetLook:{toArray:()=>[0,0,0]},render(){},updateViewOffset(){}};
+ h.run(`world={quality:'balanced',canvas:{clientWidth:390,clientHeight:844},desired:{toArray:()=>[0,10,10]},targetLook:{toArray:()=>[0,0,0]},render(){},updateViewOffset(){}};
  clearVenue=()=>{};
  createMode=ctx=>{const m={...ctx,actions:[{id:'shoot',label:'Shoot',key:'Space',charge:true},{id:'low',label:'Low shot',key:'F'},{id:'chip',label:'Chip',key:'R'},{id:'pass',label:'Pass',key:'E'},{id:'switch',label:'Switch',key:'Q'},{id:'sprint',label:'Sprint',key:'Shift',hold:true}],calls:[],hold(id){this.calls.push('hold:'+id);},action(id){this.calls.push(id);},dispose(){}};ctx.ui.actions(m.actions);return m;};
  $('#setup-dialog').open=true;$('#team-size').value='3';$('#goal-size').value='big';$('#formation').value='balanced';`);

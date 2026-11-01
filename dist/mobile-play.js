@@ -53,7 +53,7 @@ export function joystickVector(dx,dy,radius,deadzone=.12){
 }
 // Limit fill-rate on high-density and very large displays. Resolution can drop
 // a little on slow phones without changing gameplay speed or input sampling.
-export function renderPixelRatio(width,height,dpr,quality,scale=1){return Math.min(dpr,quality==='high'?1.5:1,Math.sqrt((quality==='high'?4000000:900000)/Math.max(1,width*height)))*scale;}
+export function renderPixelRatio(width,height,dpr,quality,scale=1){return Math.min(dpr,quality==='high'?1.5:quality==='balanced'?1.25:1,Math.sqrt((quality==='high'?4000000:quality==='balanced'?1500000:900000)/Math.max(1,width*height)))*scale;}
 export class RenderBudget{
  constructor(){this.reset();}
  reset(){this.samples=0;this.total=0;this.slow=0;}

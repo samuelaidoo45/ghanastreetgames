@@ -41,6 +41,7 @@ export function animateAthlete(root,t,speed=0,pose='idle',jump=0){
  const rot=(name,x=0,y=0,z=0)=>{if(!b[name])return;const o=offsets[name]??={x:0,y:0,z:0};o.x+=x;o.y+=y;o.z+=z;};
  // Additive gestures preserve the imported rig and its natural gait.
  if(pose==='ampe'){rot('thigh_'+(u.ampeFoot?'r':'l'),-.65*(u.ampeExtend||0));rot('calf_'+(u.ampeFoot?'r':'l'),.35*(u.ampeExtend||0));u.model.position.y-=u.ampeCrouch||0;}if(pose==='clap'){rot('upperarm_l',-.8,0,-.55);rot('upperarm_r',-.8,0,.55);rot('lowerarm_l',-1);rot('lowerarm_r',-1);}
+ if(pose==='defend'){rot('spine_01',.1);rot('thigh_l',-.13);rot('thigh_r',-.09);rot('calf_l',.12);rot('lowerarm_l',-.16);rot('lowerarm_r',-.12);}
  if(pose==='keeperReady'){rot('spine_01',.12);rot('thigh_l',-.12);rot('thigh_r',-.12);}
  if(pose==='keeperDive'){rot('thigh_l',-.25);rot('thigh_r',.15);rot('calf_r',.35);}
  if(pose==='cheer'){rot('upperarm_l',-.35,0,-2.3);rot('upperarm_r',-.35,0,2.3);}

@@ -1,5 +1,11 @@
 # Ghana Street Games — 3D Arcade
 
+## v4.22.0 — Mobile match presentation and Four Corners play
+
+A cleaner venue-first setup with a friend-play shortcut, direct CPU level selection, readable setting rows and a sticky Play button. All phone actions stay visible with round, translucent controls. Capable phones now use balanced rendering with antialiasing, directional shadows and compressed surface detail; weaker devices retain a lighter preset and automatic fallback. Launch music starts after the first tap without waiting for every effect file.
+
+Four Corners adds rolling foot touches, a short active tackle window, open-lane shooting choices, more mobile defensive cover and a ready stance. Gameplay ideas were studied in the user-provided local reference project and implemented in this game’s existing engine. See `research/verification-v422.md`.
+
 ## v4.21.0 — All mobile actions visible
 
 Every game action now appears directly on the phone action pad, including Sprint. The More menu is removed. Portrait uses a compact three-column grid; landscape spreads actions across four columns. The movement joystick and automatic sprint remain available.
