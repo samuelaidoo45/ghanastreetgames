@@ -21,4 +21,8 @@ Applied the OWASP security-check guidance to the new shared game registration an
 
 ## Deployment
 
-Production verification is recorded after deployment.
+- Gameplay release commit: `c6940f5`. Vercel reported a successful production deployment. All 17 changed/new deployed assets matched local SHA-256 hashes.
+- Cloudflare Worker version: `18e3bf48-8b80-4f6d-9eb1-afdb54dca7b3`. A read-only fetch of `/leaderboard?game=abedemu` returned HTTP 200 with an entries array.
+- Production browser showed the 34-game catalogue, Ab3d3mu card, updated kick-off/save instructions and CB/DM formation explanation.
+- The automatic approval review rejected a proposed test that would create temporary production players because its cleanup was not part of the same operation. No such test records were created. Private-room behavior and score persistence were verified locally; live checks remained read-only.
+- Proof image: `../gameplay-v418/live-football-setup.png`.
