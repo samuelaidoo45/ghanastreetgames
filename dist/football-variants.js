@@ -1,3 +1,5 @@
+import {FourCorners} from './four-corners.js';
+export {FourCorners};
 import {closestChallenger,separatePlayers,dribbleBall,supportPosition} from './street-ball-control.js';
 import {goalSpec,goalMarker} from './goal-markers.js';
 import {pitchSurface,pitchTypes,pitchType} from './football-assets.js';
@@ -9,36 +11,6 @@ import {matchBall as ball,clamp,stepBall,sweptDistance,chalk,streetGoal,ringTarg
 const names=['YOU','KOJO','NII','KOFI'];
 const colors=[0xc05336,0x326b85,0xb59546,0x468367];
 export function footballVariant(ctx){const C={fourcorners:FourCorners,penalties:Penalties,onepole:OnePole,laski:Laski}[ctx.game.id];return C?new C(ctx):null;}
-
-export class FourCorners extends Mode{
- constructor(ctx){super(ctx);this.players=[];this.goals=[];this.active=[true,true,true,true];this.startLives=[1,3,5].includes(Number(this.settings.cornersLives))?Number(this.settings.cornersLives):3;this.lives=Array(4).fill(this.startLives);this.conceded=[0,0,0,0];this.oneTouch=this.settings.cornersTouch==='one';this.layout='sides';this.goalSpec=goalSpec(this.settings.goalStyle,1.25);this.surfaceType=pitchType(this.game.id,this.settings.pitchSurface);this.surface=pitchTypes[this.surfaceType];pitchSurface(this.root,20,20,this.surfaceType);this.world.setCamera([0,15,18,0,.4,0]);this.cameraView=0;
-  const corners=[[-7,7],[7,7],[-7,-7],[7,-7]],sides=[[-9,0],[0,9],[9,0],[0,-9]];
-  sides.forEach(([x,z],i)=>{const n=new THREE.Vector3(x,0,z).normalize(),g=goalFrame(x,z,n.x,n.z,2.5,this.goalSpec.height,this.goalSpec);g.mesh=streetGoal(this.root,x,z,Math.atan2(-n.z,n.x),g.width,g.height,this.goalSpec.style);this.goals.push(g);const p=this.player(x*.7,z*.7,i?colors[i]:this.settings.color);p.rotation.y=Math.atan2(-x,-z);p.userData.id=i;this.players.push(p);this.text(names[i],x,1.8,z,'#eddcb0',.22);this.circle(x,z,.3,colors[i]);});
-  for(const [x,z,w,d]of [[0,-10,20,.035],[0,10,20,.035],[-10,0,.035,20],[10,0,.035,20]])chalk(this.root,x,z,w,d);
-  this.you=this.players[0];this.b=ball(this.root);this.v=new THREE.Vector3();this.marker=this.circle(0,0,.48);this.targetMarker=this.circle(7,7,.7,0xa9c8d0);this.aim=1;this.lastTouch=-1;this.cool=0;this.charge=null;this.carrier=null;this.round=0;
-  this.setActions([{id:'kick',label:this.oneTouch?'One-touch kick':'Shoot / tackle',key:'Space',charge:true},{id:'target',label:'Next goal',key:'E'},{id:'chip',label:'Chip',key:'R'},{id:'sprint',label:'Sprint',key:'Shift',hold:true}]);this.serve();this.note(`${this.startLives} ${this.startLives===1?'life':'lives'} each. ${this.oneTouch?'One touch until another player touches.':'Carry the ball, tackle and shoot.'} E selects a goal.`);
- }
- serve(){this.phase='serve';this.time=0;this.lastTouch=-1;this.carrier=null;this.b.position.set(0,2.5,0);this.v.set((Math.random()-.5)*.8,0,(Math.random()-.5)*.8);this.players.forEach((p,i)=>{p.position.copy(this.goals[i].center).multiplyScalar(.7);p.position.y=0;});}
- cycleCamera(){this.cameraView=(this.cameraView+1)%3;this.world.setCamera([[0,15,18,0,.4,0],[-14,9,14,0,.4,0],[0,25,6,0,0,0]][this.cameraView]);}
- hold(){if(this.phase==='play')this.charge=this.age;}
- action(id){if(id==='target'){const others=this.active.flatMap((a,i)=>a&&i!==0?[i]:[]);this.aim=others[(others.indexOf(this.aim)+1)%others.length]??0;return;}if(this.phase!=='play'||!this.active[0])return;const power=this.charge===null?.45:clamp(this.age-this.charge,.1,1);this.charge=null;this.kick(0,this.aim,power,id==='chip');}
- kick(i,target,power=.5,chip=false){if(!this.active[i]||!this.active[target]||target===i||this.oneTouch&&this.lastTouch===i||this.cool>0||distance(this.players[i],this.b)>1.05||this.b.position.y>1.3)return false;const aim=this.goals[target].center.clone().sub(this.b.position);aim.y=0;this.v.copy(aim.normalize().multiplyScalar(chip?8+power*5:9+power*8));this.v.y=chip?3.5: .6;this.carrier=null;this.lastTouch=i;this.cool=.2;this.players[i].userData.kick=.38;this.ui.sound('kick');return true;}
- concede(i){if(!this.active[i])return;this.lives[i]--;this.ui.cornerScores?.(this.lives);this.conceded[i]++;this.round++;this.phase='result';this.time=0;this.carrier=null;this.ui.sound('goal');if(this.lives[i]>0){this.note(`${names[i]} conceded. ${this.lives[i]} ${this.lives[i]===1?'life':'lives'} left.`);return;}this.active[i]=false;this.players[i].visible=false;this.goals[i].mesh.visible=false;this.note(`${names[i]} is out. ${this.active.filter(Boolean).length} defenders remain.`);if(i===0){const rank=this.active.filter(Boolean).length+1;this.finish('YOUR CORNER WAS BEATEN',`You finished ${rank}${rank===2?'nd':rank===3?'rd':'th'} after losing all ${this.startLives} lives.`,false);}else if(this.active.filter(Boolean).length===1){this.score=3;this.finish('LAST CORNER STANDING','You protected your corner and outlasted the other defenders.');}}
- hit({point}){this.input.target=point;}
- update(dt){this.cool=Math.max(0,this.cool-dt);this.ui.power?.(this.charge===null?0:clamp(this.age-this.charge,0,1));this.ui.cornerScores?.(this.lives);this.status(`${this.active.filter(Boolean).length} CORNERS LEFT`,this.phase==='play'?(this.oneTouch&&this.lastTouch===0?'WAIT FOR ANOTHER TOUCH':'TARGET: '+names[this.aim]):'THROW-IN · WAIT FOR THE BOUNCE');
-  if(this.phase==='result'){if(this.time>1.8)this.serve();return;}
-  if(this.phase==='serve'){stepBall(this.b,this.v,dt,{bounce:this.surface.bounce});if(this.b.position.y<=.14){this.phase='play';this.time=0;this.lastTouch=-1;this.note('Ball bounced. Play!');}return;}
-  const before=this.b.position.clone();this.move(this.you,dt,this.input.sprint?6.2:4.4,9);this.you.position.z=clamp(this.you.position.z,-9,9);this.marker.position.set(this.you.position.x,.04,this.you.position.z);
-  if(!this.active[this.aim])this.aim=this.active.findIndex((a,i)=>a&&i!==0);if(this.aim>=0)this.targetMarker.position.set(this.goals[this.aim].center.x,.04,this.goals[this.aim].center.z);
-  if(this.carrier===0){this.b.position.set(this.you.position.x+Math.sin(this.you.rotation.y)*.5,.12,this.you.position.z+Math.cos(this.you.rotation.y)*.5);this.v.copy(this.b.position).sub(before).divideScalar(dt||1);}
-  const eligible=[1,2,3].filter(i=>this.active[i]&&(!this.oneTouch||this.lastTouch!==i));const chase=eligible.sort((a,b)=>distance(this.players[a],this.b)-distance(this.players[b],this.b))[0];
-  for(let i=1;i<4;i++){if(!this.active[i]||this.networked)continue;const p=this.players[i],g=this.goals[i],can=!this.oneTouch||this.lastTouch!==i;const home=g.center.clone().addScaledVector(g.normal,-1.4);const danger=this.b.position.clone().sub(g.center).length()<5;const target=can&&(i===chase||danger)?this.b.position:home;p.userData.run=moveActor(p,target,i===chase?3.6:3.1,dt);if(can&&distance(p,this.b)<1){const targets=this.active.flatMap((a,j)=>a&&j!==i?[j]:[]);const target=targets.sort((a,b)=>distance(this.players[b],this.goals[b].center)-distance(this.players[a],this.goals[a].center))[0];this.kick(i,target,.3+Math.random()*.4);}}
-  if(this.carrier===null)stepBall(this.b,this.v,dt,{drag:this.surface.drag,bounce:this.surface.bounce});const post=collideGoalFrames(this.b,this.v,before,this.goals.filter((g,i)=>this.active[i]));if(post){this.carrier=null;this.cool=.18;this.ui.sound('stone');}
-  for(let i=0;i<4;i++)if(this.active[i]&&!post&&crossedGoal(before,this.b.position,this.goals[i])){this.concede(i);return;}
-  if(!this.oneTouch&&this.cool<=0&&this.b.position.y<.5&&distance(this.you,this.b)<.7){this.carrier=0;this.lastTouch=0;}
-  if(Math.abs(this.b.position.x)>11||Math.abs(this.b.position.z)>11||this.carrier===null&&this.v.length()<.15&&this.time>12){this.phase='result';this.time=.8;this.note('Out of play. Fresh throw-in; no life lost.');}
- }
-}
 
 export class Penalties extends Mode{
  constructor(ctx){super(ctx);this.goalSpec=goalSpec(this.settings.goalStyle,2.4);this.goal=goalFrame(0,-9,0,-1,5.5,this.goalSpec.height,this.goalSpec);this.goalMesh=streetGoal(this.root,0,-9,Math.PI/2,5.5,this.goalSpec.height,this.goalSpec.style);this.surfaceType=pitchType(this.game.id,this.settings.pitchSurface);this.surface=pitchTypes[this.surfaceType];pitchSurface(this.root,15,24,this.surfaceType);chalk(this.root,0,-9,5.5,.06);chalk(this.root,0,0,.2,.2);for(const x of [-5,5])chalk(this.root,x,-5,.04,8);chalk(this.root,0,-1,10,.04);

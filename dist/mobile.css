@@ -82,3 +82,48 @@
 .more-actions>summary:focus-visible{outline:3px solid #fff2c7;outline-offset:3px}
 .more-actions[open]>summary{background:#f4b83e}
 .touch-ui #game-hud{padding-top:max(12px,env(safe-area-inset-top));padding-left:max(12px,env(safe-area-inset-left));padding-right:max(12px,env(safe-area-inset-right))}
+
+/* Thumb action pad. The established movement joystick is unchanged. */
+.touch-ui #game-hud #action-buttons{--action-size:82px;--support-size:60px;--action-power:0%;display:grid;grid-template-columns:var(--support-size) var(--action-size);grid-template-rows:var(--support-size) var(--action-size);gap:8px;align-items:center;justify-items:center;width:150px}
+.touch-ui #game-hud #action-buttons>button{position:relative;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;width:var(--support-size);height:var(--support-size);padding:6px;border:1px solid #efdcac99;border-radius:50%;background:#211b17dc;color:#fff0cc;box-shadow:0 3px 0 #110e0b80,inset 0 1px 0 #fff2;touch-action:none;-webkit-tap-highlight-color:transparent}
+.touch-ui #game-hud #action-buttons>button[data-role=primary]{grid-column:2;grid-row:2;width:var(--action-size);height:var(--action-size);border:2px solid #ffe2a2;background:#f5bb45;color:#261c10;box-shadow:0 4px 0 #6b4225,0 0 0 4px #211b1740}
+.touch-ui #game-hud #action-buttons>button:nth-child(2){grid-column:2;grid-row:1}
+.touch-ui #game-hud #action-buttons>button:nth-child(3){grid-column:1;grid-row:2}
+.touch-ui #game-hud #action-buttons>.more-actions{grid-column:1;grid-row:1;align-self:center}
+.touch-ui #game-hud #action-buttons>.more-actions>summary{width:48px;height:48px;min-width:48px;min-height:48px;border:1px solid #efdcac80;border-radius:50%;box-shadow:none;background:#211b17bb;color:#fff0cc;font:700 17px Arial,sans-serif;letter-spacing:2px;padding:0}
+.touch-ui #game-hud #action-buttons strong{font:700 11px/1.15 Shantell,Arial,sans-serif;letter-spacing:0;max-width:100%;text-transform:none}
+.touch-ui #game-hud #action-buttons [data-role=primary] strong{font-size:14px}
+.touch-ui #game-hud #action-buttons .control-icon{display:block;width:23px;height:23px;opacity:1;margin:0}
+.touch-ui #game-hud #action-buttons [data-role=primary] .control-icon{width:29px;height:29px}
+.control-icon svg{display:block;width:100%;height:100%}
+.touch-ui #game-hud #action-buttons .touch-label{font:700 7px/1.1 Arial,sans-serif;letter-spacing:.4px;margin:0;opacity:.7}
+.touch-ui #game-hud #action-buttons button:active,.touch-ui #game-hud #action-buttons button.charging{transform:translateY(2px) scale(.96);filter:brightness(1.12)}
+.touch-ui #game-hud #action-buttons button.charging{outline:none}
+.touch-ui #game-hud #action-buttons button.charging:after{content:'';position:absolute;inset:-7px;border-radius:inherit;border:3px solid transparent;background:conic-gradient(#fff3c7 var(--action-power),#fff2 0) border-box;mask:linear-gradient(#000 0 0) padding-box,linear-gradient(#000 0 0);mask-composite:exclude;pointer-events:none}
+.touch-ui #game-hud #action-buttons button:disabled{opacity:.4;filter:saturate(.3);transform:none}
+.touch-ui #game-hud #action-buttons button:focus-visible{outline:3px solid #fff6db;outline-offset:4px}
+.touch-ui #game-hud #action-buttons[data-count="1"]{width:var(--action-size);height:var(--action-size);grid-template-columns:var(--action-size);grid-template-rows:var(--action-size)}
+.touch-ui #game-hud #action-buttons[data-count="1"]>button[data-role=primary]{grid-column:1;grid-row:1}
+.touch-ui #game-hud #action-buttons[data-count="2"]{height:var(--action-size);grid-template-columns:var(--support-size) var(--action-size);grid-template-rows:var(--action-size)}
+.touch-ui #game-hud #action-buttons[data-count="2"]>button[data-role=primary]{grid-column:2;grid-row:1}
+.touch-ui #game-hud #action-buttons[data-count="2"]>button:nth-child(2){grid-column:1;grid-row:1}
+.touch-ui #game-hud #action-buttons .extra-actions{right:0;bottom:calc(100% + 12px);display:grid;grid-template-columns:repeat(2,64px);max-height:45dvh;overflow:auto}
+.touch-ui #game-hud #action-buttons .more-actions:not([open]) .extra-actions{display:none}
+.touch-ui #game-hud #action-buttons .extra-actions button{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;width:64px;min-width:64px;height:66px;min-height:66px;border-radius:16px;background:#efe0ba;color:#2c2115;padding:6px;border:1px solid #f3dfb1}
+/* Choices are peers: neither Ampe foot nor a board piece is a secondary action. */
+.touch-ui #game-hud #action-buttons[data-pad=choices],.touch-ui.board-game #game-hud #action-buttons,.touch-ui.floor-game #game-hud #action-buttons{display:flex;flex-wrap:wrap;justify-content:center;align-items:center;width:auto;max-width:min(100%,420px);height:auto;gap:10px}
+.touch-ui #game-hud #action-buttons[data-pad=choices]>button,.touch-ui.board-game #game-hud #action-buttons>button,.touch-ui.floor-game #game-hud #action-buttons>button{width:76px;height:76px;min-height:64px;border-radius:22px;padding:8px}
+.touch-ui #game-hud #action-buttons[data-pad=choices]>button{background:#efe0ba;color:#2c2115;border:2px solid #ffe6ae;box-shadow:0 3px 0 #5e442a}
+.touch-ui #game-hud #action-buttons[data-pad=choices] strong{font-size:12px}
+.touch-ui #game-hud #action-buttons[data-pad=choices] .control-icon{width:24px;height:24px}
+.touch-ui #game-hud #action-buttons[data-pad=choices][data-count="2"]>button{width:96px;height:80px}
+@media(max-height:520px) and (orientation:landscape){
+ .touch-ui #game-hud #action-buttons{--action-size:70px;--support-size:52px;width:130px;gap:8px}
+ .touch-ui #game-hud #action-buttons .control-icon{width:20px;height:20px}
+ .touch-ui #game-hud #action-buttons [data-role=primary] .control-icon{width:24px;height:24px}
+ .touch-ui #game-hud #action-buttons[data-pad=choices]>button,.touch-ui.board-game #game-hud #action-buttons>button,.touch-ui.floor-game #game-hud #action-buttons>button{width:64px;height:64px}
+ .touch-ui #game-hud #action-buttons[data-pad=choices][data-count="2"]>button{width:88px;height:64px}
+}
+.touch-ui.left-actions #game-hud #action-buttons .extra-actions{right:auto;left:0}
+.touch-ui #game-hud #action-buttons>button:not([data-role=primary]) strong{font-size:10px}
+.touch-ui #game-hud #action-buttons[data-pad=choices]>button strong{font-size:12px}

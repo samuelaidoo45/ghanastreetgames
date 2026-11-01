@@ -24,7 +24,7 @@ The runtime and fonts are vendored in `dist`; the hosted game requires no extern
 - Pilolo uses fourteen concealed-object hiding places throughout the neighbourhood and competing seekers who route around buildings; Stay uses eight players with hit-and-catch role transfers, loose-ball clearances and retrieval; Tumatu follows an out-and-back hop route; Alikoto and Kpitinge score actual landings; Pempenaa tracks individual legs; Mbobagor gives every player a stone; Chempε alternates food-holder and claimant roles.
 - Pause → Watch replay plays and saves actual gameplay as WebM where supported, with an MP4 fallback. Recordings stay on the device, contain the 3D canvas and game audio, and are bounded to five minutes per clip. Viewing a replay finalizes that segment; resuming starts a new segment. The HUD is not part of the recording.
 - The other games use character movement, hiding/searching, chase-and-rescue, jumping, timing, spinning, throwing, recall and role-play mechanics. Each has a setup screen with its digital rules.
-- Settings include four shirt colours, CC0 menu music and softer recorded claps, CPU/local board opponents, football difficulty and lower graphics quality. Settings remain in this browser. No online multiplayer or accounts.
+- Settings include four shirt colours, CC0 menu music and softer recorded claps, CPU/local board opponents, football difficulty and lower graphics quality. Settings remain in this browser. Private friend rooms and persistent points are available through Friends & Scores.
 
 ## Cultural accuracy and scope
 
@@ -131,3 +131,12 @@ See [research/multiplayer-v415.md](research/multiplayer-v415.md) for verificatio
 ## Celebration audio (4.15.1)
 
 Goals, points and victories now use original short reward cues instead of applause/clap recordings: football fanfares, wooden notes for floor/board and precision games, percussion for rhythm games, and rising notes for search/chase games. Round victories have their own event. A new reward fades the previous one to prevent stacked celebrations. Ampe clapping and other actual rhythm/palm actions retain their physical sound. Music and background ambience are unchanged. Rebuild the six compact mono MP3 cues with `python3 scripts/build-reward-audio.py` (FFmpeg required).
+
+
+## 4.16.0 — Four Corners gameplay and mobile action pad
+
+Four Corners now has shared possession for all four players, rolling dribble touches, smooth acceleration and turns, limited sprint energy, timed tackles, a short dodge with recovery, placed shots and visible goal targeting. One opponent contests a loose ball while others defend their sides; a carrier looks for an exposed goal and carries into a shooting lane. Fast shots can deflect off bodies, rather than being caught automatically. One-touch rules, side goals, configurable lives and private human rooms remain supported.
+
+The action buttons across all 33 games use a thumb pad with an emphasized primary action, local SVG icons, concise labels and secondary actions in More where needed. Timing and board choices stay equally prominent. Quick taps use the game's default strike; holds retain power control, shown around the pressed button. The movement joystick is unchanged. The pad respects the existing left-handed setting, safe areas, pause cancellation and multi-touch ownership.
+
+Verification: `npm test` and `npm run check`; actual scene simulations at 30/60/120 Hz, four human seats, all-game action reachability, touch-handler integration and cancellation tests. Browser control was disabled during this release, so these checks do not constitute visual or physical-phone testing.
