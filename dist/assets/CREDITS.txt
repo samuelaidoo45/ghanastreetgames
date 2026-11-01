@@ -105,3 +105,7 @@ https://github.com/kblood/CharacterCreator/tree/master/output
 https://github.com/kblood/CharacterCreator/blob/master/LICENSE-NOTES.md#generated-files-owner-decision-2026-10-03
 The shape data reuses the existing character textures, skeleton and animations.
 Extraction: scripts/build-female-shape.py. Clap/jump choreography is original.
+
+Reward cues — 1 November 2026
+assets/audio/rewards/{goal-fanfare,wood-point,rhythm-point,discovery-point,victory,ready}.mp3
+Original procedural music/percussion created for Ghana Street Games using scripts/build-reward-audio.py. No external recordings or samples. Generated from pitched oscillators and decaying drum tones; no continuous noise layer. These replace applause and celebration claps. Physical Ampe/rhythm claps retain their existing credit above.

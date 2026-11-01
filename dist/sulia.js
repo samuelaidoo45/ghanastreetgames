@@ -24,7 +24,7 @@ export class Sulia extends Mode{
    else{const a=i*2.399;target={x:clamp(victim.position.x+Math.sin(a)*2.6,-7.5,7.5),z:clamp(victim.position.z+Math.cos(a)*2.6,-7.5,7.5)};}
    p.userData.run=moveActor(p,avoidPlayers(p,target,this.players),p===victim?4.8:5.3,dt);
   }
-  if(!this.tagged&&distance(tagger,victim)<1.1){this.tagged=true;this.tagAt=this.chaseAge;tagger.userData.pose='reach';victim.userData.pose='head';this.ui.sound('clap');}
+  if(!this.tagged&&distance(tagger,victim)<1.1){this.tagged=true;this.tagAt=this.chaseAge;tagger.userData.pose='reach';victim.userData.pose='head';this.ui.sound('ballHit');}
   separatePlayers(this.players,1.02,8.5);
   if(this.chaseAge>2.8||this.tagged&&this.chaseAge-this.tagAt>.65){this.players.forEach(p=>{p.userData.pose='idle';p.userData.run=0;});this.phase='play';this.carrier=this.victim;this.cool=1;this.placeBall();this.note(`${names[this.carrier]} restarts with the ball.`);}
   return;

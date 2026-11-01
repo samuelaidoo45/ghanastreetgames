@@ -1,11 +1,24 @@
 // Keep the original African instrumental and field recordings. The continuous
 // AMB Outside 1 noise bed is deliberately excluded from preload and playback.
-const FILES={music:'v43/menu-loop.mp3',street:'street-ambience.ogg',crowd:'crowd-ambience.ogg',cap:'impactGeneric_light_000.ogg',throw:'impactGeneric_light_000.ogg',catch:'impactSoft_medium_000.ogg',ballHit:'impactSoft_medium_000.ogg',bounce:'impactSoft_medium_000.ogg',start:'v43/soft-clap.mp3',mouth:'pampanaa-mouth.mp3',band:'impactGeneric_light_000.ogg',kick:'football-kick.mp3',clap:'v43/soft-clap.mp3',call:'whistle.mp3',goal:'applause.mp3',point:'v43/soft-clap.mp3',miss:'impactSoft_medium_000.ogg',stone:'impactWood_light_000.ogg',swing:'impactGeneric_light_000.ogg',jump:'footstep-dirt-1.mp3',step1:'footstep-dirt-1.mp3',step2:'footstep-dirt-2.mp3',step3:'footstep-dirt-3.mp3',concrete:'footstep_concrete_000.ogg',grass:'footstep_grass_000.ogg',wood:'footstep_wood_000.ogg'};
+const FILES={music:'v43/menu-loop.mp3',street:'street-ambience.ogg',crowd:'crowd-ambience.ogg',cap:'impactGeneric_light_000.ogg',throw:'impactGeneric_light_000.ogg',catch:'impactSoft_medium_000.ogg',ballHit:'impactSoft_medium_000.ogg',bounce:'impactSoft_medium_000.ogg',start:'rewards/ready.mp3',mouth:'pampanaa-mouth.mp3',band:'impactGeneric_light_000.ogg',kick:'football-kick.mp3',clap:'v43/soft-clap.mp3',call:'whistle.mp3',goalFanfare:'rewards/goal-fanfare.mp3',woodPoint:'rewards/wood-point.mp3',rhythmPoint:'rewards/rhythm-point.mp3',discoveryPoint:'rewards/discovery-point.mp3',victory:'rewards/victory.mp3',miss:'impactSoft_medium_000.ogg',stone:'impactWood_light_000.ogg',swing:'impactGeneric_light_000.ogg',jump:'footstep-dirt-1.mp3',step1:'footstep-dirt-1.mp3',step2:'footstep-dirt-2.mp3',step3:'footstep-dirt-3.mp3',concrete:'footstep_concrete_000.ogg',grass:'footstep_grass_000.ogg',wood:'footstep_wood_000.ogg'};
 export function audioProfile(game='',venue='pitch',surface='dirt'){
  const sport=['football','fourcorners','penalties','laski','onepole','sulia','chaskele'].includes(game);
  const rhythm=['ampe','skipping','kyekyekule','pempenaa','mbobagor','antoakyire','tumatu','zanzama'].includes(game);
  const chase=['stay','pilolo','pampanaa','shooting','police','sansankroma','tyre'].includes(game);
  return {bed:sport?'crowd':'street',ambienceScale:sport?.55:rhythm?.32:chase?.42:.2,footstep:surface==='grass'?'grass':surface==='concrete'||venue==='veranda'?'concrete':'step',small:['counters','alikoto','alasa','oware','ludo','dame','kpitinge'].includes(game)};
+}
+// Reward events are separate from physical claps used by Ampe and palm strikes.
+export function audioCue(type,game='',venue='pitch',surface='dirt'){
+ const football=['football','fourcorners','penalties','laski'].includes(game);
+ if(type==='win')return football?'goalFanfare':'victory';
+ if(type==='goal'&&football)return 'goalFanfare';
+ if(type==='goal'||type==='point'){
+  if(['ampe','skipping','kyekyekule','pempenaa','mbobagor','antoakyire','tumatu','zanzama'].includes(game))return 'rhythmPoint';
+  if(['stay','pilolo','pampanaa','shooting','police','sansankroma','tyre','pretend'].includes(game))return 'discoveryPoint';
+  return 'woodPoint';
+ }
+ if(type==='call'&&audioProfile(game,venue,surface).small)return 'start';
+ return type;
 }
 export const clampVolume=(value,fallback=.6)=>Number.isFinite(Number(value))?Math.max(0,Math.min(1,Number(value))):fallback;
 export function sceneMix(scene,venue='pitch'){
@@ -35,11 +48,10 @@ export class Soundscape{
  ramp(param,value,time=.35){param.setTargetAtTime(value,this.context.currentTime,time);}
  loop(key,volume){if(!this.buffers[key])return;let loop=this.loops.get(key);if(!loop&&volume>0){const source=this.context.createBufferSource(),gain=this.context.createGain();source.buffer=this.buffers[key];source.loop=true;gain.gain.value=0;source.connect(gain);gain.connect(this.master);source.start();loop={source,gain};this.loops.set(key,loop);}if(loop)this.ramp(loop.gain.gain,volume,.45);}
  sync(){if(!this.master)return;this.ramp(this.master.gain,this.enabled&&this.visible?.78:0,.08);this.ramp(this.effects.gain,this.volumes.effects,.08);const mix=sceneMix(this.scene,this.venue),profile=audioProfile(this.game,this.venue,this.surface);this.loop('music',mix.music*this.volumes.music);const level=mix.ambience*this.volumes.ambience;this.loop('street',level*(this.scene==='menu'?.3:profile.bed==='street'?profile.ambienceScale:0));this.loop('crowd',this.scene==='game'&&profile.bed==='crowd'?level*profile.ambienceScale:0);}
- play(type){if(!this.enabled||!this.visible||!this.context||this.context.state!=='running')return;const profile=audioProfile(this.game,this.venue,this.surface);let key=type;
+ play(type){if(!this.enabled||!this.visible||!this.context||this.context.state!=='running')return;const profile=audioProfile(this.game,this.venue,this.surface);let key=audioCue(type,this.game,this.venue,this.surface);
   if(type==='step'||type==='jump')key=profile.footstep==='step'?'step'+(1+Math.floor(Math.random()*3)):profile.footstep;
   if(this.game==='counters'&&['kick','stone','swing'].includes(type))key='cap';
-  if(profile.small&&['call','goal'].includes(type))key=type==='call'?'start':'point';
   const buffer=this.buffers[key];if(!buffer)return;
-  const source=this.context.createBufferSource(),gain=this.context.createGain();source.buffer=buffer;source.playbackRate.value=['call','start'].includes(type)?1:.97+Math.random()*.06;gain.gain.value={step:.24,jump:.26,goal:.45,call:.24,point:.25,clap:.36,kick:.6,stone:.35,throw:.55,catch:.6,bounce:.42,ballHit:.55}[type]||.38;source.connect(gain);gain.connect(this.effects);source.start();source.onended=()=>{source.disconnect();gain.disconnect();};}
- dispose(){for(const {source,gain}of this.loops.values()){source.stop();source.disconnect();gain.disconnect();}this.loops.clear();this.context?.close();this.context=null;this.master=null;}
+  const source=this.context.createBufferSource(),gain=this.context.createGain();source.buffer=buffer;source.playbackRate.value=['call','start','goal','point','win'].includes(type)?1:.97+Math.random()*.06;gain.gain.value={step:.24,jump:.26,goal:.4,win:.42,call:.24,point:.3,clap:.36,kick:.6,stone:.35,throw:.55,catch:.6,bounce:.42,ballHit:.55}[type]||.38;source.connect(gain);gain.connect(this.effects);if(['goal','point','win'].includes(type)){if(this.reward){this.reward.gain.gain.setTargetAtTime(0,this.context.currentTime,.025);this.reward.source.stop(this.context.currentTime+.1);}this.reward={source,gain};}source.start();source.onended=()=>{if(this.reward?.source===source)this.reward=null;source.disconnect();gain.disconnect();};}
+ dispose(){for(const {source,gain}of this.loops.values()){source.stop();source.disconnect();gain.disconnect();}this.loops.clear();this.reward=null;this.context?.close();this.context=null;this.master=null;}
 }

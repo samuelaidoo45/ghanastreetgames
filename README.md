@@ -127,3 +127,7 @@ Practice rounds earn 10–50 XP. Completed friend matches earn 100 for a win, 50
 Ampe and board moves are server-authoritative. Other live arenas use a human host's existing 3D simulation, with authenticated inputs, bounded scene deltas, and durable, idempotent awards through Cloudflare Workers + Durable Objects. Their results are host-reported, not independently verified competitive results. Keep the host's tab open; reloading the host ends the round. Guest connections can rejoin the current scene. No Cloudflare credentials are shipped to the client.
 
 See [research/multiplayer-v415.md](research/multiplayer-v415.md) for verification and limits.
+
+## Celebration audio (4.15.1)
+
+Goals, points and victories now use original short reward cues instead of applause/clap recordings: football fanfares, wooden notes for floor/board and precision games, percussion for rhythm games, and rising notes for search/chase games. Round victories have their own event. A new reward fades the previous one to prevent stacked celebrations. Ampe clapping and other actual rhythm/palm actions retain their physical sound. Music and background ambience are unchanged. Rebuild the six compact mono MP3 cues with `python3 scripts/build-reward-audio.py` (FFmpeg required).
