@@ -12,7 +12,7 @@ export const difficultyEffects = {
  alikoto:'Upright landing tolerance', tumatu:'Landing precision inside each square', counters:'Computer flick accuracy', antoakyire:'Chaser reaction and pace',
  sansankroma:'Hawk pursuit speed', tyre:'Gate precision', kpitinge:'Upright landing tolerance', zanzama:'Seating precision', pretend:'Delivery precision', numbers:'Time to answer', police:'Pursuit speed',
  skipping:'Rope pace', alasa:'Opponent flick accuracy', chempe:'Time before the rival calls', kyekyekule:'Time to copy the pose', pempenaa:'Counting pace and time to fold', mbobagor:'Passing rhythm and timing window',
- highjump:'Bar height and take-off tolerance', agawowa:'Take-off and feet-first landing tolerance',
+ 'agawowa-backflip':'Backflip opening and feet-first landing tolerance',highjump:'Bar height and take-off tolerance', agawowa:'Take-off and feet-first landing tolerance',
 };
 export function difficultyProfile(value,balance=0){
  const base=Object.hasOwn(levels,value)?levels[value]:levels.normal;

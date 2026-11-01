@@ -32,7 +32,7 @@ export function gameActionCamera(mode,aspect,mobile=false){
 // floor games close and fits wide groups on narrow phones without scaling people.
 function passingBounds(mode){const points=mode.players.map(p=>p.position);if(mode.b)points.push(mode.b.position);return [Math.min(...points.map(p=>p.x))-.6,0,Math.min(...points.map(p=>p.z))-.6,Math.max(...points.map(p=>p.x))+.6,2.6,Math.max(...points.map(p=>p.z))+.6];}
 const phoneBounds={
- highjump:[-2.5,0,-6,2.5,3.8,7],agawowa:[-2.5,0,-6,2.5,4.2,7],
+ 'agawowa-backflip':[-2.2,0,-5,2.2,4.6,-1.8],highjump:[-2.5,0,-6,2.5,3.8,7],agawowa:[-2.5,0,-6,2.5,4.2,7],
  penalties:[-3,0,-9.6,3,2.8,4],onepole:[-2,0,-10.4,2,2.6,10.4],rubberband:[-1.3,0,-4.3,1.3,2.6,3.8],
  counters:[-.34,0,-.22,.34,.055,.22],oware:[-.94,.75,-.43,.94,.9,.43],dame:[-.9,.72,-.9,.9,.9,.9],ludo:[-.62,.67,-.62,.62,.88,.62],
  alikoto:[-.19,0,-.19,.19,.08,.19],ampe:[-2.1,0,-.7,2.1,2.65,.7],

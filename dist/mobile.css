@@ -100,3 +100,5 @@
 /* Jump instructions stay above the runway, clear of the active jumper. */
 .touch-ui #game-hud[data-game="highjump"] #announcement,
 .touch-ui #game-hud[data-game="agawowa"] #announcement{top:calc(var(--hud-top) + 8px);bottom:auto;max-width:480px}
+
+.touch-ui #game-hud[data-game="agawowa-backflip"] #announcement{top:calc(var(--hud-top) + 8px);bottom:auto;max-width:480px}

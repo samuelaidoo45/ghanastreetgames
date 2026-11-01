@@ -16,7 +16,7 @@ export default {
   const cors=response=>{if(response.status===101)return response;const headers=new Headers(response.headers);if(origin)headers.set('Access-Control-Allow-Origin',origin);headers.set('Vary','Origin');headers.set('Access-Control-Allow-Methods','GET,POST,OPTIONS');headers.set('Access-Control-Allow-Headers','Authorization,Content-Type');return new Response(response.body,{status:response.status,headers});};
   if(request.method==='OPTIONS')return cors(new Response(null,{status:204}));
   try{
-   if(path==='/health')return cors(json({ok:true,version:'4.15',duels:[...duels]}));
+   if(path==='/health')return cors(json({ok:true,version:'4.27.0',duels:[...duels]}));
    if(!['GET','POST'].includes(request.method))return cors(json({error:'Method not allowed'},405));
    if(!await rate(env,'ip:'+(path==='/players'?'signup:':'general:')+request.headers.get('CF-Connecting-IP'),path==='/players'?10:120))return cors(json({error:'Too many requests. Try again in a minute.'},429));
    if(path==='/players'&&request.method==='POST'){

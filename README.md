@@ -210,3 +210,12 @@ Verification: 471 automated tests, application syntax/import/asset checks, and s
 Street Football (small and big poles), Four Corners and Laski now use a shared distance-based finishing model. Close, unpressured human shots preserve their placement; longer shots have bounded aim variation and lower pace, with defensive pressure and rushed touches further affecting accuracy. These rules run at the strike for local play, CPUs and private friend rooms. Goals still depend on the actual ball crossing the posts and bar. CPUs build attacks into closer shooting range rather than routinely striking from midfield.
 
 Verification: 488 automated tests, including seeded close-versus-centre shot simulations across sand, concrete and grass, CPU build-up, friend-room strikes, keeper saves, tackling and sprint possession; application syntax/import/asset checks. Browser control remains disabled, so visual or physical-phone verification was unavailable.
+
+
+## 4.27.0 — Beast Master and Agawowa backflips
+
+The inclined-block somersault game is now **Beast Master**, including its optional palm bar. Its internal `agawowa` ID is retained to preserve existing points and room history. **Agawowa** is a separate standing-backflip competition (`agawowa-backflip`) with four turns each, Tuck/Pike/Layout/Split poses, backward hip rotation, opening and feet-first landing controls. New landed styles earn 100 points plus up to 20 execution points; repeated styles only earn execution points, so variety decides the winner before execution breaks ties.
+
+Agawowa supports 2–4 local players or CPU opponents, 2–8 human friend-room turns, all difficulty modes and persistent points with a 480-point score cap. The new card uses an original SVG illustration; it is not a gameplay screenshot.
+
+Verification: 510 automated tests and syntax/import/asset checks, including all four styles at 30/60/120 Hz, failed landings, repeat-style scoring, complete local competitions, CPU flights, human turn ownership and backward-rotation snapshots. Browser control is disabled, so visual browser and physical-phone checks remain unavailable.

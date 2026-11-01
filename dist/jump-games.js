@@ -83,7 +83,7 @@ export class JumpGames extends Mode{
  }
  update(dt){
   const p=this.you;this.marker.position.set(p.position.x,.03,p.position.z);
-  this.status(this.agawowa?'AGAWOWA · '+jumpStyles[this.style].toUpperCase():'HIGH JUMP · '+this.barHeight.toFixed(1)+' M',`${this.name()} · ${this.round+1}/3 · ${this.scores[this.turn]} PTS`);
+  this.status(this.agawowa?'BEAST MASTER · '+jumpStyles[this.style].toUpperCase():'HIGH JUMP · '+this.barHeight.toFixed(1)+' M',`${this.name()} · ${this.round+1}/3 · ${this.scores[this.turn]} PTS`);
   if(this.phase==='ready'){if(this.isCPU()&&this.time>.85)this.perform('run');return;}
   if(this.phase==='result'){if(this.barHit){this.bar.position.y=Math.max(.06,this.bar.position.y-dt*1.8);this.bar.rotation.x+=dt*.7;}if(this.time>(this.isCPU()?2:12))this.next();return;}
   if(this.phase==='run'){

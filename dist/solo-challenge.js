@@ -6,7 +6,7 @@ const clamp=value=>Number.isFinite(value)?Math.max(-1,Math.min(1,value)):0;
 export function adaptiveSolo(game,settings,online=false){
  if(online||settings.difficulty!=='normal'||game==='pretend')return false;
  if(['oware','dame','ludo','counters'].includes(game)&&settings.opponent==='local')return false;
- if(['highjump','agawowa'].includes(game)&&settings.jumpOpponents==='local')return false;
+ if(['highjump','agawowa','agawowa-backflip'].includes(game)&&settings.jumpOpponents==='local')return false;
  return true;
 }
 export class SoloChallenge{
