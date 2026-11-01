@@ -13,7 +13,7 @@ Reference inspected in the browser: https://fourcornersgh.com/ . The comparison 
 - All 33 previews refreshed to 640×400 JPEG; complete preview directory approximately 1.5 MB, lazy-loaded by the existing menu.
 
 ## Checks
-- `npm test`: 338/338 pass.
+- `npm test`: 339/339 pass.
 - `npm run check`: 50 application modules; stylesheet, imports and HTML assets pass.
 - `git diff --check`: clean.
 - Actual WebGL browser sweep: all 33 games plus dirt, concrete and grass Four Corners variants, high and low graphics: 36/36 each, no shader/console errors.
@@ -27,3 +27,5 @@ Visual quality is not an objectively measured equivalence to Four Corners. This 
 
 ## Deployment review
 Only static game artwork/rendering and preview mapping changed. No new remote dependencies, credentials, user-data uploads or permissions. The temporary browser QA page is retained under research (outside Vercel's dist output), not deployed. Existing nosniff and referrer headers remain intact.
+
+Final live check: coastal pavements were raised 6 cm above the terrain to remove coplanar flicker. A regression test verifies both pavement tops clear the ground; the coastal preview was refreshed. Released as 4.17.1.

@@ -135,7 +135,7 @@ function ensureWorld(progress=()=>{}){
  })().catch(error=>{worldLoading=null;throw error;});
 }
 function boot(){
- for(const g of catalogue)thumbs.set(g.id,'assets/previews/'+g.id+'.jpg?v=417');
+ for(const g of catalogue)thumbs.set(g.id,'assets/previews/'+g.id+'.jpg?v=4171');
  applySettings();$('#loading').hidden=true;lobby();
  const params=new URLSearchParams(location.search);if(params.has('game'))openSetup(gameById(params.get('game')));
  else{$('#lobby').hidden=true;$('#launch-screen').hidden=false;document.body.classList.add('in-launch');}

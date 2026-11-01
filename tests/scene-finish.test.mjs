@@ -25,3 +25,8 @@ test('kit shader preserves normal Three.js skinning and differentiates garment b
  const materials=[new THREE.MeshStandardMaterial(),new THREE.MeshStandardMaterial()];const geometries=[new THREE.BoxGeometry(1,1,1),new THREE.BoxGeometry(1,2,1)];
  materials.forEach((m,i)=>finishJersey(m,geometries[i]));assert.notEqual(materials[0].customProgramCacheKey(),materials[1].customProgramCacheKey());const shader={vertexShader:'#include <common>\n#include <begin_vertex>\n#include <skinning_vertex>',fragmentShader:'#include <common>\n#include <color_fragment>'};materials[0].onBeforeCompile(shader);assert.match(shader.vertexShader,/#include <skinning_vertex>/);assert.match(shader.fragmentShader,/chestBand/);
 });
+
+test('coastal pavement surfaces clear the surrounding terrain instead of z-fighting',async()=>{
+ const {footballStreetscape}=await import('../dist/venue-details.js');const group=new THREE.Group();footballStreetscape(group,'concrete',10,10,[]);const pavements=[];group.traverse(o=>{const p=o.geometry?.parameters;if(p?.width===2.6&&p.height===.09)pavements.push(o);});assert.equal(pavements.length,2);
+ for(const p of pavements){const bounds=new THREE.Box3().setFromObject(p);assert.ok(bounds.max.y>=.05,'pavement top is above y=0 terrain');}
+});

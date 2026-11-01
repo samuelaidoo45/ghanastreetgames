@@ -152,7 +152,7 @@ export function footballStreetscape(parent,theme,hx,hz,solids){
   // Courtyard mural, recessed shutters, canopy and narrow pavement outside the pitch.
   const mural=block(parent,5.5,1.2,.06,0x517d7c,0,.95,-hz-4.95);mural.name='Painted community wall';
   sign(parent,'PLAY TOGETHER',0,1.05,-hz-4.9,4.5);
-  for(const side of [-1,1]){block(parent,2.6,.09,hz*2+6,0xb7ac95,side*(hx+2.8),-.045,0,'plastered_wall_02');for(let j=0;j<20;j++)decor.box(j%3?0xd9cfb2:0x927e62,side*(hx+1.4),.08,-hz-2+j*(hz*2+4)/20,.15,.16,(hz*2+4)/20-.04);}
+  for(const side of [-1,1]){block(parent,2.6,.09,hz*2+6,0xb7ac95,side*(hx+2.8),.015,0,'plastered_wall_02');for(let j=0;j<20;j++)decor.box(j%3?0xd9cfb2:0x927e62,side*(hx+1.4),.08,-hz-2+j*(hz*2+4)/20,.15,.16,(hz*2+4)/20-.04);}
  }else{
   sign(parent,'COMMUNITY PARK',0,3.65,-hz-7.4,5);
   for(const side of [-1,1]){const stand=new THREE.Group();stand.position.set(side*(hx+4),0,0);stand.rotation.y=side*Math.PI/2;parent.add(stand);for(let row=0;row<3;row++)block(stand,7,.3,.7,0x9d9a83,0,.15+row*.3,-row*.65);const roof=block(stand,8,.08,3.1,0x6d8275,0,3.1,-.65,'corrugated_iron_02');roof.rotation.x=.08;for(const x of [-3.7,3.7])pipe(stand,[x,0,-1.6],[x,3.1,-1.6],.055,0x656b60);}
