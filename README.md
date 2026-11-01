@@ -228,3 +228,12 @@ Four Corners, Laski and Sulia have a visible Press action (F on keyboard): tap t
 Default Street Football, Four Corners, Laski, Sulia and Stay cameras now frame the player and ball more closely. Four Corners no longer fits the entire compound or distant home goal into the default mobile view. Camera fitting continues to reserve space for the HUD and touch controls; Wide/Tactical and Top Down remain available in View.
 
 Verification: 522 automated tests plus application syntax/import/asset checks, including local and friend-room pressing, manual override, shield protection, physical-range challenges and readable player framing across phone/tablet sizes. Browser control is disabled, so visual browser and physical-phone checks remain unavailable.
+
+
+## 4.29.0 — Agawowa standing-backflip motion
+
+Agawowa now has a grounded crouch and arm-drive sequence, a short upright take-off, backward rotation relative to the player's facing direction, blended tuck/open shapes and a bent-knee landing recovery. The closer side camera makes the motion easier to read. Actual two-bone arm reach puts the imported character's hands overhead during take-off and near the knees in a tuck; rotating shoulder Euler angles alone did not do this on the shipped rig. The existing four-style competition, scoring and private-room turns remain compatible.
+
+Motion reference: the user-supplied Bob Reese video https://www.youtube.com/watch?v=YW8FPY7VGjE. Public preview frames were inspected; full continuous video playback was unavailable. No video footage or audio was added to the game. See research/agawowa-motion.md.
+
+Verification: 526 automated tests and application syntax/import/asset checks, including physical backward rotation at different headings, shipped-rig hand positions, take-off sequencing, clean/failed landings, 30/60/120 Hz flips and human friend-room turns. Visual browser and physical-phone verification remain unavailable because browser control is disabled.

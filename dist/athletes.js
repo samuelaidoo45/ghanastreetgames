@@ -59,6 +59,6 @@ export function animateAthlete(root,t,speed=0,pose='idle',jump=0){
  for(const name of new Set([...Object.keys(offsets),...Object.keys(u.gestures)])){const target=offsets[name]||{x:0,y:0,z:0},current=u.gestures[name]??={x:0,y:0,z:0};for(const axis of ['x','y','z']){current[axis]=THREE.MathUtils.damp(current[axis],target[axis],18,dt);b[name].rotation[axis]+=current[axis];}}
  if(['knees','fold-left','fold-right'].includes(pose)&&u.feet?.length){root.updateMatrixWorld(true);const lowest=Math.min(...u.feet.map(foot=>root.worldToLocal(foot.getWorldPosition(new THREE.Vector3())).y));u.model.position.y+=THREE.MathUtils.clamp(u.restFootY+jump-lowest,-.8,.8);}
  u.model.rotation.z=THREE.MathUtils.damp(u.model.rotation.z,u.lean||0,9,dt);
- animateKeeperArms(root,pose,moving,dt);if(pose==='ampe')animateAmpeArms(root);animateJumpShape(root,pose);
+ animateKeeperArms(root,pose,moving,dt);if(pose==='ampe')animateAmpeArms(root);animateJumpShape(root,pose,dt);
 }
 export function disposeAthlete(root){root.userData.mixer?.stopAllAction();root.traverse(o=>{if(o.skeleton)o.skeleton.dispose();if(o.userData.contactShadow)o.geometry.dispose();if(o.isMesh)for(const m of Array.isArray(o.material)?o.material:[o.material])m?.dispose();});}
