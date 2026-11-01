@@ -135,8 +135,7 @@ function ensureWorld(progress=()=>{}){
  })().catch(error=>{worldLoading=null;throw error;});
 }
 function boot(){
- const existing=['alasa','alikoto','ampe','antoakyire','chaskele','chempe','counters','dame','football','kpitinge','kyekyekule','ludo','mbobagor','numbers','oware','pampanaa','pempenaa','pilolo','police','pretend','sansankroma','shooting','skipping','stay','sulia','tumatu','tyre','zanzama'];
- for(const g of catalogue)thumbs.set(g.id,'assets/previews/'+(existing.includes(g.id)?g.id:'football')+'.jpg');
+ for(const g of catalogue)thumbs.set(g.id,'assets/previews/'+g.id+'.jpg?v=417');
  applySettings();$('#loading').hidden=true;lobby();
  const params=new URLSearchParams(location.search);if(params.has('game'))openSetup(gameById(params.get('game')));
  else{$('#lobby').hidden=true;$('#launch-screen').hidden=false;document.body.classList.add('in-launch');}

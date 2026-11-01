@@ -140,3 +140,11 @@ Four Corners now has shared possession for all four players, rolling dribble tou
 The action buttons across all 33 games use a thumb pad with an emphasized primary action, local SVG icons, concise labels and secondary actions in More where needed. Timing and board choices stay equally prominent. Quick taps use the game's default strike; holds retain power control, shown around the pressed button. The movement joystick is unchanged. The pad respects the existing left-handed setting, safe areas, pause cancellation and multi-touch ownership.
 
 Verification: `npm test` and `npm run check`; actual scene simulations at 30/60/120 Hz, four human seats, all-game action reachability, touch-handler integration and cancellation tests. Browser control was disabled during this release, so these checks do not constitute visual or physical-phone testing.
+
+## 4.17.0 — Venue and player art pass
+
+Afternoon lighting, contact shadows, worn sand/concrete/grass surfaces, painted court shoulders, street stalls, planters, tyres and segmented compound walls give venues more depth. School and veranda blocks now have repeated door/window bays; neighbourhood trees use individual leaves. Players have broader silhouettes, garment-following chest stripes, revised skin/fabric materials and varied footwear. All 33 menu previews now show their own current game scene.
+
+Static textured architecture is batched by material and source texture, with UV repeats baked into vertices. Low graphics keeps its reduced asset downloads and avoids shadow maps/postprocessing; a single baked building-shadow layer and small shared player shadows provide grounding. Original surface detail is generated locally using cached 512px textures, without additional downloads.
+
+Verification: 338 tests, 50 module checks, browser rendering of 33 games plus three surface variants at both high and low quality, and desktop/390px touch-viewport visual checks. Browser emulation is not a physical-phone frame-rate benchmark. Reproduce the scene sweep by temporarily copying `research/graphics-review-v417.html` to `dist/_graphics-review.html`, running the local server and clicking Render; remove that local QA page before deployment.

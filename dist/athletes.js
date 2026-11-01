@@ -1,3 +1,4 @@
+import {finishJersey} from './scene-finish.js';
 import {femaleGeometry} from './female-shape.js';
 import {animateAmpeArms} from './ampe-motion.js';
 import {animateKeeperArms} from './keeper-arms.js';
@@ -17,11 +18,11 @@ export async function loadAthletes(progress=()=>{},quality="high"){
 }
 export function createAthlete(parent,{x=0,z=0,color=0xa93424,skin=0x895237,scale=1,gender='male'}={}){
  if(!template)return null;
- const root=new THREE.Group(),model=cloneRig(template);root.add(model);parent?.add(root);root.position.set(x,0,z);root.scale.setScalar(scale);const identity=Math.abs(Math.round(x*97+z*131))%5,heights=[1,.98,1.025,.965,1.015],builds=[1,.97,1.025,1.01,.985];model.scale.set(1.18*builds[identity],1.28*heights[identity],1.18*builds[identity]);
- const afro=gender==='female'||Math.abs(Math.round(x*3+z*7))%3===0;const bones={};model.traverse(o=>{if(o.isBone)bones[o.name]=o;if(o.isMesh){if(gender==='female')o.geometry=femaleGeometry(o.geometry,o.name);if(o.name==='Hair_afro01')o.visible=afro;if(o.name==='Hair_short04')o.visible=!afro;o.userData.sharedAsset=true;if(o.material){const materials=(Array.isArray(o.material)?o.material:[o.material]).map(m=>{const n=m.clone();n.userData.sharedTextures=true;if(n.name==='Skin'){n.color.setHex(skin).lerp(new THREE.Color([0x89573e,0x744a34,0x976344,0x634331,0x805039][identity]),.25);n.roughness=.54;n.normalScale?.set(.5,.5);n.envMapIntensity=.55;}
- if(n.name==='Cloth_tshirt'){n.color.setHex(color);n.roughness=.86;n.normalScale?.set(.7,.7);}
+ const root=new THREE.Group(),model=cloneRig(template);root.add(model);parent?.add(root);root.position.set(x,0,z);root.scale.setScalar(scale);const identity=Math.abs(Math.round(x*97+z*131))%5,heights=[1,.98,1.025,.965,1.015],builds=[1,.97,1.025,1.01,.985];model.scale.set(1.28*builds[identity],1.34*heights[identity],1.28*builds[identity]);
+ const afro=gender==='female'||Math.abs(Math.round(x*3+z*7))%3===0;const bones={};model.traverse(o=>{if(o.isBone)bones[o.name]=o;if(o.isMesh){if(gender==='female')o.geometry=femaleGeometry(o.geometry,o.name);if(o.name==='Hair_afro01')o.visible=afro;if(o.name==='Hair_short04')o.visible=!afro;o.userData.sharedAsset=true;if(o.material){const materials=(Array.isArray(o.material)?o.material:[o.material]).map(m=>{const n=m.clone();n.userData.sharedTextures=true;if(n.name==='Skin'){n.color.setHex(skin).lerp(new THREE.Color([0x89573e,0x744a34,0x976344,0x634331,0x805039][identity]),.25);n.roughness=.62;n.normalScale?.set(.65,.65);n.envMapIntensity=.8;}
+ if(n.name==='Cloth_tshirt'){n.color.setHex(color);n.roughness=.78;n.normalScale?.set(.9,.9);finishJersey(n,o.geometry);}
  if(n.name==='Cloth_shorts'){n.color.setHex([0x283438,0x34312a,0x222f3e,0x302b29,0x2b3532][identity]);n.roughness=.9;}
- if(n.name==='Cloth_shoes'){n.color.setHex(identity%2?0x4b453b:0x343c3c);n.roughness=.7;}
+ if(n.name==='Cloth_shoes'){n.color.setHex([0xe4d6b2,0x2c3334,0xb4502f,0x284945,0xc9b16b][identity]);n.roughness=.7;}
  if(n.name.startsWith('Hair')){n.color.setHex(identity%2?0x241b16:0x191714);n.roughness=.82;}
  if(n.name==='Eye'||n.name==='Iris')n.roughness=.18;
  if(n.name==='Cornea'){n.roughness=.035;n.depthWrite=false;}
@@ -58,4 +59,4 @@ export function animateAthlete(root,t,speed=0,pose='idle',jump=0){
  u.model.rotation.z=THREE.MathUtils.damp(u.model.rotation.z,u.lean||0,9,dt);
  animateKeeperArms(root,pose,moving,dt);if(pose==='ampe')animateAmpeArms(root);
 }
-export function disposeAthlete(root){root.userData.mixer?.stopAllAction();root.traverse(o=>{if(o.skeleton)o.skeleton.dispose();if(o.isMesh)for(const m of Array.isArray(o.material)?o.material:[o.material])m?.dispose();});}
+export function disposeAthlete(root){root.userData.mixer?.stopAllAction();root.traverse(o=>{if(o.skeleton)o.skeleton.dispose();if(o.userData.contactShadow)o.geometry.dispose();if(o.isMesh)for(const m of Array.isArray(o.material)?o.material:[o.material])m?.dispose();});}

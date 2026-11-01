@@ -1,20 +1,22 @@
+import {courtPatina,venueShadow} from './scene-finish.js';
 import {pitchType,pitchSurface} from './football-assets.js';
 import {THREE,box,cylinder,sphere} from './world.js';
 import {surface} from './surfaces.js';
-import {detailedHome,neighbourhoodDetails,streetCourtDetails,compactVenueGeometry,footballStreetscape,venueTree} from './venue-details.js';
+import {detailedHome,neighbourhoodDetails,streetCourtDetails,compactVenueGeometry,footballStreetscape,venueTree,venueLife} from './venue-details.js';
 
 export const venueFor=id=>['pampanaa','shooting','pilolo'].includes(id)?'neighbourhood':id==='rubberband'?'wall':id==='onepole'?'lane':['laski','stay'].includes(id)?'streetcourt':['fourcorners','penalties','football','sulia'].includes(id)?'pitch':['oware','dame','ludo','counters','chempe','pretend'].includes(id)?'veranda':['alikoto','kpitinge','alasa'].includes(id)?'sand':id==='tyre'?'lane':'schoolyard';
 export function clearVenue(world){
  if(world.venue){world.venue.traverse(o=>{if(o.isInstancedMesh)o.dispose();o.geometry?.dispose();for(const m of Array.isArray(o.material)?o.material:[o.material]){if(!m)continue;for(const k of ['map','normalMap','roughnessMap'])if(m[k]&&!m[k].userData.sharedAsset)m[k].dispose();m.dispose();}});world.scene?.remove(world.venue);}
- world.venue=null;if(world.environment)world.environment.visible=true;
+ world.venue=null;world.venueShadow=null;if(world.environment)world.environment.visible=true;
 }
 function textured(w,h,d,name,color,x,y,z,parent){const m=box(w,h,d,color,x,y,z,parent);m.material.dispose();m.material=surface(name,color,w/2,d/2);return m;}
 function home(g,x,z,w,d,h,tint){
- textured(w,h,d,'plastered_wall_02',tint,x,h/2,z,g);
- const roof=textured(w+.4,.13,d+.4,'corrugated_iron_02',0x8d7762,x,h+.1,z,g);roof.rotation.z=.025;
- textured(.9,1.95,.08,'wood_planks',0x526c63,x+.4,.98,z+d/2+.045,g);
- for(const dx of [-w*.3,w*.3]){box(.75,.85,.09,0x263d3c,x+dx,h*.62,z+d/2+.07,g);for(let k=0;k<4;k++)box(.022,.85,.04,0x8e8d7e,x+dx-.3+k*.2,h*.62,z+d/2+.13,g);}
- box(w,.16,.28,0xa69c83,x,.08,z+d/2+.1,g);
+ // Long school/veranda blocks have repeated bays rather than a single huge doorless wall.
+ const alongX=w>=d,count=Math.max(1,Math.ceil((alongX?w:d)/6)),width=(alongX?w:d)/count;
+ for(let i=0;i<count;i++){
+  const dx=alongX?-w/2+width*(i+.5):0,dz=alongX?0:-d/2+width*(i+.5);
+  detailedHome(g,x+dx,z+dz,alongX?width:w,alongX?d:width,h,tint,i+10,alongX?(z>0?Math.PI:0):(x<0?Math.PI/2:-Math.PI/2));
+ }
 }
 export function buildVenue(world,game,settings={}){
  clearVenue(world);const kind=venueFor(game.id);world.venueKind=kind;
@@ -55,7 +57,10 @@ export function buildVenue(world,game,settings={}){
   box(4,1.4,.08,0x3e5c4c,0,1.6,-12.94,g);
   for(let i=0;i<10;i++){const x=-12+i*2.6;box(1.8,.1,.5,0x78634d,x,.5,-11,g);for(const dx of [-.65,.65])box(.08,.45,.4,0x635842,x+dx,.225,-11,g);}
  }
- if(['neighbourhood','lane','streetcourt'].includes(kind))compactVenueGeometry(g);
+ courtPatina(g,kind==='neighbourhood'?32:24,kind==='neighbourhood'?32:24,kind==='veranda'?'concrete':'dirt',false);
+ if(['schoolyard','sand','wall'].includes(kind)){const hz=kind==='schoolyard'?12:kind==='sand'?8:7;venueLife(g,kind,kind==='schoolyard'?13:10,hz);venueTree(g,-18,-15);venueTree(g,18,-15);}
+ compactVenueGeometry(g);
+ world.venueShadow=venueShadow(g,solids);world.venueShadow&&(world.venueShadow.visible=world.quality==='low');
  world.venueSolids=solids;return {kind,solids};
 }
 // Segment-vs-expanded-wall test is shared by navigation, collision and pretend shots.
@@ -107,5 +112,6 @@ function buildFootballVenue(world,game,settings,kind){
   building(0,-edgeZ-5,8,5,3.4,0xd6c6a2,3);for(const x of [-7,-3,3,7])bench(x,-halfZ-2.5);
  }
  footballStreetscape(g,theme,halfX,halfZ,solids);
- compactVenueGeometry(g);world.venueSolids=solids;world.venueTheme=theme;return {kind,theme,surface:theme,solids};
+ courtPatina(g,halfX*2,halfZ*2,theme);venueLife(g,theme,halfX,halfZ);
+ compactVenueGeometry(g);world.venueShadow=venueShadow(g,solids);world.venueShadow&&(world.venueShadow.visible=world.quality==='low');world.venueSolids=solids;world.venueTheme=theme;return {kind,theme,surface:theme,solids};
 }

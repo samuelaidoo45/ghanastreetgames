@@ -1,0 +1,19 @@
+<!doctype html><meta charset="utf-8"><title>Graphics verification</title>
+<style>body{margin:0;background:#171d1b;color:#eee;font:14px sans-serif}canvas{width:960px;height:600px}button,select{padding:12px;margin:8px}#results{display:flex;flex-wrap:wrap}figure{width:300px;margin:8px}img{width:100%}pre{white-space:pre-wrap}</style>
+<select id="quality"><option>high</option><option>low</option></select><button id="run">Render every game and venue</button><pre id="status">Ready</pre><canvas id="canvas"></canvas><div id="results"></div>
+<script type="module">
+import {World,animateActor} from './world.js';import {createMode} from './modes.js';import {catalogue} from './catalogue.js';import {loadAthletes} from './athletes.js';import {loadSurfaces} from './surfaces.js';import {loadFootballAssets} from './football-assets.js';import {loadFemaleShape} from './female-shape.js';import {clearVenue} from './venues.js';
+const button=document.querySelector('#run'),status=document.querySelector('#status'),canvas=document.querySelector('canvas'),results=document.querySelector('#results');let world;
+button.onclick=async()=>{button.disabled=true;const quality=document.querySelector('#quality').value;try{
+ await Promise.all([loadAthletes(()=>{},quality),loadSurfaces(quality),loadFootballAssets(),loadFemaleShape()]);
+ if(world){clearVenue(world);world.dispose();}world=new World(canvas,quality);if(quality==='high')await world.loadSky();world.thumbnail=true;world.renderer.setPixelRatio(1);world.renderer.setSize(960,600,false);world.camera.aspect=1.6;world.camera.updateProjectionMatrix();results.replaceChildren();
+ const cases=[...catalogue.map(game=>({game,surface:'auto'})),...['dirt','concrete','grass'].map(surface=>({game:catalogue.find(g=>g.id==='fourcorners'),surface}))];
+ for(const {game,surface}of cases){status.textContent='Rendering '+game.id+' '+surface;const mode=createMode({world,game,settings:{color:0xc05336,pitchSurface:surface,goalStyle:'net',quality},input:{target:null,sprint:false,vector:()=>({x:0,z:0})},ui:{actions(){},status(){},note(){},sound(){},end(){}}});
+ for(const a of mode.actors||[])animateActor(a,0,0,a.userData.pose||'idle',0);
+ if(['pampanaa','shooting','pilolo'].includes(game.id))world.setCamera([-17,25,27,0,0,0],true);
+ if(game.id==='football'){const p=mode.teams[0][mode.selected].position;world.setCamera([p.x-5,3.2,p.z+1,p.x+10,1,p.z],true);}
+ if(game.id==='fourcorners')world.setCamera([0,20,23,0,0,0],true);
+ world.render(0,0);const fig=document.createElement('figure'),img=document.createElement('img'),caption=document.createElement('figcaption');const thumb=document.createElement('canvas');thumb.width=640;thumb.height=400;thumb.getContext('2d').drawImage(canvas,0,0,640,400);img.src=thumb.toDataURL('image/jpeg',.82);img.dataset.id=game.id+(surface==='auto'?'':'-'+surface);caption.textContent=img.dataset.id+' · '+world.renderer.info.render.calls+' draws · '+world.renderer.info.render.triangles+' triangles';fig.append(img,caption);results.append(fig);mode.dispose();await new Promise(requestAnimationFrame);
+ }world.clear();clearVenue(world);status.textContent='PASS: '+cases.length+' scenes rendered in '+quality+' quality. GPU geometries remaining: '+world.renderer.info.memory.geometries;}
+ catch(error){status.textContent='FAIL: '+error.stack;}finally{button.disabled=false;}};
+</script>

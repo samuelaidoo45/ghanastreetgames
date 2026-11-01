@@ -60,7 +60,7 @@ export function detailedHome(parent,x,z,w,d,h,tint=0xbba88a,index=0,front=0){
 function bench(parent,x,z,rotation=0){const g=new THREE.Group();g.position.set(x,0,z);g.rotation.y=rotation;parent.add(g);const b=batch(g);for(let i=0;i<3;i++)b.box(0x77634b,0,.47,-.18+i*.18,1.65,.07,.15);for(const side of [-1,1])b.box(0x5d5847,side*.58,.22,0,.08,.45,.5);b.finish();}
 function basin(parent,x,z){const g=new THREE.Group();g.position.set(x,0,z);parent.add(g);mesh(g,new THREE.CylinderGeometry(.24,.18,.22,12,1,true),new THREE.MeshStandardMaterial({color:0x788b84,roughness:.5,side:THREE.DoubleSide}),0,.11,0);mesh(g,new THREE.TorusGeometry(.24,.018,6,18),new THREE.MeshStandardMaterial({color:0xb0b6a5,roughness:.55}),0,.22,0).rotation.x=Math.PI/2;}
 function planter(parent,x,z){const g=new THREE.Group();g.position.set(x,0,z);parent.add(g);mesh(g,new THREE.CylinderGeometry(.25,.19,.4,10),new THREE.MeshStandardMaterial({color:0x98775b,roughness:.95}),0,.2,0);const leaves=[];for(let i=0;i<13;i++){const a=i*2.4,r=.19+(i%3)*.08,base=new THREE.Vector3(Math.sin(a)*.06,.4,Math.cos(a)*.06),tip=new THREE.Vector3(Math.sin(a)*r,.62+(i%4)*.09,Math.cos(a)*r),side=new THREE.Vector3(Math.cos(a)*.09,0,-Math.sin(a)*.09);leaves.push(...base.toArray(),...tip.clone().add(side).toArray(),...tip.clone().sub(side).toArray());}const geom=new THREE.BufferGeometry();geom.setAttribute('position',new THREE.Float32BufferAttribute(leaves,3));geom.computeVertexNormals();mesh(g,geom,new THREE.MeshStandardMaterial({color:0x586a43,roughness:.95,side:THREE.DoubleSide}));}
-function tree(parent,x,z,scale=1){const g=new THREE.Group();g.position.set(x,0,z);g.scale.setScalar(scale);parent.add(g);pipe(g,[0,0,0],[.24,5,0],.15,0x6a6650);for(let i=0;i<5;i++){const a=i*2.4;pipe(g,[.12,3.3,0],[Math.sin(a)*1.4,4.5+i%2*.5,Math.cos(a)*1.4],.05,0x6a6650);}const geom=new THREE.IcosahedronGeometry(1,1),mat=new THREE.MeshStandardMaterial({color:0x5b704c,roughness:1}),foliage=new THREE.InstancedMesh(geom,mat,14),m=new THREE.Matrix4();for(let i=0;i<14;i++){const a=i*2.4,r=.6+(i%3)*.52;m.compose(new THREE.Vector3(Math.sin(a)*r,4.7+(i%4)*.27,Math.cos(a)*r),new THREE.Quaternion(),new THREE.Vector3(.85, .65, .95));foliage.setMatrixAt(i,m);}foliage.castShadow=true;g.add(foliage);}
+function tree(parent,x,z,scale=1){const g=venueTree(parent,x,z,false);g.scale.setScalar(scale);return g;}
 function washing(parent,a,b){wire(parent,[a,[(a[0]+b[0])/2,Math.min(a[1],b[1])-.18,(a[2]+b[2])/2],b],.008);for(let i=1;i<5;i++){const t=i/5,x=THREE.MathUtils.lerp(a[0],b[0],t),z=THREE.MathUtils.lerp(a[2],b[2],t),y=THREE.MathUtils.lerp(a[1],b[1],t)-Math.sin(t*Math.PI)*.18;const cloth=mesh(parent,new THREE.PlaneGeometry(.45,.65,2,3),new THREE.MeshStandardMaterial({color:[0xc3b69b,0x647e82,0x9e7e65,0x748368][i-1],roughness:1,side:THREE.DoubleSide}),x,y-.32,z);cloth.rotation.y=Math.atan2(b[0]-a[0],b[2]-a[2])+Math.PI/2;cloth.rotation.z=(i%2?1:-1)*.05;}}
 function groundWear(parent,width,length){const geometry=new THREE.CircleGeometry(1,18),material=new THREE.MeshStandardMaterial({color:0x967558,roughness:1,transparent:true,opacity:.12,depthWrite:false,polygonOffset:true,polygonOffsetFactor:-1}),inst=new THREE.InstancedMesh(geometry,material,28),m=new THREE.Matrix4(),q=new THREE.Quaternion().setFromEuler(new THREE.Euler(-Math.PI/2,0,0));for(let i=0;i<28;i++){const x=Math.sin(i*7.13)*width*.46,z=Math.cos(i*3.71)*length*.45;m.compose(new THREE.Vector3(x,.006,z),q,new THREE.Vector3(.4+(i%4)*.23, .8+(i%5)*.4,1));inst.setMatrixAt(i,m);}inst.receiveShadow=true;parent.add(inst);}
 export function neighbourhoodDetails(parent,solids){
@@ -94,11 +94,13 @@ export function streetCourtDetails(parent,wide=false,edgeOverride){
 }
 
 // Baking static fittings into colour/material groups keeps richer facades inexpensive.
-// Textured meshes retain their own UV tiling; transparent ground marks remain separate.
+// UV repeats are baked into vertices so repeated textured walls and roofs share draws.
+// Transparent ground marks and per-instance leaf colours remain separate.
 export function compactVenueGeometry(parent){
  parent.updateMatrixWorld(true);const inverse=parent.matrixWorld.clone().invert(),groups=new Map(),original=[];
- parent.traverse(o=>{const mat=o.material;if(!o.isMesh||Array.isArray(mat)||!mat||mat.map||mat.normalMap||mat.roughnessMap||mat.transparent||mat.vertexColors||o.instanceColor)return;const key=[mat.color?.getHex(),mat.roughness,mat.metalness,mat.side,o.castShadow,o.receiveShadow].join(':');let group=groups.get(key);if(!group){group={material:mat,positions:[],normals:[],uvs:[],indices:[],castShadow:o.castShadow,receiveShadow:o.receiveShadow};groups.set(key,group);}const geo=o.geometry,position=geo.attributes.position,normal=geo.attributes.normal,uv=geo.attributes.uv,baseMatrix=inverse.clone().multiply(o.matrixWorld);for(let instance=0;instance<(o.isInstancedMesh?o.count:1);instance++){const matrix=baseMatrix.clone();if(o.isInstancedMesh){const local=new THREE.Matrix4();o.getMatrixAt(instance,local);matrix.multiply(local);}const normalMatrix=new THREE.Matrix3().getNormalMatrix(matrix),offset=group.positions.length/3,p=new THREE.Vector3(),n=new THREE.Vector3();for(let i=0;i<position.count;i++){p.fromBufferAttribute(position,i).applyMatrix4(matrix);group.positions.push(p.x,p.y,p.z);if(normal)n.fromBufferAttribute(normal,i).applyMatrix3(normalMatrix).normalize();else n.set(0,1,0);group.normals.push(n.x,n.y,n.z);group.uvs.push(uv?.getX(i)||0,uv?.getY(i)||0);}if(geo.index)for(let i=0;i<geo.index.count;i++)group.indices.push(offset+geo.index.getX(i));else for(let i=0;i<position.count;i++)group.indices.push(offset+i);}original.push(o);});
- const retained=new Set([...groups.values()].map(g=>g.material)),disposedGeometry=new Set(),disposedMaterial=new Set();for(const old of original){old.removeFromParent();if(!disposedGeometry.has(old.geometry)){old.geometry.dispose();disposedGeometry.add(old.geometry);}if(!retained.has(old.material)&&!disposedMaterial.has(old.material)){old.material.dispose();disposedMaterial.add(old.material);}}
+ parent.traverse(o=>{const mat=o.material;if(!o.isMesh||Array.isArray(mat)||!mat||mat.transparent||mat.vertexColors||o.instanceColor)return;const textureKeys=['map','normalMap','roughnessMap'],texture=mat.map||mat.normalMap||mat.roughnessMap;
+  const key=[mat.type,mat.color?.getHex(),mat.roughness,mat.metalness,mat.side,mat.normalScale?.toArray(),...textureKeys.map(k=>mat[k]?.source.uuid||''),o.castShadow,o.receiveShadow].join(':');let group=groups.get(key);if(!group){const mergedMaterial=mat.clone();for(const k of textureKeys)if(mat[k]){mergedMaterial[k]=mat[k].clone();mergedMaterial[k].repeat.set(1,1);mergedMaterial[k].offset.set(0,0);mergedMaterial[k].rotation=0;mergedMaterial[k].updateMatrix();mergedMaterial[k].userData.sharedAsset=false;}group={material:mergedMaterial,positions:[],normals:[],uvs:[],indices:[],castShadow:o.castShadow,receiveShadow:o.receiveShadow};groups.set(key,group);}const geo=o.geometry,position=geo.attributes.position,normal=geo.attributes.normal,uv=geo.attributes.uv,baseMatrix=inverse.clone().multiply(o.matrixWorld);for(let instance=0;instance<(o.isInstancedMesh?o.count:1);instance++){const matrix=baseMatrix.clone();if(o.isInstancedMesh){const local=new THREE.Matrix4();o.getMatrixAt(instance,local);matrix.multiply(local);}const normalMatrix=new THREE.Matrix3().getNormalMatrix(matrix),offset=group.positions.length/3,p=new THREE.Vector3(),n=new THREE.Vector3();for(let i=0;i<position.count;i++){p.fromBufferAttribute(position,i).applyMatrix4(matrix);group.positions.push(p.x,p.y,p.z);if(normal)n.fromBufferAttribute(normal,i).applyMatrix3(normalMatrix).normalize();else n.set(0,1,0);group.normals.push(n.x,n.y,n.z);const texUV=new THREE.Vector2(uv?.getX(i)||0,uv?.getY(i)||0);if(texture){texture.updateMatrix();texUV.applyMatrix3(texture.matrix);}group.uvs.push(texUV.x,texUV.y);}if(geo.index)for(let i=0;i<geo.index.count;i++)group.indices.push(offset+geo.index.getX(i));else for(let i=0;i<position.count;i++)group.indices.push(offset+i);}original.push(o);});
+ const retained=new Set([...groups.values()].map(g=>g.material)),disposedGeometry=new Set(),disposedMaterial=new Set();for(const old of original){old.removeFromParent();if(!disposedGeometry.has(old.geometry)){old.geometry.dispose();disposedGeometry.add(old.geometry);}if(!retained.has(old.material)&&!disposedMaterial.has(old.material)){for(const k of ['map','normalMap','roughnessMap'])if(old.material[k]&&!old.material[k].userData.sharedAsset)old.material[k].dispose();old.material.dispose();disposedMaterial.add(old.material);}}
  for(const group of groups.values()){const geometry=new THREE.BufferGeometry();geometry.setAttribute('position',new THREE.Float32BufferAttribute(group.positions,3));geometry.setAttribute('normal',new THREE.Float32BufferAttribute(group.normals,3));geometry.setAttribute('uv',new THREE.Float32BufferAttribute(group.uvs,2));geometry.setIndex(group.indices);geometry.computeBoundingSphere();const m=new THREE.Mesh(geometry,group.material);m.name='Batched street details';m.castShadow=group.castShadow;m.receiveShadow=group.receiveShadow;parent.add(m);}
 }
 
@@ -166,5 +168,37 @@ export function footballStreetscape(parent,theme,hx,hz,solids){
  wire(parent,[[-edge-3.3,7,-hz],[0,6.1,-hz],[edge+3.3,7,-hz]],.017);
  // Sparse edge stones, drains and repairs stay clear of the playable rectangle.
  for(let i=0;i<20;i++){const side=i%2?1:-1,x=side*(hx+1.7+(i%3)*.3),z=-hz+(i*.731%(hz*2));decor.box(i%3?0x968773:0xc4b79b,x,.035,z,.13,.07,.18,0,i*.43);}
+ decor.finish();
+}
+
+// The play area stays uncluttered. Life and detail sit along its shoulders.
+export function venueLife(parent,kind,hx=12,hz=12){
+ const decor=batch(parent),back=-hz-3.2;
+ const market=(x,z,rotation=0)=>{
+  const g=new THREE.Group();g.name='Street provisions stall';g.position.set(x,0,z);g.rotation.y=rotation;parent.add(g);
+  block(g,2.5,.72,1.05,0x796548,0,.36,0,'wood_planks');
+  block(g,2.65,.08,1.18,0xbb9a66,0,.76,0);
+  for(const side of [-1,1])pipe(g,[side*1.24,0,-.4],[side*1.24,2.65,-.4],.035,0x49564b);
+  for(let i=0;i<8;i++){const canopy=block(g,.36,.045,1.85,i%2?0xdfb958:0x38746d,-1.26+i*.36,2.5,.1);canopy.rotation.x=.15;block(g,.36,.2,.035,i%2?0xdfb958:0x38746d,-1.26+i*.36,2.27,1);}
+  for(let row=0;row<2;row++)for(let i=0;i<8;i++){const fruit=mesh(g,new THREE.IcosahedronGeometry(.115,1),new THREE.MeshStandardMaterial({color:i%3?0xcdb451:0x84984b,roughness:.84}),-.95+i*.27,.9+row*.16,row*.2);fruit.scale.y=.85;}
+  for(const side of [-1,1]){block(g,.65,.6,.65,0x597368,side*1.6,.3,0);for(let i=0;i<3;i++)block(g,.67,.035,.03,0x304f45,side*1.6,.12+i*.18,.34);}
+ };
+ market(-hx-3.5,back,.18);market(hx+3.5,back,-.18);
+ // Hand-painted low street walls, white caps and terracotta pavement edges.
+ for(const side of [-1,1]){
+  for(let i=0;i<9;i++){const z=-hz+1+i*(hz*2-2)/9;decor.box(i%3?0xc8ac7a:0x558784,side*(hx+4.8),.42,z,.22,.84,(hz*2-2)/9-.08);decor.box(0xe2ceb0,side*(hx+4.8),.87,z,.32,.08,(hz*2-2)/9-.06);}
+  for(let i=0;i<4;i++)planter(parent,side*(hx+2.6),-hz+2+i*hz/2);
+  // A stack of used tyres, water barrel and timber stools.
+  for(let i=0;i<3;i++){const tire=mesh(parent,new THREE.TorusGeometry(.42,.105,6,18),new THREE.MeshStandardMaterial({color:0x343731,roughness:1}),side*(hx+3.2),.12+i*.22,hz-1);tire.rotation.x=Math.PI/2;}
+  mesh(parent,new THREE.CylinderGeometry(.32,.3,.85,12),new THREE.MeshStandardMaterial({color:0x416c80,roughness:.7}),side*(hx+3.7),.425,hz-2.5);
+  for(const z of [-hz+3,hz-4]){decor.box(0x867052,side*(hx+2),.48,z,.65,.09,.58);for(const dx of [-.23,.23])decor.box(0x705d43,side*(hx+2)+dx,.24,z,.08,.48,.48);}
+ }
+ // Paper scraps and bottle caps are instanced; no per-frame decoration updates.
+ for(let i=0;i<36;i++){const side=i%2?1:-1,x=side*(hx+.7+(i%7)*.35),z=Math.sin(i*6.13)*hz;decor.box(i%4===0?0x729caa:0xd7c8a4,x,.013,z,.07+(i%3)*.03,.008,.11,0,i*1.3);}
+ if(kind==='schoolyard'||kind==='sand'){
+  sign(parent,kind==='sand'?'OUR COMPOUND':'AKWAABA COMMUNITY SCHOOL',0,2.85,-hz-.94,7);
+  for(let i=-3;i<=3;i++){const x=i*3.7;decor.box(0xd8c09b,x,1.3,-hz+.1,.18,2.6,.18);}
+  block(parent,26,.1,1.8,0x8a6d53,0,2.7,-hz-.25,'corrugated_iron_02');
+ }
  decor.finish();
 }
