@@ -76,3 +76,30 @@ test('off-ball defenders step into distinct lanes instead of camping beside thei
  const h=harness(),m=h.m;m.b.position.set(0,.12,0);m.think();const covers=m.plans.map((plan,i)=>({plan,i})).filter(x=>x.i&& !x.plan.press);
  for(const {plan,i} of covers)assert.ok(plan.target.distanceTo(m.goals[i].center)>3);assert.ok(covers[0].plan.target.distanceTo(covers[1].plan.target)>2);h.close();
 });
+
+test('defender can block a close shot during the kicker’s pickup cooldown',()=>{
+ const h=harness(),m=h.m;m.carrier=null;m.lastTouch=1;m.cool=.18;m.you.position.set(0,0,0);
+ const before=new THREE.Vector3(-1,.2,0);m.b.position.set(1,.2,0);m.v.set(20,0,0);
+ m.contactBall(before);assert.ok(m.v.x<0);assert.equal(m.lastTouch,0);h.close();
+});
+test('Tackle is an immediate separate action and leaves a recoverable loose ball',()=>{
+ const h=harness(),m=h.m;m.you.position.set(0,0,0);m.you.rotation.y=0;m.players[1].position.set(0,0,1.2);m.b.position.set(0,.12,1);m.carrier=1;m.cool=0;
+ assert.equal(m.actions.find(a=>a.id==='tackle').charge,undefined);m.action('tackle');assert.equal(m.carrier,null);assert.ok(m.v.length()<3);assert.ok(m.you.userData.challengeUntil===0);h.close();
+});
+test('Recover runs goal-side and steering immediately returns manual control',()=>{
+ const h=harness(),m=h.m;m.you.position.set(0,0,0);m.carrier=1;m.b.position.set(3,.12,0);
+ m.action('feint');assert.ok(m.you.userData.recoverUntil>m.age);
+ for(let frame=0;frame<90;frame++)m.tick(1/60,frame/60);
+ assert.ok(m.you.position.x<-4,'recover toward the left-hand home goal');
+ assert.deepEqual(m.recoveryInput(0,{x:0,z:1}),{x:0,z:1});assert.equal(m.you.userData.recoverUntil,0);h.close();
+});
+test('a close CPU challenger gives the carrier time to turn before tackling',()=>{
+ const h=harness(),m=h.m;m.age=1;m.carrier=0;m.you.position.set(0,0,0);m.b.position.set(0,.12,.5);m.you.rotation.y=0;m.players[1].position.set(0,0,1.2);m.players[1].rotation.y=Math.PI;m.players[2].position.set(8,0,8);m.players[3].position.set(-8,0,-8);m.cool=0;
+ m.update(0);assert.equal(m.carrier,0);assert.ok(m.players[1].userData.challengeReady>m.age);
+ m.age+=.4;m.update(0);assert.equal(m.carrier,null);h.close();
+});
+test('CPU shot has a visible wind-up and can be interrupted by a tackle',()=>{
+ const h=harness(),m=h.m;m.age=1;m.carrier=1;m.cool=0;m.players[1].position.set(0,0,2);m.b.position.set(0,.12,1.5);m.players[1].rotation.y=Math.PI;m.players[1].userData.carryTime=4;m.think();m.nextThink=10;
+ m.update(0);assert.equal(m.carrier,1);assert.ok(m.players[1].userData.shotAt>m.age);assert.ok(m.players[1].userData.kick>0);
+ m.you.position.set(0,0,.5);m.you.rotation.y=0;m.action('tackle');assert.equal(m.carrier,null);h.close();
+});

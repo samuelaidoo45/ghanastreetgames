@@ -22,7 +22,7 @@ export function gameActionCamera(mode,aspect,mobile=false){
  if(!mode?.you||!mode.b||mode.wide||mode.cameraWide||(mode.cameraView||0)!==0)return null;
  if(!['fourcorners','laski','sulia','stay','abedemu'].includes(mode.game.id))return null;
  // Four-way defence needs every side goal visible on landscape displays.
- if(mode.game.id==='fourcorners'&&aspect>=1.2&&!mobile)return {position:new THREE.Vector3(0,13.8,16.5),look:new THREE.Vector3(0,.4,0)};
+ if(mode.game.id==='fourcorners'&&aspect>=1.2)return {position:new THREE.Vector3(0,13.8,16.5),look:new THREE.Vector3(0,.4,0),bounds:mobile?[-10,0,-10,10,2.6,10]:null};
  if(mode.game.id==='abedemu'&&mode.players?.length){const bounds=passingBounds(mode);return fitMobileScene(new THREE.Vector3(0,14,10),new THREE.Vector3(0,.7,0),bounds,{width:1000*aspect,height:1000,top:80,bottom:160},aspect<1?65:52);}
  const offset=aspect<.85?[0,11,8]:[1.5,10,12];
  return frameAction(mode.liveFocus||mode.you,mode.b,aspect,offset);
@@ -45,7 +45,7 @@ const phoneBounds={
 };
 export function mobileSceneBounds(mode){
  if(!mode||mode.overview||mode.cameraWide||mode.wide||(mode.cameraView||0)!==0)return null;
- const id=mode.game.id;if(id==='abedemu'&&mode.players?.length)return passingBounds(mode);
+ const id=mode.game.id;if(id==='fourcorners'&&mode.goals?.length){const goal=mode.goals[mode.liveSeat??0].center,p=(mode.liveFocus||mode.you).position,b=mode.b.position;return [Math.min(p.x-1,b.x-.4,goal.x-1.7),0,Math.min(p.z-1,b.z-.4,goal.z-1.7),Math.max(p.x+1,b.x+.4,goal.x+1.7),2.6,Math.max(p.z+1,b.z+.4,goal.z+1.7)];}if(id==='abedemu'&&mode.players?.length)return passingBounds(mode);
  if(phoneBounds[id])return phoneBounds[id];
  if(['football','fourcorners','laski','sulia','stay','abedemu'].includes(id)){
   const p=(mode.liveFocus||mode.teams?.[0]?.[mode.selected]||mode.you)?.position,b=mode.b?.position;
@@ -74,9 +74,10 @@ export function fitMobileScene(position,look,bounds,viewport,fov){
 // Lift the One Pole camera above roofs intersecting the view of either end.
 // Run after zoom, phone fitting and smoothing: those can pull a safe camera
 // back behind a building even when the original camera preset is unobstructed.
-export function clearPoleCamera(position,solids=[]){
+export function clearPoleCamera(position,solids=[]){return clearCameraObstacles(position,[-3,3].flatMap(x=>[-10.5,10.5].map(z=>({x,z}))),solids);}
+export function clearCameraObstacles(position,targets,solids=[]){
  const result=position.clone();
- for(const x of [-3,3])for(const z of [-10.5,10.5])for(const solid of solids){
+ for(const {x,z} of targets)for(const solid of solids){
   let enter=0,exit=1;
   for(const [start,end,centre,size]of [[x,result.x,solid.x,solid.w],[z,result.z,solid.z,solid.d]]){
    const delta=end-start,min=centre-size/2-.35,max=centre+size/2+.35;
@@ -86,4 +87,22 @@ export function clearPoleCamera(position,solids=[]){
   if(exit>=enter&&enter>0&&enter<=1)result.y=Math.max(result.y,((solid.h||4)+1.2)/enter);
  }
  return result;
+}
+
+// Named views share the same framing on touch screens and desktop.
+export function cameraPresetFrame(mode,preset,aspect){
+ if(!mode||!preset||preset==='auto')return null;
+ const fixed=phoneBounds[mode.game.id];
+ const player=mode.liveFocus||mode.teams?.[0]?.[mode.selected]||mode.you||mode.actors?.[0]||(fixed?{position:new THREE.Vector3()}:null);
+ const ball=mode.b||player;if(!player||!ball)return null;
+ const bounds=fixed|| (mode.game.id==='football'?[-mode.halfX,0,-mode.halfZ,mode.halfX,2.6,mode.halfZ]:mode.game.id==='fourcorners'?[-10,0,-10,10,2.6,10]:mode.players?.length?passingBounds(mode):mobileSceneBounds(mode));
+ const offsets={follow:[0,8,10],behind:[-Math.sin(player.rotation?.y||0)*10,7,-Math.cos(player.rotation?.y||0)*10],side:[14,9,0],tactical:[0,18,14],overhead:[0,24,.5]};
+ const offset=offsets[preset];if(!offset)return null;
+ if((fixed||preset==='tactical'||preset==='overhead')&&bounds){
+  // Floor equipment needs centimetre-scale views, not a person-sized offset.
+  const extent=Math.max(bounds[3]-bounds[0],bounds[5]-bounds[2]);
+  const position=new THREE.Vector3(...offset).multiplyScalar(Math.min(1,extent/14));
+  return {...fitMobileScene(position,new THREE.Vector3(),bounds,{width:1000*aspect,height:1000,top:80,bottom:150},aspect<1?65:52),bounds};
+ }
+ return frameAction(player,ball,aspect,offset);
 }

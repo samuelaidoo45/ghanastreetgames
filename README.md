@@ -194,3 +194,12 @@ The passing group now reshapes around the ball, using changing support lanes and
 The middle player can use **Q / Press** for a short pursuit that cuts passing lanes and predicts ball flight; steering overrides it, and **Space / Tackle** challenges nearby. Press has a brief recovery period. Nearby pressure reduces pass precision and can produce a heavy first touch, leaving a physical loose ball to win. Defenders retain real interception and tackling distances, and cannot steal remotely. Middle-player controls now show only Tackle, Press and Sprint.
 
 Private-room participants retain full human control: no CPU support runs or automatic CPU passing are applied to their seats. See `research/verification-v419.md`.
+
+
+## 4.26.0 — Camera choices and Four Corners defence
+
+The View menu now offers Auto, Close Follow, Behind Player, Side View, Wide Tactical and Top Down. Named views respect mobile control space; landscape Four Corners includes all four goals, while portrait Auto includes the player’s own goal. Camera clearance also applies to the new views.
+
+Four Corners has a separate immediate Tackle button, a longer dodge shield and a contextual Recover action that guides the player goal-side until manual steering resumes. CPU challenges have a reaction delay and shots have a wind-up. Defenders can block during a kicker’s pickup cooldown, while tackle cooldown prevents instant repossession. Private-room seats use the same tackle and recovery rules.
+
+Verification: 471 automated tests, application syntax/import/asset checks, and simulated scoring, sprint control, defensive blocks and mobile camera framing. Browser control was disabled, so this release has not had visual browser or physical-phone verification.

@@ -99,3 +99,18 @@ test('One Pole clears both end views of buildings after phone fitting, zoom and 
   }
  }
 });
+
+test('named camera angles frame action and tactical views include every corner goal',async()=>{
+ const {cameraPresetFrame}=await import('../dist/camera-framing.js');
+ for(const [w,h]of screens){const mode={game:{id:'fourcorners'},you:{position:new THREE.Vector3(-5,0,1),rotation:{y:1}},b:{position:new THREE.Vector3(3,.12,-2)}};
+  const positions=[];
+  for(const preset of ['follow','behind','side','tactical','overhead']){const frame=cameraPresetFrame(mode,preset,w/h),project=projection(frame,w,h);positions.push(frame.position.toArray().join());for(const p of [mode.you.position,mode.b.position]){const q=project(p);assert.ok(Math.abs(q.x)<.95&&Math.abs(q.y)<.95);}
+   if(['tactical','overhead'].includes(preset))for(const [x,z]of [[-9,0],[9,0],[0,-9],[0,9]]){const q=project(new THREE.Vector3(x,.2,z));assert.ok(Math.abs(q.x)<.95&&Math.abs(q.y)<.95);}
+  }
+  assert.equal(new Set(positions).size,5);assert.equal(cameraPresetFrame(mode,'auto',w/h),null);
+ }
+});
+test('manual side views rise over a building between camera and action',async()=>{
+ const {clearCameraObstacles}=await import('../dist/camera-framing.js');const p=clearCameraObstacles(new THREE.Vector3(14,4,0),[{x:0,z:0}],[{x:10,z:0,w:4,d:8,h:5}]);
+ assert.ok(p.y>10);assert.equal(p.x,14);
+});

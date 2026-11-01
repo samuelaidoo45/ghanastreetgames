@@ -7,7 +7,7 @@ export const touchHints={
  agawowa:'Choose your style, Run up, then Jump on the inclined block. Tuck to rotate; Open when your feet point down. Tap Land just before the sand.',
  abedemu:'Pass around the middle player. Tap Pass or hold for power; Target chooses a teammate. In the middle, tap Press to close the passing lane, then Tackle. Steer to take over. Close pressure can force a bad pass or loose touch. An interception swaps the last toucher into the middle.',
  football:'Keeper save is beside Shoot in big-poles matches. Without the ball, Pass becomes Press. Move with the stick; push to its edge to sprint. Hold Shoot, then release. Low shot, Chip, Switch and Sprint are all on screen.',
- fourcorners:'Move to collect the ball. Tap Shoot for a quick strike, or hold for power. Without the ball it tackles. Target changes goal; Dodge slips past a challenge. Tap Chip for a lifted shot.',
+ fourcorners:'Move to collect the ball. Tap Shoot for a quick strike, or hold for power. Tap Tackle to challenge. Target changes goal; Dodge shields a turn with the ball, and Recover guides you back to defend without it. Tap Chip for a lifted shot.',
  penalties:'Tap Lock aim, then Set power. In free-aim mode, tap the goal or use AIM, then hold and release Shoot. In goal, tap a dive button.',
  onepole:'Use AIM or tap the target to aim. Step left/right changes your position. Hold Strike for power, then release.',
  laski:'Chase the keeper’s throw with MOVE. Push to the edge to sprint. Hold Shoot, release to strike; Volley meets an airborne ball. In goal, move and use Dive.',

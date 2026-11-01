@@ -89,3 +89,13 @@ test('orientation choices expose success and fallback without changing game cont
  await h.$('#orientation-auto').onclick();
  assert.equal(h.$('#orientation-auto')['aria-pressed'],'true');
 });
+
+
+test('named camera choices apply immediately, close View and reset to automatic framing',()=>{
+ const h=setup();h.run("world={selectedCamera:'auto',cameraZoom:1.8,cameraOrbit:1};active={};");
+ for(const preset of ['follow','behind','side','tactical','overhead']){
+  h.$('#view-options').open=true;h.$('#camera-preset').value=preset;h.$('#camera-preset').onchange();
+  assert.equal(h.run('world.selectedCamera'),preset);assert.equal(h.run('world.cameraZoom'),1);assert.equal(h.run('world.cameraOrbit'),0);assert.equal(h.$('#view-options').open,false);
+ }
+ h.$('#camera-reset').onclick();assert.equal(h.run('world.selectedCamera'),'auto');assert.equal(h.$('#camera-preset').value,'auto');
+});
