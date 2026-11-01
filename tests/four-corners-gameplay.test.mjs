@@ -99,7 +99,7 @@ test('a close CPU challenger gives the carrier time to turn before tackling',()=
  m.age+=.4;m.update(0);assert.equal(m.carrier,null);h.close();
 });
 test('CPU shot has a visible wind-up and can be interrupted by a tackle',()=>{
- const h=harness(),m=h.m;m.age=1;m.carrier=1;m.cool=0;m.players[1].position.set(0,0,2);m.b.position.set(0,.12,1.5);m.players[1].rotation.y=Math.PI;m.players[1].userData.carryTime=4;m.think();m.nextThink=10;
+ const h=harness(),m=h.m;m.age=1;m.carrier=1;m.cool=0;m.players[1].position.set(0,0,-5);m.b.position.set(0,.12,-5.5);m.players[3].position.set(7,0,7);m.players[1].rotation.y=Math.PI;m.players[1].userData.carryTime=4;m.think();m.nextThink=10;
  m.update(0);assert.equal(m.carrier,1);assert.ok(m.players[1].userData.shotAt>m.age);assert.ok(m.players[1].userData.kick>0);
- m.you.position.set(0,0,.5);m.you.rotation.y=0;m.action('tackle');assert.equal(m.carrier,null);h.close();
+ m.you.position.set(0,0,-6.5);m.you.rotation.y=0;m.action('tackle');assert.equal(m.carrier,null);h.close();
 });

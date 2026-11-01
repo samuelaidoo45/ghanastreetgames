@@ -203,3 +203,10 @@ The View menu now offers Auto, Close Follow, Behind Player, Side View, Wide Tact
 Four Corners has a separate immediate Tackle button, a longer dodge shield and a contextual Recover action that guides the player goal-side until manual steering resumes. CPU challenges have a reaction delay and shots have a wind-up. Defenders can block during a kicker’s pickup cooldown, while tackle cooldown prevents instant repossession. Private-room seats use the same tackle and recovery rules.
 
 Verification: 471 automated tests, application syntax/import/asset checks, and simulated scoring, sprint control, defensive blocks and mobile camera framing. Browser control was disabled, so this release has not had visual browser or physical-phone verification.
+
+
+## 4.26.1 — Build attacks before finishing
+
+Street Football (small and big poles), Four Corners and Laski now use a shared distance-based finishing model. Close, unpressured human shots preserve their placement; longer shots have bounded aim variation and lower pace, with defensive pressure and rushed touches further affecting accuracy. These rules run at the strike for local play, CPUs and private friend rooms. Goals still depend on the actual ball crossing the posts and bar. CPUs build attacks into closer shooting range rather than routinely striking from midfield.
+
+Verification: 488 automated tests, including seeded close-versus-centre shot simulations across sand, concrete and grass, CPU build-up, friend-room strikes, keeper saves, tackling and sprint possession; application syntax/import/asset checks. Browser control remains disabled, so visual or physical-phone verification was unavailable.

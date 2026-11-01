@@ -130,8 +130,8 @@ test('Sulia CPU carries toward a rival and attempts an actual nutmeg',()=>{
  assert.ok(attempt);assert.ok(m.players[1].position.z>.5,'CPU dribbles into range first');h.close();
 });
 
-test('a normal Laski shoot action can beat the keeper with assisted placement',()=>{
- const h=harness('laski'),m=h.mode;m.phase='play';m.cool=0;m.possessor=m.you;m.you.position.set(0,0,-1);m.you.rotation.y=Math.PI;m.b.position.set(0,.12,-1.5);m.players.slice(1).forEach((p,i)=>p.position.set(6,0,4+i));m.action('shoot');advance(m,.8);assert.equal(m.lastScorer,0);assert.equal(m.phase,'choose');h.close();
+test('a close Laski shoot action can still beat the keeper with placed finishing',()=>{
+ const h=harness('laski'),m=h.mode;m.phase='play';m.cool=0;m.possessor=m.you;m.you.position.set(0,0,-4);m.you.rotation.y=Math.PI;m.b.position.set(0,.12,-4.5);m.players.slice(1).forEach((p,i)=>p.position.set(6,0,4+i));m.action('shoot');advance(m,.8);assert.equal(m.lastScorer,0);assert.equal(m.phase,'choose');h.close();
 });
 
 test('CPU players contest a loose ball even when an idle human is slightly closer',()=>{
