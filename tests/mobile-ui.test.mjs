@@ -1,4 +1,4 @@
-import {enterGameFullscreen} from '../dist/display-mode.js';
+import {enterGameFullscreen,syncGameViewport} from '../dist/display-mode.js';
 import {difficultyHint} from '../dist/difficulty.js';
 import {initialGraphics} from '../dist/graphics-profile.js';
 import {actionLabel,actionIcon,padLayout,releaseQuickCharge} from '../dist/action-pad.js';
@@ -32,7 +32,7 @@ function setup(){
  const frames=[],window=new EventTarget();window.visualViewport=new EventTarget();
  class Sound{setScene(){}setEnabled(){}setVolume(){}setVisible(){}play(){}unlock(){return Promise.resolve();}}
  class Replay{supported(){return false;}finish(){return Promise.resolve();}pause(){}resume(){}}
- const ctx=vm.createContext({enterGameFullscreen:()=>enterGameFullscreen(doc),difficultyHint,initialGraphics,actionLabel,actionIcon,padLayout,releaseQuickCharge,roomSettings,seeded,initClub:()=>({launchContext:null,attach(){},finishRound(){},leave(){},open(){}}),console,document:doc,window,navigator:{maxTouchPoints:5,hardwareConcurrency:4},matchMedia:()=>({matches:true}),innerWidth:390,innerHeight:844,performance,location:{search:''},localStorage:{getItem(){return null;},setItem(){}},requestAnimationFrame:f=>(frames.push(f),frames.length),setTimeout,clearTimeout,URLSearchParams,Soundscape:Sound,ReplayRecorder:Replay,clampVolume:Number,catalogue,categories,sources,formationFor,menuLayout,remapPage,mobileProfile,arrangeActions,joystickVector,RenderBudget,mobileMessage,bindChargeControl,bindTapControl,bindJoystick});
+ const ctx=vm.createContext({enterGameFullscreen:()=>enterGameFullscreen(doc),syncGameViewport:()=>syncGameViewport(doc,{innerWidth:390,innerHeight:844}),difficultyHint,initialGraphics,actionLabel,actionIcon,padLayout,releaseQuickCharge,roomSettings,seeded,initClub:()=>({launchContext:null,attach(){},finishRound(){},leave(){},open(){}}),console,document:doc,window,navigator:{maxTouchPoints:5,hardwareConcurrency:4},matchMedia:()=>({matches:true}),innerWidth:390,innerHeight:844,performance,location:{search:''},localStorage:{getItem(){return null;},setItem(){}},requestAnimationFrame:f=>(frames.push(f),frames.length),setTimeout,clearTimeout,URLSearchParams,Soundscape:Sound,ReplayRecorder:Replay,clampVolume:Number,catalogue,categories,sources,formationFor,menuLayout,remapPage,mobileProfile,arrangeActions,joystickVector,RenderBudget,mobileMessage,bindChargeControl,bindTapControl,bindJoystick});
  const source=readFileSync('dist/arcade.js','utf8').replace(/^import .*?;\n/gm,'');vm.runInContext(source,ctx);
  return {ctx,$,frames,run:code=>vm.runInContext(code,ctx)};
 }
@@ -51,4 +51,22 @@ test('mobile app boots without a rendering loop; real control wiring survives pa
  h.run('clearInput()');assert.equal(h.run('input.sprint'),false);send(shoot,'pointerup',2);assert.equal(h.run('active.calls.join()'),'hold:shoot');
  send(stick,'pointermove',1);assert.equal(h.run('input.stick.x'),0);send(shoot,'pointerdown',3);send(shoot,'pointerup',3);assert.equal(h.run('active.calls.join()'),'hold:shoot,hold:shoot,shoot');
  h.frames.length=0;h.run("state='paused';frame(performance.now()+40)");assert.equal(h.frames.length,0);
+});
+
+test('fullscreen and viewport events resize once and measure controls relative to the visible canvas',()=>{
+ const h=setup();
+ h.run("state='playing';world={resizes:0,resize(){this.resizes++;},updateViewOffset(){}};active={frameView(){}};");
+ h.$('#world').bounds={left:0,top:24,width:390,height:720,bottom:744};
+ h.$('#world').clientHeight=720;
+ h.$('.play-bottom').bounds={left:12,top:600,width:366,height:124,bottom:724};
+ h.$('.match-header').bounds={left:12,top:36,width:366,height:80,bottom:116};
+ h.$('#corner-scores').hidden=h.$('#penalty-scores').hidden=true;
+ h.ctx.document.dispatchEvent(new Event('fullscreenchange'));
+ h.ctx.window.visualViewport.dispatchEvent(new Event('resize'));
+ h.ctx.window.visualViewport.dispatchEvent(new Event('scroll'));
+ assert.equal(h.frames.length,1,'transition events must share a single resize');
+ h.frames.shift()();
+ assert.equal(h.run('world.resizes'),1);
+ assert.equal(h.run('world.mobileViewport.top'),100);
+ assert.equal(h.run('world.mobileViewport.bottom'),156);
 });

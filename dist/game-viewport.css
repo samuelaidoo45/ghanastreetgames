@@ -1,0 +1,46 @@
+/* One visible viewport for the scene and its controls, including fullscreen. */
+body #world,body #game-hud,body.full-window #world,body.full-window #game-hud{
+ position:fixed;inset:auto;
+ left:var(--game-view-left,0px);top:var(--game-view-top,0px);
+ width:var(--game-view-width,100%);height:var(--game-view-height,100dvh);
+}
+#game-hud{z-index:10;container:game-controls / size;
+ --safe-top:env(safe-area-inset-top,0px);--safe-right:env(safe-area-inset-right,0px);
+ --safe-bottom:env(safe-area-inset-bottom,0px);--safe-left:env(safe-area-inset-left,0px);
+}
+body #game-hud{padding:calc(var(--safe-top) + 12px) calc(var(--safe-right) + 12px) 0 calc(var(--safe-left) + 12px)}
+#game-hud .match-header{position:relative;z-index:3;padding:0;gap:8px}
+#game-hud .match-header>.round-button,#game-hud .view-options{flex-shrink:0}
+#game-hud .play-bottom{z-index:2;left:calc(var(--safe-left) + 16px);right:calc(var(--safe-right) + 16px);bottom:calc(var(--safe-bottom) + 20px);gap:12px}
+#game-hud .keyboard-hint{bottom:calc(var(--safe-bottom) + 3px)}
+#game-hud #player-meter{transform:none}
+body:not(.touch-ui) #game-hud #player-meter{transform:translateX(-50%)}
+.touch-ui #game-hud #action-buttons{flex-shrink:0;max-width:none}
+.touch-ui #game-hud #action-buttons>button{background:#2b2019f2;color:#fff0cc;border-color:#f2deace6}
+.touch-ui #game-hud #action-buttons>button[data-role=primary]{background:#f6c354;color:#261c10}
+.touch-ui #game-hud #action-buttons[data-pad=choices]>button{background:#efe0ba;color:#2c2115}
+.touch-ui #game-hud #action-buttons>button:disabled{opacity:.65}
+.touch-ui #game-hud #player-meter{left:calc(var(--safe-left) + 16px)}
+.touch-ui #game-hud #charge-meter{right:calc(var(--safe-right) + 16px)}
+
+/* Fit to the HUD itself, not a stale orientation/layout viewport. */
+@container game-controls (max-width:600px){
+ .touch-ui #game-hud #action-buttons{--action-size:clamp(48px,14cqw,62px);grid-template-columns:repeat(3,var(--action-size));gap:6px}
+ .touch-ui #game-hud #joystick{width:clamp(84px,25cqw,116px);height:clamp(84px,25cqw,116px)}
+ .touch-ui #game-hud #action-buttons[data-count="1"]{grid-template-columns:var(--action-size)}
+ .touch-ui #game-hud #action-buttons[data-count="2"]{grid-template-columns:repeat(2,var(--action-size))}
+}
+@container game-controls (max-height:500px) and (min-width:601px){
+ .touch-ui #game-hud #action-buttons{--action-size:54px;grid-template-columns:repeat(4,var(--action-size));gap:7px}
+ .touch-ui #game-hud #joystick{width:92px;height:92px}
+ .touch-ui #game-hud #action-buttons[data-count="1"]{grid-template-columns:var(--action-size)}
+ .touch-ui #game-hud #action-buttons[data-count="2"]{grid-template-columns:repeat(2,var(--action-size))}
+ .touch-ui #game-hud #action-buttons[data-count="3"]{grid-template-columns:repeat(3,var(--action-size))}
+}
+@container game-controls (max-height:360px){
+ .touch-ui #game-hud #action-buttons{--action-size:48px;gap:6px}
+ .touch-ui #game-hud #joystick{width:84px;height:84px}
+ .touch-ui #game-hud .score-panel{padding:4px 8px}
+ .touch-ui #game-hud .score-panel>span{display:none}
+ .touch-ui #game-hud #announcement{max-height:40px;padding:4px 8px}
+}
