@@ -219,3 +219,12 @@ The inclined-block somersault game is now **Beast Master**, including its option
 Agawowa supports 2–4 local players or CPU opponents, 2–8 human friend-room turns, all difficulty modes and persistent points with a 480-point score cap. The new card uses an original SVG illustration; it is not a gameplay screenshot.
 
 Verification: 510 automated tests and syntax/import/asset checks, including all four styles at 30/60/120 Hz, failed landings, repeat-style scoring, complete local competitions, CPU flights, human turn ownership and backward-rotation snapshots. Browser control is disabled, so visual browser and physical-phone checks remain unavailable.
+
+
+## 4.28.0 — Assisted pressing and closer football cameras
+
+Four Corners, Laski and Sulia have a visible Press action (F on keyboard): tap to close down the ball for up to three seconds and challenge within physical reach. Steering cancels the assist. Possession, shields, cooldowns and round states still govern challenges; private-room players use the same rules. Four Corners keeps six action buttons, with Shoot becoming Tackle when defending. Street Football's existing Pass/Press assist now lasts three seconds and stops when a teammate wins the ball.
+
+Default Street Football, Four Corners, Laski, Sulia and Stay cameras now frame the player and ball more closely. Four Corners no longer fits the entire compound or distant home goal into the default mobile view. Camera fitting continues to reserve space for the HUD and touch controls; Wide/Tactical and Top Down remain available in View.
+
+Verification: 522 automated tests plus application syntax/import/asset checks, including local and friend-room pressing, manual override, shield protection, physical-range challenges and readable player framing across phone/tablet sizes. Browser control is disabled, so visual browser and physical-phone checks remain unavailable.

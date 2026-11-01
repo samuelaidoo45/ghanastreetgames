@@ -10,7 +10,7 @@ export function crossedGoal(before,after,goal,radius=.12){const from=before.clon
 export function shootoutWinner(shots,scores){if(shots[0]<5||shots[1]<5){if(scores[0]>scores[1]+Math.max(0,5-shots[1]))return 0;if(scores[1]>scores[0]+Math.max(0,5-shots[0]))return 1;}if(shots[0]===shots[1]&&shots[0]>=5&&scores[0]!==scores[1])return scores[0]>scores[1]?0:1;return null;}
 export function footballCamera(player,ball,aspect=1.5,view='broadcast',direction=1){
  const p=player.position||player,b=ball.position||ball;
- const offset=view==='high'?[-2,24,17]:view==='behind'?[-direction*9,6.5,4]:aspect<.85?[-direction*11,9,3.5]:[-3,9,12];
+ const offset=view==='high'?[-2,24,17]:view==='behind'?[-direction*9,6.5,4]:aspect<.85?[-direction*8,7.2,3]:[-2,7.2,9.5];
  const frame=frameAction(p,b,aspect,offset);
  if((view==='behind'||(view==='broadcast'&&aspect<.85))&&Math.abs(frame.look.x)>12){frame.position.x=clamp(frame.position.x,-21,21);frame.position.y=Math.max(9,frame.position.y);}
  return frame;

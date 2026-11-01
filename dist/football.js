@@ -33,8 +33,8 @@ export class Football extends Mode {
   this.kickoff={team,taker,readyAt:this.age+2.8};this.possessor=taker;this.b.position.set(0,.13,0);this.velocity.set(0,0,0);this.passTarget=null;this.pause=2.1;this.cool=0;this.input.target=null;this.marker?.position.set(taker.position.x,.03,0);
  }
  reset(scoringTeam){this.prepareKickoff(1-scoringTeam);}
- press(a){if(!a||this.possessor?.userData.team===a.userData.team||this.pause>0||this.kickoff)return false;a.userData.pressUntil=this.age+1.3;return true;}
- pressingInput(a,raw){if(this.possessor===a||this.age>=(a.userData.pressUntil||0))return raw;if(Math.hypot(raw.x,raw.z)>.2){a.userData.pressUntil=0;return raw;}
+ press(a){if(!a||this.possessor?.userData.team===a.userData.team||this.pause>0||this.kickoff)return false;a.userData.pressUntil=this.age+3;if(!this.networked)this.input.target=null;return true;}
+ pressingInput(a,raw){if(this.possessor?.userData.team===a.userData.team||this.pause>0||this.kickoff){a.userData.pressUntil=0;return raw;}if(this.age>=(a.userData.pressUntil||0))return raw;if(Math.hypot(raw.x,raw.z)>.2){a.userData.pressUntil=0;return raw;}
   const carrier=this.possessor,target=(carrier?.position||this.b.position).clone(),v=carrier?.userData.velocity||this.velocity;target.addScaledVector(v,.16);const dx=target.x-a.position.x,dz=target.z-a.position.z,d=Math.hypot(dx,dz);if(d<1.35&&carrier&&carrier.userData.team!==a.userData.team){a.rotation.y=Math.atan2(dx,dz);this.tackle(a);}return d>.5?{x:dx/d,z:dz/d}:{x:0,z:0};
  }
  keeperSave(k=this.keepers[0],direction=0){if(!k||this.pause>0||this.kickoff||this.possessor===k||this.age<(k.userData.nextManualSave||0))return false;

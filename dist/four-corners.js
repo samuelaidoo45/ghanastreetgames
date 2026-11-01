@@ -1,3 +1,4 @@
+import {startBallPress,steerBallPress} from './ball-press.js';
 import {finishAttempt,defensivePressure,finishingRange} from './finishing.js';
 import {goalLane,rollingTouch} from './corner-tactics.js';
 import {Mode} from './mode-base.js';
@@ -29,14 +30,14 @@ export class FourCorners extends Mode{
   this.you=this.players[0];this.b=matchBall(this.root);this.v=new THREE.Vector3();this.marker=this.circle(0,0,.48);
   this.targetMarker=this.circle(0,9,.55,0xa9c8d0);this.aimGuide=new THREE.ArrowHelper(new THREE.Vector3(0,0,1),new THREE.Vector3(),2,0xffd478,.3,.18);this.root.add(this.aimGuide);this.aimGuide.visible=false;
   this.aim=1;this.manualAimUntil=0;this.lastTouch=-1;this.cool=0;this.charge=null;this.carrier=null;this.round=0;this.nextThink=0;this.plans=[];this.stillTime=0;
-  this.setActions([{id:'kick',label:'Shoot',key:'Space',charge:true},{id:'tackle',label:'Tackle',key:'F'},{id:'target',label:'Next goal',key:'E'},this.oneTouch?{id:'recover',label:'Recover',key:'Q'}:{id:'feint',label:'Dodge',key:'Q'},{id:'chip',label:'Chip',key:'R'},{id:'sprint',label:'Sprint',key:'Shift',hold:true}]);
-  this.serve();this.note(`${this.startLives} lives each. Defend your side. ${this.oneTouch?'One touch until someone else plays the ball.':'Dribble close to an exposed goal; shots from the centre are less accurate.'} Tap Shoot for a quick strike; hold for power. Tap Tackle to challenge. Recover helps you protect your goal; steer to take over.`);
+  this.setActions([{id:'kick',label:'Shoot',key:'Space',charge:true},{id:'press',label:'Press',key:'F'},{id:'target',label:'Next goal',key:'E'},this.oneTouch?{id:'recover',label:'Recover',key:'Q'}:{id:'feint',label:'Dodge',key:'Q'},{id:'chip',label:'Chip',key:'R'},{id:'sprint',label:'Sprint',key:'Shift',hold:true}]);
+  this.serve();this.note(`${this.startLives} lives each. Defend your side. ${this.oneTouch?'One touch until someone else plays the ball.':'Dribble close to an exposed goal; shots from the centre are less accurate.'} Tap Shoot for a quick strike; hold for power. Tap Press to close down and challenge; steering takes over. Without the ball, Shoot becomes Tackle. Recover helps you protect your goal; steer to take over.`);
  }
  name(i){return this.roomPlayers?.[i]?.name||names[i];}
  serve(){
   this.phase='serve';this.time=0;this.lastTouch=-1;this.carrier=null;this.charge=null;this.cool=0;this.stillTime=0;this.nextThink=0;this.aimGuide.visible=false;
   this.b.position.set(0,2.5,0);this.v.set((Math.random()-.5)*1.3,0,(Math.random()-.5)*1.3);
-  this.players.forEach((p,i)=>{p.position.copy(this.goals[i].center).multiplyScalar(.7);p.position.y=0;p.rotation.y=Math.atan2(-p.position.x,-p.position.z);p.userData.velocity.set(0,0,0);p.userData.run=0;p.userData.dribble=0;p.userData.carryTime=0;p.userData.stamina=1;p.userData.tackleUntil=0;p.userData.challengeUntil=0;p.userData.controlUntil=0;p.userData.recoverUntil=0;p.userData.challengeReady=0;p.userData.shotAt=0;p.userData.footTimer=0;p.userData.skillUntil=0;p.userData.shieldUntil=0;});
+  this.players.forEach((p,i)=>{p.position.copy(this.goals[i].center).multiplyScalar(.7);p.position.y=0;p.rotation.y=Math.atan2(-p.position.x,-p.position.z);p.userData.velocity.set(0,0,0);p.userData.run=0;p.userData.dribble=0;p.userData.carryTime=0;p.userData.stamina=1;p.userData.tackleUntil=0;p.userData.challengeUntil=0;p.userData.controlUntil=0;p.userData.recoverUntil=0;p.userData.pressUntil=0;p.userData.challengeReady=0;p.userData.shotAt=0;p.userData.footTimer=0;p.userData.skillUntil=0;p.userData.shieldUntil=0;});
  }
  cycleCamera(){this.cameraView=(this.cameraView+1)%3;this.world.setCamera([[0,15,18,0,.4,0],[-14,9,14,0,.4,0],[0,25,6,0,0,0]][this.cameraView]);}
  hold(){if(this.phase==='play')this.charge=this.age;}
@@ -57,7 +58,7 @@ export class FourCorners extends Mode{
  }
  action(id){
   if(this.phase!=='play'||!this.active[0])return;
-  if(id==='target'){this.selectTarget(0);return;}if(id==='tackle'){this.tackle(0);return;}if(id==='recover'||id==='feint'&&this.carrier!==0){this.recover(0);return;}if(id==='feint'){this.feint(0);return;}
+  if(id==='target'){this.selectTarget(0);return;}if(id==='press'){this.press(0);return;}if(id==='tackle'){this.tackle(0);return;}if(id==='recover'||id==='feint'&&this.carrier!==0){this.recover(0);return;}if(id==='feint'){this.feint(0);return;}
   if(!['kick','chip'].includes(id))return;
   const power=this.charge===null?.5:clamp((this.age-this.charge)/.85,.2,1);this.charge=null;
   if(this.carrier!==null&&this.carrier!==0){this.tackle(0);return;}
@@ -94,12 +95,15 @@ export class FourCorners extends Mode{
   const length=Math.hypot(v.x,v.z),x=length>.1?v.x/length:Math.cos(p.rotation.y),z=length>.1?v.z/length:-Math.sin(p.rotation.y);
   u.velocity.set(x*8,0,z*8);u.burstUntil=this.age+.16;return true;
  }
+ press(i){if(this.oneTouch&&this.lastTouch===i)return false;return startBallPress(this,this.players[i],this.players[this.carrier]);}
+ pressInput(i,raw){return steerBallPress(this,this.players[i],raw,this.players[this.carrier],this.v,()=>this.tackle(i));}
  recover(i){
   if(this.phase!=='play'||!this.active[i]||this.carrier===i)return false;
-  this.players[i].userData.recoverUntil=this.age+3;
+  this.players[i].userData.recoverUntil=this.age+3;this.players[i].userData.pressUntil=0;
   if(i===0){this.input.target=null;this.note('Recovering to your goal. Steer to take over; tap Tackle when close.');}return true;
  }
  recoveryInput(i,raw){
+  if(this.age<(this.players[i].userData.pressUntil||0))return this.pressInput(i,raw);
   const p=this.players[i],u=p.userData;
   if(Math.hypot(raw.x,raw.z)>.15||this.carrier===i){u.recoverUntil=0;return raw;}
   if(this.age>=(u.recoverUntil||0))return raw;
@@ -168,7 +172,7 @@ export class FourCorners extends Mode{
  }
  update(dt){
   this.cool=Math.max(0,this.cool-dt);this.ui.power?.(this.charge===null?0:clamp((this.age-this.charge)/.85,0,1));this.ui.cornerScores?.(this.lives);
-  const context=this.carrier===0?'carry':this.oneTouch?'one':'defend';if(context!==this.contextKey){this.contextKey=context;this.ui.context?.({kick:'Shoot',feint:this.carrier===0?'Dodge':'Recover'});}
+  const context=this.carrier===0?'carry':this.oneTouch?'one':'defend';if(context!==this.contextKey){this.contextKey=context;this.ui.context?.({kick:this.carrier===0||this.oneTouch?'Shoot':'Tackle',feint:this.carrier===0?'Dodge':'Recover'});}
   this.status(`${this.active.filter(Boolean).length} CORNERS · ${this.goalsScored[0]} GOALS`,this.phase==='play'?(this.oneTouch&&this.lastTouch===0?'WAIT FOR ANOTHER TOUCH':'ATTACK: '+this.name(this.aim)):'NEXT BALL');
   if(this.phase==='result'){if(this.time>1.45)this.serve();return;}
   if(this.phase==='serve'){stepBall(this.b,this.v,dt,{bounce:this.surface.bounce});if(this.b.position.y<=.14){this.phase='play';this.time=0;this.lastTouch=-1;this.note('Ball bounced. Play!');}return;}
@@ -177,7 +181,7 @@ export class FourCorners extends Mode{
   for(let i=0;i<4;i++){
    if(!this.active[i])continue;const p=this.players[i],u=p.userData;u.dribble=0;u.stamina=clamp(u.stamina+dt*.14,0,1);
    if(this.networked)continue;
-   if(i===0){const raw=this.recoveryInput(i,this.world.movementVector?.(this.input.vector())||this.input.vector()),target=raw.x||raw.z?{x:p.position.x+raw.x*3,z:p.position.z+raw.z*3}:this.input.target||p.position,run=(this.input.sprint||this.age<(u.recoverUntil||0))&&u.stamina>.08;if(run)u.stamina=Math.max(0,u.stamina-dt*.34);this.advance(p,target,run?6.4:4.5,dt);continue;}
+   if(i===0){const raw=this.recoveryInput(i,this.world.movementVector?.(this.input.vector())||this.input.vector()),target=raw.x||raw.z?{x:p.position.x+raw.x*3,z:p.position.z+raw.z*3}:this.input.target||p.position,run=(this.input.sprint||this.age<(u.recoverUntil||0)||this.age<(u.pressUntil||0))&&u.stamina>.08;if(run)u.stamina=Math.max(0,u.stamina-dt*.34);this.advance(p,target,run?6.4:4.5,dt);continue;}
    const plan=this.plans[i];if(!plan)continue;
    this.advance(p,avoidPlayers(p,plan.target,field,1.1),(u.shotAt?1.8:plan.speed)*(this.settings.difficulty==='easy'?.87:this.settings.difficulty==='hard'?1.06:this.difficultyTuning.speed),dt);
    if(this.carrier===i){u.carryTime+=dt;const lane=this.lane(i,plan.goal),blocked=lane.openness<.55,goalDistance=lane.distance;

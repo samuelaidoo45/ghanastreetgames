@@ -21,10 +21,9 @@ export function frameAction(player, ball, aspect, offset, fov=aspect<1?65:52) {
 export function gameActionCamera(mode,aspect,mobile=false){
  if(!mode?.you||!mode.b||mode.wide||mode.cameraWide||(mode.cameraView||0)!==0)return null;
  if(!['fourcorners','laski','sulia','stay','abedemu'].includes(mode.game.id))return null;
- // Four-way defence needs every side goal visible on landscape displays.
- if(mode.game.id==='fourcorners'&&aspect>=1.2)return {position:new THREE.Vector3(0,13.8,16.5),look:new THREE.Vector3(0,.4,0),bounds:mobile?[-10,0,-10,10,2.6,10]:null};
+ // Default framing follows play; full-court views remain explicit choices.
  if(mode.game.id==='abedemu'&&mode.players?.length){const bounds=passingBounds(mode);return fitMobileScene(new THREE.Vector3(0,14,10),new THREE.Vector3(0,.7,0),bounds,{width:1000*aspect,height:1000,top:80,bottom:160},aspect<1?65:52);}
- const offset=aspect<.85?[0,11,8]:[1.5,10,12];
+ const offset=aspect<.85?[0,8.2,7.2]:[1.5,7.2,9];
  return frameAction(mode.liveFocus||mode.you,mode.b,aspect,offset);
 }
 
@@ -45,7 +44,7 @@ const phoneBounds={
 };
 export function mobileSceneBounds(mode){
  if(!mode||mode.overview||mode.cameraWide||mode.wide||(mode.cameraView||0)!==0)return null;
- const id=mode.game.id;if(id==='fourcorners'&&mode.goals?.length){const goal=mode.goals[mode.liveSeat??0].center,p=(mode.liveFocus||mode.you).position,b=mode.b.position;return [Math.min(p.x-1,b.x-.4,goal.x-1.7),0,Math.min(p.z-1,b.z-.4,goal.z-1.7),Math.max(p.x+1,b.x+.4,goal.x+1.7),2.6,Math.max(p.z+1,b.z+.4,goal.z+1.7)];}if(id==='abedemu'&&mode.players?.length)return passingBounds(mode);
+ const id=mode.game.id;if(id==='abedemu'&&mode.players?.length)return passingBounds(mode);
  if(phoneBounds[id])return phoneBounds[id];
  if(['football','fourcorners','laski','sulia','stay','abedemu'].includes(id)){
   const p=(mode.liveFocus||mode.teams?.[0]?.[mode.selected]||mode.you)?.position,b=mode.b?.position;

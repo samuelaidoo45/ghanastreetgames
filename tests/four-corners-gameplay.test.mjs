@@ -82,9 +82,9 @@ test('defender can block a close shot during the kicker’s pickup cooldown',()=
  const before=new THREE.Vector3(-1,.2,0);m.b.position.set(1,.2,0);m.v.set(20,0,0);
  m.contactBall(before);assert.ok(m.v.x<0);assert.equal(m.lastTouch,0);h.close();
 });
-test('Tackle is an immediate separate action and leaves a recoverable loose ball',()=>{
+test('contextual Tackle leaves a recoverable loose ball alongside the separate Press action',()=>{
  const h=harness(),m=h.m;m.you.position.set(0,0,0);m.you.rotation.y=0;m.players[1].position.set(0,0,1.2);m.b.position.set(0,.12,1);m.carrier=1;m.cool=0;
- assert.equal(m.actions.find(a=>a.id==='tackle').charge,undefined);m.action('tackle');assert.equal(m.carrier,null);assert.ok(m.v.length()<3);assert.ok(m.you.userData.challengeUntil===0);h.close();
+ assert.equal(m.actions.find(a=>a.id==='press').charge,undefined);m.action('kick');assert.equal(m.carrier,null);assert.ok(m.v.length()<3);assert.ok(m.you.userData.challengeUntil===0);h.close();
 });
 test('Recover runs goal-side and steering immediately returns manual control',()=>{
  const h=harness(),m=h.m;m.you.position.set(0,0,0);m.carrier=1;m.b.position.set(3,.12,0);

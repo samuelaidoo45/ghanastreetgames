@@ -90,3 +90,18 @@ test('phone prompts use action labels without rewriting numbers or game rules',(
  const text=mobileMessage('E passes. Hold Space. Shift sprints. C changes camera. First to 3.',actions,'football');
  assert.equal(text,'“Pass” passes. Hold “Shoot”. “MOVE edge” sprints. “View” changes camera. First to 3.');
 });
+
+test('close football action stays readable above mobile controls in portrait and landscape',()=>{
+ for(const id of ['football','fourcorners','laski','sulia']){
+  const h=harness(id),p=h.mode.teams?.[0]?.[h.mode.selected]||h.mode.you;
+  p.position.set(0,0,0);h.mode.b.position.set(.8,.12,0);
+  if(id==='football')h.world.follow(p,true);
+  for(const [width,height]of [[360,740],[390,844],[667,375],[844,390],[1200,540],[1024,768]]){
+   const top=width>height?100:130,bottom=width>height?68:182;
+   h.world.mobileViewport={width,height,top,bottom};h.world.camera.aspect=width/height;h.world.camera.fov=width<height?65:52;h.world.updateViewOffset();h.world.render(1,0);h.world.camera.updateMatrixWorld();
+   const feet=p.position.clone().project(h.world.camera),head=p.position.clone().add(new THREE.Vector3(0,2.3,0)).project(h.world.camera),ball=h.mode.b.position.clone().project(h.world.camera);
+   assert.ok(Math.abs(head.y-feet.y)/2>=.1,`${id} ${width}×${height}: player smaller than 10% of view`);
+   for(const q of [feet,head,ball]){const y=(1-q.y)*height/2;assert.ok(Math.abs(q.x)<.9&&y>top&&y<height-bottom,`${id}: action obscured`);}
+  }h.close();
+ }
+});

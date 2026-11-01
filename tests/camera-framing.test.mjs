@@ -50,11 +50,13 @@ test('World applies action framing and respects a deliberately selected overview
  }
 });
 
-test('Four Corners landscape default keeps all four side goals visible',()=>{
- for(const [width,height]of screens.filter(([w,h])=>w/h>=1.2)){
-  const mode={game:{id:'fourcorners'},you:{position:new THREE.Vector3(-6,0,0)},b:{position:new THREE.Vector3()},cameraView:0};
+test('Four Corners default follows play with readable players instead of framing the compound',()=>{
+ for(const [width,height]of screens){
+  const mode={game:{id:'fourcorners'},you:{position:new THREE.Vector3(-6,0,0)},b:{position:new THREE.Vector3(-5,.12,0)},cameraView:0};
   const project=projection(gameActionCamera(mode,width/height),width,height);
-  for(const [x,z]of [[-9,0],[9,0],[0,-9],[0,9]]){const p=project(new THREE.Vector3(x,.3,z));assert.ok(Math.abs(p.x)<.9&&Math.abs(p.y)<.9);}
+  const feet=project(mode.you.position),head=project(mode.you.position.clone().add(new THREE.Vector3(0,2.3,0)));
+  assert.ok(Math.abs(head.y-feet.y)/2>.1,`${width}×${height}: player too small`);
+  assert.ok(Math.abs(project(mode.b.position).x)<.8);
  }
 });
 

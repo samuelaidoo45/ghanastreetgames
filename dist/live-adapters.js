@@ -33,7 +33,7 @@ export function liveAdapter(m,room){
  // No movement happens unless that seat sends input. Physical collisions are retained.
  function movement(dt){
   const moving=new Set(['abedemu','football','fourcorners','laski','sulia','stay','chaskele','pampanaa','shooting','pilolo','sansankroma','police']);if(!moving.has(id)||(id==='football'&&(m.pause>0||m.kickoff)))return;
-  people.forEach((p,i)=>{if(!p.visible)return;const v=m.liveInputs[i]||neutral;let x=v.x,z=v.z;if(id==='football')({x,z}=m.pressingInput(p,{x,z}));if(id==='abedemu')({x,z}=m.pressInput(i,{x,z}));if(id==='fourcorners')({x,z}=m.recoveryInput(i,{x,z}));const len=Math.hypot(x,z)||1;if(len>1){x/=len;z/=len;}const speed=id==='abedemu'?(v.sprint?6.8:i===m.middleIndex&&m.age<p.userData.pressUntil?(m.age-p.userData.pressStarted<.55?6.2:5.5):5.1):v.sprint?6.5:4.5,old=p.position.clone();
+  people.forEach((p,i)=>{if(!p.visible)return;const v=m.liveInputs[i]||neutral;let x=v.x,z=v.z;if(id==='football')({x,z}=m.pressingInput(p,{x,z}));if(id==='abedemu')({x,z}=m.pressInput(i,{x,z}));if(id==='fourcorners')({x,z}=m.recoveryInput(i,{x,z}));if(['laski','sulia'].includes(id)&&m.players.includes(p))({x,z}=m.pressInput(i,{x,z}));const len=Math.hypot(x,z)||1;if(len>1){x/=len;z/=len;}const speed=id==='abedemu'?(v.sprint?6.8:i===m.middleIndex&&m.age<p.userData.pressUntil?(m.age-p.userData.pressStarted<.55?6.2:5.5):5.1):v.sprint||['fourcorners','laski','sulia'].includes(id)&&m.age<(p.userData.pressUntil||0)?6.5:4.5,old=p.position.clone();
    if(id==='abedemu'){m.moveRunner(p,{x:p.position.x+x*3,z:p.position.z+z*3},speed,dt);return;}
    if(id==='chaskele'&&i===0)z=0;
    if(id==='laski'&&i===n-1)z=0;
@@ -47,7 +47,7 @@ export function liveAdapter(m,room){
   });
  }
  function target(i,exclude=i){const p=people[i],candidates=people.map((q,j)=>({j,q,d:distance(p,q)})).filter(o=>o.j!==exclude&&o.q.visible);return candidates.sort((a,b)=>a.d-b.d)[0]?.j;}
- function ballAction(i,a){const p=people[i],power=a.power??.4;
+ function ballAction(i,a){const p=people[i],power=a.power??.4;if(a.action==='press'&&['fourcorners','laski','sulia'].includes(id)){if(id!=='laski'||i<n-1)m.press(i);return;}
   if(id==='football'){
    if(m.pause>0)return;if(a.action==='dive'&&p.userData.keeper){m.keeperSave(p,a.z);return;}if(m.kickoff&&m.kickoff.taker!==p)return;if(m.possessor!==p){if(a.action==='shoot')m.tackle(p);else if(a.action==='pass')m.press(p);return;}if(!['shoot','pass','chip'].includes(a.action))return;
    const team=p.userData.team,direction=team? -1:1;
@@ -99,10 +99,10 @@ export function liveAdapter(m,room){
  function controls(slot){if(room.type==='turns')return m.baseActions;
   if(id==='football'&&people[slot]?.userData.keeper)return[button('shoot','Throw / clear','Space',true),button('pass','Roll to teammate','E'),button('dive','Save','G')];
   if(id==='football')return[button('shoot','Shoot / tackle','Space',true),button('pass','Pass / press','E'),button('chip','Chip','R',true)];
-  if(id==='fourcorners')return[button('kick','Shoot','Space',true),button('tackle','Tackle','F'),button('target','Next goal','E'),m.oneTouch?button('recover','Recover','Q'):button('feint',m.carrier===slot?'Dodge':'Recover','Q'),button('chip','Chip','R')];
-  if(id==='laski'){if(slot===n-1)return[button('throw','Throw in'),button('dive','Dive','E')];if(m.phase==='choose')return m.active.flatMap((yes,i)=>yes&&i!==slot?[{...button('out-'+i,'Out: '+room.players[i]?.name,String(i+1)),disabled:slot!==m.lastScorer}]:[]);return[button('shoot','Shoot / tackle','Space',true),button('volley','Volley','E')];}
+  if(id==='fourcorners')return[button('kick',m.carrier===slot||m.oneTouch?'Shoot':'Tackle','Space',true),button('press','Press','F'),button('target','Next goal','E'),m.oneTouch?button('recover','Recover','Q'):button('feint',m.carrier===slot?'Dodge':'Recover','Q'),button('chip','Chip','R')];
+  if(id==='laski'){if(slot===n-1)return[button('throw','Throw in'),button('dive','Dive','E')];if(m.phase==='choose')return m.active.flatMap((yes,i)=>yes&&i!==slot?[{...button('out-'+i,'Out: '+room.players[i]?.name,String(i+1)),disabled:slot!==m.lastScorer}]:[]);return[button('shoot','Shoot / tackle','Space',true),button('volley','Volley','E'),button('press','Press','F')];}
   if(id==='abedemu')return slot===m.middleIndex?[button('pass','Tackle'),button('press','Press','Q')]:[button('pass','Pass','Space',true),button('target','Next player','E'),button('press','Call for ball','Q'),button('lob','Lob pass','R')];
-  if(id==='sulia')return[button('nutmeg','Nutmeg / tackle','Space',true)];
+  if(id==='sulia')return[button('nutmeg','Nutmeg / tackle','Space',true),button('press','Press','F')];
   if(id==='stay')return[button('ball',slot===m.throwerIndex?(m.phase==='held'?'Throw':'Catch'):'Dodge'),button('play',slot===m.throwerIndex?'Next target':'Kick loose ball','E')];
   if(id==='penalties')return slot===m.turn?[button('shoot','Shoot','Space',true)]:[button('left','Dive left','Q'),button('center','Centre'),button('right','Dive right','E')];
   if(id==='onepole')return[{...button('shoot','Strike pole','Space',true),disabled:slot!==m.turn}];
