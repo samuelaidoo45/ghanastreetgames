@@ -100,9 +100,9 @@ export function liveAdapter(m,room){
   if(id==='football'&&people[slot]?.userData.keeper)return[button('shoot','Throw / clear','Space',true),button('pass','Roll to teammate','E'),button('dive','Save','G')];
   if(id==='football')return[button('shoot','Shoot / tackle','Space',true),button('pass','Pass / press','E'),button('chip','Chip','R',true)];
   if(id==='fourcorners')return[button('kick',m.carrier===slot||m.oneTouch?'Shoot':'Tackle','Space',true),button('press','Press','F'),button('target','Next goal','E'),m.oneTouch?button('recover','Recover','Q'):button('feint',m.carrier===slot?'Dodge':'Recover','Q'),button('chip','Chip','R')];
-  if(id==='laski'){if(slot===n-1)return[button('throw','Throw in'),button('dive','Dive','E')];if(m.phase==='choose')return m.active.flatMap((yes,i)=>yes&&i!==slot?[{...button('out-'+i,'Out: '+room.players[i]?.name,String(i+1)),disabled:slot!==m.lastScorer}]:[]);return[button('shoot','Shoot / tackle','Space',true),button('volley','Volley','E'),button('press','Press','F')];}
+  if(id==='laski'){if(slot===n-1)return[button('throw','Throw in'),button('dive','Dive','E')];if(m.phase==='choose')return m.active.flatMap((yes,i)=>yes&&i!==slot?[{...button('out-'+i,'Out: '+room.players[i]?.name,String(i+1)),disabled:slot!==m.lastScorer}]:[]);return[button('shoot',m.possessor===people[slot]?'Shoot':'Tackle','Space',true),button('volley','Volley','E'),button('press','Press','F')];}
   if(id==='abedemu')return slot===m.middleIndex?[button('pass','Tackle'),button('press','Press','Q')]:[button('pass','Pass','Space',true),button('target','Next player','E'),button('press','Call for ball','Q'),button('lob','Lob pass','R')];
-  if(id==='sulia')return[button('nutmeg','Nutmeg / tackle','Space',true),button('press','Press','F')];
+  if(id==='sulia')return[button('nutmeg',m.carrier===slot?'Nutmeg':'Tackle','Space',true),button('press','Press','F')];
   if(id==='stay')return[button('ball',slot===m.throwerIndex?(m.phase==='held'?'Throw':'Catch'):'Dodge'),button('play',slot===m.throwerIndex?'Next target':'Kick loose ball','E')];
   if(id==='penalties')return slot===m.turn?[button('shoot','Shoot','Space',true)]:[button('left','Dive left','Q'),button('center','Centre'),button('right','Dive right','E')];
   if(id==='onepole')return[{...button('shoot','Strike pole','Space',true),disabled:slot!==m.turn}];

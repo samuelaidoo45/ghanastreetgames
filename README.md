@@ -138,7 +138,7 @@ Stay uses a spread-out street court, individual roaming/dodging and one nearby l
 
 ### Version 4.13 — mobile play across all 33 games
 
-Phone controls now use a compact two-thumb layout. Pushing the movement stick to its outer ring sprints, while aiming controls never trigger sprint. Settings can restore a separate Sprint button or put actions on the left. Football keeps Shoot, Pass and Switch beside a More button for Low shot and Chip. Timing actions respond on contact; charged actions preserve hold/release behavior and cancel safely on pause, rotation or lost touch capture.
+Phone controls now use a compact two-thumb layout. Pushing the movement stick to its outer ring sprints, while aiming controls never trigger sprint. Settings can restore a separate Sprint button or put actions on the left. Simple controls keep Shoot/Tackle, Pass/Press and Switch, plus Save for big goals. Extra moves are available through View → Full controls. Timing actions respond on contact; charged actions preserve hold/release behavior and cancel safely on pause, rotation or lost touch capture.
 
 Phone setup instructions cover every game. Small pieces get a 24 CSS-pixel near-touch selection allowance, keeping direct hits and mouse precision unchanged. Equipment and action cameras fit between the measured HUD and controls in portrait and landscape; zoom and alternate views remain available. The phone catalogue uses two columns.
 
@@ -181,7 +181,7 @@ Verification: 339 tests, 50 module checks, browser rendering of 33 games plus th
 
 Street football now has explicit centre-back and defensive-midfielder roles from three outfield players, with central cover, support runs, pressing and recovery. Three-player presets remain 2–1 / 1–2. Both small and big poles begin at the centre spot and the conceding team restarts there after a goal. The ball waits for a legal kick-off instead of starting in a defender’s possession away from centre.
 
-Press **E** without possession to close down and challenge; steering overrides the assist. **Space** tackles with a cooldown and facing check. Big-poles **G / Save** triggers a timed keeper dive with physical reach and recovery, not a guaranteed save. Save stays on the primary mobile pad; Switch, Low shot and Chip remain in More. Human keeper seats use G too.
+Press **E** without possession to close down and challenge; steering overrides the assist. **Space** tackles with a cooldown and facing check. Big-poles **G / Save** triggers a timed keeper dive with physical reach and recovery, not a guaranteed save. Save and Switch stay on the Simple mobile pad; Low shot and Chip are available through View → Full controls. Human keeper seats use G too.
 
 **Ab3d3mu** adds passing around one middle defender, physical ground/lob passes, interceptions and role swaps. Space passes or tackles; E selects a teammate; Q calls for a pass or presses; R lobs. The two-minute scoring preset awards one point per completed pass and two for an interception. Private rooms support 3–6 real players with shared scores and persistent completion points. The group camera keeps passing options in view on portrait phones. These scoring, turnover and timer conventions are digital adaptations of the core rules supplied by the user.
 
@@ -237,3 +237,12 @@ Agawowa now has a grounded crouch and arm-drive sequence, a short upright take-o
 Motion reference: the user-supplied Bob Reese video https://www.youtube.com/watch?v=YW8FPY7VGjE. Public preview frames were inspected; full continuous video playback was unavailable. No video footage or audio was added to the game. See research/agawowa-motion.md.
 
 Verification: 526 automated tests and application syntax/import/asset checks, including physical backward rotation at different headings, shipped-rig hand positions, take-off sequencing, clean/failed landings, 30/60/120 Hz flips and human friend-room turns. Visual browser and physical-phone verification remain unavailable because browser control is disabled.
+
+
+## 4.30.0 — Simple thumb controls
+
+Phones and tablets now default to Simple controls: a compact cluster of larger round buttons, with the main action at the outside lower corner. Street Football keeps Shoot/Tackle, Pass/Press and Switch, plus Save for big goals; Four Corners keeps Shoot/Tackle, Press and Target. Laski and Sulia also show possession-aware labels. Sprint uses the movement stick edge where supported; disabling automatic sprint retains a separate Sprint button. Choice-based rounds keep every required choice.
+
+View → Touch controls and Settings offer Full controls for optional moves. The preference persists, left-hand placement is supported, and switching layouts cancels held input without releasing a shot. Keyboard actions remain available.
+
+Verification: 528 automated tests and 65 application-module syntax checks plus asset/import validation. Browser checks confirmed Simple/Full switching and visible, non-overlapping joystick/action bounds at 390×844 portrait and 844×390 landscape with touch emulation. Physical-phone testing was not performed.

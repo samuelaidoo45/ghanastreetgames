@@ -27,11 +27,11 @@ test('all 33 games have phone instructions and the correct movement category',()
 });
 test('mobile layouts preserve every game action, including sprint even when joystick auto-sprint is enabled',()=>{
  for(const game of catalogue){const h=harness(game.id),all=h.mode.actions;
-  for(const automatic of [true,false]){const {primary,secondary}=arrangeActions(game.id,all,automatic),ids=[...primary,...secondary].map(a=>a.id);
+  for(const automatic of [true,false]){const {primary,secondary}=arrangeActions(game.id,all,automatic,'full'),ids=[...primary,...secondary].map(a=>a.id);
    for(const a of all)assert.ok(primary.some(button=>button.id===a.id),game.id+': '+a.id);
    assert.equal(new Set(ids).size,ids.length);assert.equal(secondary.length,0);
   }
-  if(game.id==='football'){const layout=arrangeActions(game.id,all);assert.deepEqual(layout.primary.map(a=>a.id),['shoot','pass','save','low','chip','switch','sprint']);assert.deepEqual(layout.secondary,[]);}
+  if(game.id==='football'){const layout=arrangeActions(game.id,all);assert.deepEqual(layout.primary.map(a=>a.id),['shoot','pass','switch','save']);assert.deepEqual(layout.secondary,[]);}
   if(game.id==='antoakyire')assert.ok(arrangeActions(game.id,all).primary.some(a=>a.hold&&a.id==='sprint'));
   h.close();
  }

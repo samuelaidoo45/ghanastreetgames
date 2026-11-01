@@ -29,7 +29,7 @@ function setup(){
  const nodes=new Map();for(const m of readFileSync('dist/index.html','utf8').matchAll(/<([a-z]+)[^>]*\bid="([^"]+)"[^>]*>/g))nodes.set('#'+m[2],new Element(m[1]));
  const extra=new Map();const $=selector=>nodes.get(selector)||extra.get(selector)||(()=>{const e=new Element();extra.set(selector,e);return e;})();
  $('.play-bottom').bounds={left:12,top:680,width:366,height:152,bottom:832};$('.match-header').bounds={left:12,top:12,width:366,height:80,bottom:92};$('#world').clientHeight=844;$('#world').clientWidth=390;
- const doc=new EventTarget();Object.assign(doc,{body:new Element('body'),documentElement:new Element('html'),hidden:false,createElement:tag=>new Element(tag),querySelector:$,querySelectorAll:selector=>selector==='dialog'?[...nodes.values()].filter(e=>e.tagName==='DIALOG'):[]});
+ const doc=new EventTarget();Object.assign(doc,{body:new Element('body'),documentElement:new Element('html'),hidden:false,createElement:tag=>new Element(tag),querySelector:selector=>{const match=/^\[data-action="([^"]+)"\]$/.exec(selector);return match?$('#action-buttons').children.find(b=>b.dataset.action===match[1])||null:$(selector);},querySelectorAll:selector=>selector==='dialog'?[...nodes.values()].filter(e=>e.tagName==='DIALOG'):[]});
  const frames=[],window=new EventTarget();window.visualViewport=new EventTarget();
  class Sound{setScene(){}setEnabled(){}setVolume(){}setVisible(){}play(){}unlock(){return Promise.resolve();}}
  class Replay{supported(){return false;}finish(){return Promise.resolve();}pause(){}resume(){}}
@@ -45,8 +45,8 @@ test('mobile app boots without a rendering loop; real control wiring survives pa
  createMode=ctx=>{const m={...ctx,actions:[{id:'shoot',label:'Shoot',key:'Space',charge:true},{id:'low',label:'Low shot',key:'F'},{id:'chip',label:'Chip',key:'R'},{id:'pass',label:'Pass',key:'E'},{id:'switch',label:'Switch',key:'Q'},{id:'sprint',label:'Sprint',key:'Shift',hold:true}],calls:[],hold(id){this.calls.push('hold:'+id);},action(id){this.calls.push(id);},dispose(){}};ctx.ui.actions(m.actions);return m;};
  $('#setup-dialog').open=true;$('#team-size').value='3';$('#goal-size').value='big';$('#formation').value='balanced';`);
  await h.run('startGame()');
- const buttons=h.$('#action-buttons').children;assert.deepEqual(buttons.filter(b=>b.tagName==='BUTTON').map(b=>b.dataset.action),['shoot','pass','low','chip','switch','sprint']);assert.ok(buttons.every(b=>b.tagName==='BUTTON'));assert.equal(h.$('#action-buttons').dataset.count,'6');assert.ok(h.frames.length>0);
- const chip=buttons.find(b=>b.dataset.action==='chip');send(chip,'pointerdown',8);send(chip,'pointerup',8);assert.equal(h.run('active.calls.join()'),'chip');h.run('active.calls=[]');
+ const buttons=h.$('#action-buttons').children;assert.deepEqual(buttons.filter(b=>b.tagName==='BUTTON').map(b=>b.dataset.action),['shoot','pass','switch']);assert.ok(buttons.every(b=>b.tagName==='BUTTON'));assert.equal(h.$('#action-buttons').dataset.count,'3');assert.ok(h.frames.length>0);
+ const pass=buttons.find(b=>b.dataset.action==='pass');send(pass,'pointerdown',8);send(pass,'pointerup',8);assert.equal(h.run('active.calls.join()'),'pass');h.run('active.calls=[]');
  const shoot=buttons[0],stick=h.$('#joystick');send(stick,'pointerdown',1);assert.equal(h.run('input.sprint'),true);
  send(shoot,'pointerdown',2);send(shoot,'pointerup',1);assert.equal(h.run('active.calls.join()'),'hold:shoot');
  h.run('clearInput()');assert.equal(h.run('input.sprint'),false);send(shoot,'pointerup',2);assert.equal(h.run('active.calls.join()'),'hold:shoot');
@@ -98,4 +98,18 @@ test('named camera choices apply immediately, close View and reset to automatic 
   assert.equal(h.run('world.selectedCamera'),preset);assert.equal(h.run('world.cameraZoom'),1);assert.equal(h.run('world.cameraOrbit'),0);assert.equal(h.$('#view-options').open,false);
  }
  h.$('#camera-reset').onclick();assert.equal(h.run('world.selectedCamera'),'auto');assert.equal(h.$('#camera-preset').value,'auto');
+});
+
+test('Full/Simple switch cancels held input, preserves contextual labels and restores advanced actions',()=>{
+ const h=setup();h.run(`state='playing';active={actions:[],calls:[],hold(){this.calls.push('hold');},action(id){this.calls.push(id);},cancelCharge(){}};
+ ui.actions([{id:'shoot',label:'Shoot',key:'Space',charge:true},{id:'pass',label:'Pass',key:'E'},{id:'chip',label:'Chip',key:'R'},{id:'switch',label:'Switch',key:'Q'},{id:'sprint',label:'Sprint',key:'Shift',hold:true}]);ui.context({shoot:'Tackle',pass:'Press'});`);
+ const old=h.$('#action-buttons').children[0];send(old,'pointerdown',9);
+ h.$('#play-controls').value='full';h.$('#play-controls').onchange();send(old,'pointerup',9);
+ assert.equal(h.run('active.calls.join()'),'hold','changing layout must not release a queued shot');
+ assert.ok(h.$('#action-buttons').children.some(b=>b.dataset.action==='chip'));
+ assert.equal(h.$('#action-buttons').children[0].querySelector('strong').textContent,'Tackle');
+ h.$('#play-controls').value='simple';h.$('#play-controls').onchange();
+ assert.deepEqual(h.$('#action-buttons').children.map(b=>b.dataset.action),['shoot','pass','switch']);
+ assert.equal(h.$('#action-buttons').children[1].querySelector('strong').textContent,'Press');
+ assert.equal(h.run('settings.controlStyle'),'simple');
 });

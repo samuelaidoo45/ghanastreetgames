@@ -7,11 +7,11 @@ export const touchHints={
  highjump:'Tap Run up, then Jump on the gold mark. Tap Land just before touching the sand. Clear the palm bar; it rises after each round.',
  agawowa:'Choose your style, Run up, then Jump on the inclined block. Tuck to rotate; Open when your feet point down. Tap Land just before the sand.',
  abedemu:'Pass around the middle player. Tap Pass or hold for power; Target chooses a teammate. In the middle, tap Press to close the passing lane, then Tackle. Steer to take over. Close pressure can force a bad pass or loose touch. An interception swaps the last toucher into the middle.',
- football:'Build the attack and get close before shooting. Keeper save is beside Shoot in big-poles matches. Without the ball, Pass becomes Press. Move with the stick; push to its edge to sprint. Hold Shoot, then release. Low shot, Chip, Switch and Sprint are all on screen.',
- fourcorners:'Dribble close to goal for an accurate finish. Move to collect the ball. Tap Shoot for a quick strike, or hold for power. Tap Press to chase and challenge; steer to take over. Shoot becomes Tackle without the ball. Target changes goal; Dodge shields a turn with the ball, and Recover guides you back to defend without it. Tap Chip for a lifted shot.',
+ football:'Build the attack and get close before shooting. Keeper save is beside Shoot in big-poles matches. Without the ball, Pass becomes Press. Move with the stick; push to its edge to sprint. Hold Shoot, then release. Tap Switch to change player. Extra shots are in View → Full controls.',
+ fourcorners:'Dribble close to goal for an accurate finish. Move to collect the ball. Tap Shoot for a quick strike, or hold for power. Tap Press to chase and challenge; steer to take over. Shoot becomes Tackle without the ball. Target changes goal. Dodge, Recover and Chip are available in View → Full controls.',
  penalties:'Tap Lock aim, then Set power. In free-aim mode, tap the goal or use AIM, then hold and release Shoot. In goal, tap a dive button.',
  onepole:'Use AIM or tap the target to aim. Step left/right changes your position. Hold Strike for power, then release.',
- laski:'Tap Press to chase the ball and challenge, or steer with MOVE. Dribble closer to goal. Push to the edge to sprint. Hold Shoot, release to strike; Volley meets an airborne ball. In goal, move and use Dive.',
+ laski:'Tap Press to chase the ball and challenge, or steer with MOVE. Dribble closer to goal. Push to the edge to sprint. Hold Shoot, release to strike. Shoot becomes Tackle without the ball. Volley is available in Full controls. In goal, move and use Dive.',
  pampanaa:'Move with one thumb and drag the scene with the other to look. Face a visible rival and tap Pɛw! Walls block shots.',
  shooting:'Move with one thumb and drag the scene with the other to look. Face a visible rival and tap Pɛw! Walls block shots.',
  rubberband:'Tap the wall or use AIM. Hold Pull to stretch the band, then release. Adjust for where the last band landed.',
@@ -24,7 +24,7 @@ export const touchHints={
  tumatu:'Tap the next square to aim. Hold Hop until the landing ring is green, then release. On the return, tap Pick marker at square 5.',
  counters:'Tap your bottle cap, then tap where to aim. Hold Flick for power and release. Next cap selects another cap; wait for the pieces to settle.',
  antoakyire:'Watch behind your seated player. Tap Pick up / chase when the cloth drops, then hold Sprint to catch the runner. If you carry the cloth, tap Drop cloth behind a player.',
- sulia:'Tap Press to close down and win the ball; steering takes over. Next player selects a target. Hold Nutmeg, then release; Shield protects the ball. Push MOVE to the edge to sprint.',
+ sulia:'Tap Press to close down and win the ball; steering takes over. Next player selects a target. Hold Nutmeg, then release; it becomes Tackle without the ball. Shield is available in Full controls. Push MOVE to the edge to sprint.',
  sansankroma:'Use MOVE to run between the marked refuges. Push the stick to the edge to sprint away from the hawk.',
  ludo:'Tap Roll, then tap a highlighted token or its button. A six brings a token out. Pass the phone on local two-player turns.',
  tyre:'Guide the tyre through each gate with MOVE. Push gives a burst; moving the stick to the edge sprints.',
@@ -42,11 +42,13 @@ export const touchHints={
  mbobagor:'Tap Pass on the clap as the stone reaches you. Keep the shared rhythm.'
 };
 export function mobileProfile(id){return {stick:movement.has(id)?'move':aiming.has(id)?'aim':'none',autoSprint:sprinting.has(id),hint:touchHints[id]||'Tap the labelled actions to play.'};}
-export function arrangeActions(id,actions,autoSprint=true){
- // Every action stays visible, including manual sprint when auto-sprint is on.
- // Keep the frequently paired football controls beside each other.
- const order=id==='football'?['shoot','pass','save','low','chip','switch','sprint']:[];
- const primary=[...order.map(key=>actions.find(a=>a.id===key)).filter(Boolean),...actions.filter(a=>!order.includes(a.id))];
+// Only optional alternatives are omitted. Choice rounds and essential actions
+// are never truncated by count; Full restores the original action set.
+const optionalActions={football:['low','chip'],fourcorners:['chip','feint','recover'],laski:['volley'],sulia:['shield'],abedemu:['lob'],pampanaa:['left','right'],shooting:['left','right']};
+export function arrangeActions(id,actions,autoSprint=true,style='simple'){
+ const order=id==='football'?['shoot','pass','switch','save','low','chip','sprint']:[];
+ const sorted=[...order.map(key=>actions.find(a=>a.id===key)).filter(Boolean),...actions.filter(a=>!order.includes(a.id))];
+ const primary=style==='full'?sorted:sorted.filter(a=>!(optionalActions[id]||[]).includes(a.id)&&!(a.id==='sprint'&&autoSprint&&mobileProfile(id).autoSprint));
  return {primary,secondary:[]};
 }
 export function joystickVector(dx,dy,radius,deadzone=.12){
