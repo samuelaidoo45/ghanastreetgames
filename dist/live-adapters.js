@@ -33,7 +33,8 @@ export function liveAdapter(m,room){
  // No movement happens unless that seat sends input. Physical collisions are retained.
  function movement(dt){
   const moving=new Set(['abedemu','football','fourcorners','laski','sulia','stay','chaskele','pampanaa','shooting','pilolo','sansankroma','police']);if(!moving.has(id)||(id==='football'&&(m.pause>0||m.kickoff)))return;
-  people.forEach((p,i)=>{if(!p.visible)return;const v=m.liveInputs[i]||neutral;let x=v.x,z=v.z;if(id==='football')({x,z}=m.pressingInput(p,{x,z}));if(id==='abedemu'&&i===m.middleIndex&&m.age<p.userData.pressUntil){if(Math.hypot(x,z)>.2)p.userData.pressUntil=0;else{const dx=m.b.position.x-p.position.x,dz=m.b.position.z-p.position.z,d=Math.hypot(dx,dz);x=d>.5?dx/d:0;z=d>.5?dz/d:0;if(d<1.05)m.tackle(i);}}const len=Math.hypot(x,z)||1;if(len>1){x/=len;z/=len;}const speed=v.sprint?6.5:4.5,old=p.position.clone();
+  people.forEach((p,i)=>{if(!p.visible)return;const v=m.liveInputs[i]||neutral;let x=v.x,z=v.z;if(id==='football')({x,z}=m.pressingInput(p,{x,z}));if(id==='abedemu')({x,z}=m.pressInput(i,{x,z}));const len=Math.hypot(x,z)||1;if(len>1){x/=len;z/=len;}const speed=id==='abedemu'?(v.sprint?6.8:i===m.middleIndex&&m.age<p.userData.pressUntil?(m.age-p.userData.pressStarted<.55?6.2:5.5):5.1):v.sprint?6.5:4.5,old=p.position.clone();
+   if(id==='abedemu'){m.moveRunner(p,{x:p.position.x+x*3,z:p.position.z+z*3},speed,dt);return;}
    if(id==='chaskele'&&i===0)z=0;
    if(id==='laski'&&i===n-1)z=0;
    const velocity=new THREE.Vector3(x*speed,0,z*speed);if(id==='fourcorners'&&m.age<(p.userData.burstUntil||0))velocity.copy(p.userData.velocity);

@@ -158,3 +158,11 @@ Press **E** without possession to close down and challenge; steering overrides t
 **Ab3d3mu** adds passing around one middle defender, physical ground/lob passes, interceptions and role swaps. Space passes or tackles; E selects a teammate; Q calls for a pass or presses; R lobs. The two-minute scoring preset awards one point per completed pass and two for an interception. Private rooms support 3–6 real players with shared scores and persistent completion points. The group camera keeps passing options in view on portrait phones. These scoring, turnover and timer conventions are digital adaptations of the core rules supplied by the user.
 
 Verification details: `research/verification-v418.md`.
+
+## 4.19.0 — Ab3d3mu movement and pressure
+
+The passing group now reshapes around the ball, using changing support lanes and give-and-go runs. Carriers dribble out of pressure; receivers move to meet passes. Acceleration, braking and turning replace instant movement changes.
+
+The middle player can use **Q / Press** for a short pursuit that cuts passing lanes and predicts ball flight; steering overrides it, and **Space / Tackle** challenges nearby. Press has a brief recovery period. Nearby pressure reduces pass precision and can produce a heavy first touch, leaving a physical loose ball to win. Defenders retain real interception and tackling distances, and cannot steal remotely. Middle-player controls now show only Tackle, Press and Sprint.
+
+Private-room participants retain full human control: no CPU support runs or automatic CPU passing are applied to their seats. See `research/verification-v419.md`.
