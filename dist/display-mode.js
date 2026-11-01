@@ -20,3 +20,16 @@ export function syncGameViewport(doc=document,win=window){
  for(const [key,value] of Object.entries(bounds))doc.documentElement.style.setProperty('--game-view-'+key,value+'px');
  return bounds;
 }
+
+// Orientation locks are a browser capability, not a CSS rotation of the controls.
+export async function requestGameOrientation(mode,doc=document,screenObject=window.screen){
+ if(!['auto','portrait','landscape'].includes(mode))return false;
+ const orientation=screenObject?.orientation;
+ try{
+  if(mode==='auto'){orientation?.unlock?.();return true;}
+  if(typeof orientation?.lock!=='function')return false;
+  await enterGameFullscreen(doc);
+  await orientation.lock(mode);
+  return true;
+ }catch{return false;}
+}

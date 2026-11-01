@@ -1,4 +1,4 @@
-import {enterGameFullscreen,syncGameViewport} from '../dist/display-mode.js';
+import {enterGameFullscreen,syncGameViewport,requestGameOrientation} from '../dist/display-mode.js';
 import {SoloChallenge} from '../dist/solo-challenge.js';
 import {difficultyHint} from '../dist/difficulty.js';
 import {initialGraphics} from '../dist/graphics-profile.js';
@@ -33,7 +33,7 @@ function setup(){
  const frames=[],window=new EventTarget();window.visualViewport=new EventTarget();
  class Sound{setScene(){}setEnabled(){}setVolume(){}setVisible(){}play(){}unlock(){return Promise.resolve();}}
  class Replay{supported(){return false;}finish(){return Promise.resolve();}pause(){}resume(){}}
- const ctx=vm.createContext({SoloChallenge,enterGameFullscreen:()=>enterGameFullscreen(doc),syncGameViewport:()=>syncGameViewport(doc,{innerWidth:390,innerHeight:844}),difficultyHint,initialGraphics,actionLabel,actionIcon,padLayout,releaseQuickCharge,roomSettings,seeded,initClub:()=>({launchContext:null,attach(){},finishRound(){},leave(){},open(){}}),console,document:doc,window,navigator:{maxTouchPoints:5,hardwareConcurrency:4},matchMedia:()=>({matches:true}),innerWidth:390,innerHeight:844,performance,location:{search:''},localStorage:{getItem(){return null;},setItem(){}},requestAnimationFrame:f=>(frames.push(f),frames.length),setTimeout,clearTimeout,URLSearchParams,Soundscape:Sound,ReplayRecorder:Replay,clampVolume:Number,catalogue,categories,sources,formationFor,menuLayout,remapPage,menuOrder,mobileProfile,arrangeActions,joystickVector,RenderBudget,mobileMessage,bindChargeControl,bindTapControl,bindJoystick});
+ const ctx=vm.createContext({SoloChallenge,requestGameOrientation:mode=>requestGameOrientation(mode,doc,{}),enterGameFullscreen:()=>enterGameFullscreen(doc),syncGameViewport:()=>syncGameViewport(doc,{innerWidth:390,innerHeight:844}),difficultyHint,initialGraphics,actionLabel,actionIcon,padLayout,releaseQuickCharge,roomSettings,seeded,initClub:()=>({launchContext:null,attach(){},finishRound(){},leave(){},open(){}}),console,document:doc,window,navigator:{maxTouchPoints:5,hardwareConcurrency:4},matchMedia:()=>({matches:true}),innerWidth:390,innerHeight:844,performance,location:{search:''},localStorage:{getItem(){return null;},setItem(){}},requestAnimationFrame:f=>(frames.push(f),frames.length),setTimeout,clearTimeout,URLSearchParams,Soundscape:Sound,ReplayRecorder:Replay,clampVolume:Number,catalogue,categories,sources,formationFor,menuLayout,remapPage,menuOrder,mobileProfile,arrangeActions,joystickVector,RenderBudget,mobileMessage,bindChargeControl,bindTapControl,bindJoystick});
  const source=readFileSync('dist/arcade.js','utf8').replace(/^import .*?;\n/gm,'');vm.runInContext(source,ctx);
  return {ctx,$,frames,run:code=>vm.runInContext(code,ctx)};
 }
@@ -70,4 +70,22 @@ test('fullscreen and viewport events resize once and measure controls relative t
  assert.equal(h.run('world.resizes'),1);
  assert.equal(h.run('world.mobileViewport.top'),100);
  assert.equal(h.run('world.mobileViewport.bottom'),156);
+});
+
+test('orientation choices expose success and fallback without changing game controls',async()=>{
+ const h=setup();
+ h.run("requestGameOrientation=async()=>true");
+ await h.$('#orientation-landscape').onclick();
+ assert.equal(h.$('#orientation-landscape')['aria-pressed'],'true');
+ assert.equal(h.$('#orientation-auto')['aria-pressed'],'false');
+ assert.equal(h.$('#orientation-landscape').disabled,false);
+ h.run("requestGameOrientation=async()=>false");
+ await h.$('#orientation-portrait').onclick();
+ assert.equal(h.$('#view-options').open,true);
+ assert.match(h.$('#orientation-status').textContent,/Rotate your device to portrait/);
+ assert.equal(h.$('#orientation-portrait')['aria-pressed'],'false');
+ assert.equal(h.$('#orientation-landscape')['aria-pressed'],'true');
+ h.run("requestGameOrientation=async()=>true");
+ await h.$('#orientation-auto').onclick();
+ assert.equal(h.$('#orientation-auto')['aria-pressed'],'true');
 });

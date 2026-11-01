@@ -1,4 +1,4 @@
-import {enterGameFullscreen,syncGameViewport} from './display-mode.js';
+import {enterGameFullscreen,syncGameViewport,requestGameOrientation} from './display-mode.js';
 import {SoloChallenge} from './solo-challenge.js';
 import {difficultyHint} from './difficulty.js';
 import {initialGraphics} from './graphics-profile.js';
@@ -123,6 +123,20 @@ for(const event of ['resize','scroll'])window.visualViewport?.addEventListener(e
 window.addEventListener('orientationchange',refreshDisplay);
 window.addEventListener('pageshow',refreshDisplay);
 const viewOptions=$('#view-options');
+let orientationChoice='auto',orientationBusy=false;
+const orientationButtons=['landscape','portrait','auto'];
+function showOrientationChoice(){for(const choice of orientationButtons)$('#orientation-'+choice).setAttribute('aria-pressed',String(choice===orientationChoice));}
+for(const choice of orientationButtons)$('#orientation-'+choice).onclick=async()=>{
+ if(orientationBusy)return;orientationBusy=true;
+ for(const option of orientationButtons)$('#orientation-'+option).disabled=true;
+ const applied=await requestGameOrientation(choice);
+ orientationBusy=false;for(const option of orientationButtons)$('#orientation-'+option).disabled=false;
+ if(applied){orientationChoice=choice;showOrientationChoice();$('#orientation-status').textContent=choice==='auto'?'Auto · follows your device':choice==='landscape'?'Landscape selected':'Portrait selected';refreshDisplay();}
+ else{viewOptions.open=true;requestAnimationFrame(()=>{viewOptions.open=true;});$('#orientation-status').textContent='Rotate your device to '+choice+'. Turn off your device’s rotation lock if needed. This browser cannot switch automatically.';}
+};
+for(const event of ['fullscreenchange','webkitfullscreenchange'])document.addEventListener(event,()=>{
+ if(!document.fullscreenElement&&!document.webkitFullscreenElement&&!orientationBusy){orientationChoice='auto';requestGameOrientation('auto');showOrientationChoice();$('#orientation-status').textContent='Auto · follows your device';}
+});
 $('#view-close').onclick=()=>{viewOptions.open=false;viewOptions.querySelector('summary').focus();};
 document.addEventListener('pointerdown',e=>{if(viewOptions.open&&!viewOptions.contains(e.target))viewOptions.open=false;});
 const editableText='input:not([type]),input[type=text],input[type=search],input[type=email],input[type=url],input[type=number],textarea,[contenteditable=true]';

@@ -106,3 +106,13 @@ input:not([type]),input[type="text"],input[type="search"],input[type="email"],in
  .match-header>#pause-button{width:44px;height:44px;flex:0 0 44px}
  .match-header .score-panel{min-width:0;flex:1;max-width:360px;margin-right:0}
 }
+
+/* Screen orientation lives in View, leaving the action pad clear. */
+#orientation-controls{display:none;grid-column:1/-1;padding-bottom:10px;border-bottom:1px solid #b99b634d}
+.touch-ui #orientation-controls{display:block}
+@media(any-pointer:coarse){#orientation-controls{display:block}}
+.orientation-title{display:block;margin-bottom:8px;color:#f2dfb3;font:12px Bungee,sans-serif}
+.orientation-choices{display:grid;grid-template-columns:1.2fr 1fr .7fr;gap:5px}
+#view-options .orientation-choices button{font-size:10px;padding:6px 3px}
+#view-options .orientation-choices button[aria-pressed=true]{background:#f4b83e;color:#30210f;border-color:#f4b83e}
+#orientation-status{margin:8px 0 0;color:#e5d4b2;font:12px/1.4 sans-serif;text-align:left}

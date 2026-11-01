@@ -20,3 +20,18 @@ test('fullscreen keeps the whole game root and synchronises controls on entry an
  assert.equal(await enterGameFullscreen(doc),true);syncGameViewport(doc,win);assert.equal(styles.get('--game-view-height'),'844px');
  doc.fullscreenElement=null;win.innerHeight=720;syncGameViewport(doc,win);assert.equal(styles.get('--game-view-height'),'720px');
 });
+
+test('orientation switches request fullscreen first and keep touch geometry untransformed',async()=>{
+ const {requestGameOrientation}=await import('../dist/display-mode.js');
+ for(const choice of ['portrait','landscape']){const calls=[],doc={body:{classList:{add(){}}},documentElement:{requestFullscreen(){calls.push('fullscreen');return Promise.resolve();}}},screen={orientation:{lock(mode){calls.push(mode);return Promise.resolve();}}};
+  assert.equal(await requestGameOrientation(choice,doc,screen),true);assert.deepEqual(calls,['fullscreen',choice]);
+ }
+});
+test('Auto unlocks without entering fullscreen and blocked browsers fail gracefully',async()=>{
+ const {requestGameOrientation}=await import('../dist/display-mode.js');let unlocked=false;
+ const doc={body:{classList:{add(){}}},documentElement:{requestFullscreen(){throw Error('Denied');}}};
+ assert.equal(await requestGameOrientation('auto',doc,{orientation:{unlock(){unlocked=true;}}}),true);assert.equal(unlocked,true);
+ assert.equal(await requestGameOrientation('landscape',doc,{}),false);
+ assert.equal(await requestGameOrientation('portrait',doc,{orientation:{lock(){return Promise.reject(Error('Unsupported'));}}}),false);
+ assert.equal(await requestGameOrientation('invalid',doc,{}),false);
+});
