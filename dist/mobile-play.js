@@ -1,5 +1,5 @@
 // Phone controls are explicit for every game: an aiming stick must never sprint.
-const movement=new Set(['abedemu','football','fourcorners','laski','pampanaa','shooting','pilolo','stay','sulia','sansankroma','tyre','zanzama','pretend','police']);
+const movement=new Set(['abedemu','football','fourcorners','laski','pampanaa','pilolo','stay','sulia','sansankroma','tyre','zanzama','police']);
 const aiming=new Set(['penalties','onepole','rubberband','chaskele','kpitinge','alasa']);
 const sprinting=new Set([...movement].filter(id=>id!=='zanzama'));
 export const touchHints={
@@ -13,7 +13,6 @@ export const touchHints={
  onepole:'Use AIM or tap the target to aim. Step left/right changes your position. Hold Strike for power, then release.',
  laski:'Tap Press to chase the ball and challenge, or steer with MOVE. Dribble closer to goal. Push to the edge to sprint. Hold Shoot, release to strike. Shoot becomes Tackle without the ball. Volley is available in Full controls. In goal, move and use Dive.',
  pampanaa:'Move with one thumb and drag the scene with the other to look. Face a visible rival and tap Pɛw! Walls block shots.',
- shooting:'Move with one thumb and drag the scene with the other to look. Face a visible rival and tap Pɛw! Walls block shots.',
  rubberband:'Tap the wall or use AIM. Hold Pull to stretch the band, then release. Adjust for where the last band landed.',
  ampe:'Watch the jump and tap the foot you choose. Matching feet score for you.',
  oware:'Tap a house on your side, or its numbered button, to sow. Pass the phone on local two-player turns.',
@@ -30,7 +29,6 @@ export const touchHints={
  tyre:'Guide the tyre through each gate with MOVE. Push gives a burst; moving the stick to the edge sprints.',
  kpitinge:'Slide AIM sideways, then hold and release Throw. Watch the flight and adjust the force to plant the peg upright.',
  zanzama:'Tap Say Zanzama, move to the highlighted stool, then tap Sit.',
- pretend:'Move to a basket, water or meal and tap Pick / use. Carry it to the matching station. Take your time.',
  numbers:'Watch the choices and tap a prime number before time runs out.',
  police:'Move to a friend and tap Pick / use. Lead them to the yellow refuge. Push MOVE to the edge to sprint past the guard.',
  skipping:'Tap Jump as the rope approaches your feet. Each press starts one jump.',
@@ -44,7 +42,7 @@ export const touchHints={
 export function mobileProfile(id){return {stick:movement.has(id)?'move':aiming.has(id)?'aim':'none',autoSprint:sprinting.has(id),hint:touchHints[id]||'Tap the labelled actions to play.'};}
 // Only optional alternatives are omitted. Choice rounds and essential actions
 // are never truncated by count; Full restores the original action set.
-const optionalActions={football:['low','chip'],fourcorners:['chip','target'],laski:['volley'],sulia:['shield'],abedemu:['lob'],pampanaa:['left','right'],shooting:['left','right']};
+const optionalActions={football:['low','chip'],fourcorners:['chip','target'],laski:['volley'],sulia:['shield'],abedemu:['lob'],pampanaa:['left','right']};
 export function arrangeActions(id,actions,autoSprint=true,style='simple'){
  const order=id==='football'?['shoot','pass','switch','save','low','chip','sprint']:[];
  const sorted=[...order.map(key=>actions.find(a=>a.id===key)).filter(Boolean),...actions.filter(a=>!order.includes(a.id))];

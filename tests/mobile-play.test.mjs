@@ -19,7 +19,7 @@ function harness(id){
  const mode=createMode({world,ui,input:{target:null,sprint:false,vector:()=>({x:0,z:0})},settings:{color:0xc05336},game:catalogue.find(g=>g.id===id)});
  return {world,mode,close(){world.clear();clearVenue(world);}};
 }
-test('all 33 games have phone instructions and the correct movement category',()=>{
+test('all games have phone instructions and the correct movement category',()=>{
  assert.equal(Object.keys(touchHints).length,catalogue.length);
  for(const game of catalogue){assert.ok(touchHints[game.id]?.length>40);assert.ok(['move','aim','none'].includes(mobileProfile(game.id).stick));}
  for(const id of ['penalties','chaskele','rubberband','onepole','alasa','kpitinge']){assert.equal(mobileProfile(id).stick,'aim');assert.equal(mobileProfile(id).autoSprint,false);}

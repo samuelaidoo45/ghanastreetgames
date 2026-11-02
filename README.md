@@ -28,7 +28,7 @@ Every game action now appears directly on the phone action pad, including Sprint
 
 The launch screen and game menu now include Install game. Supported browsers offer native PWA installation; iPhone and iPad users get Safari home-screen instructions. Includes standalone app metadata, original Ghana-colour icons, and a small offline reconnect page. Games and multiplayer still require an internet connection; the service worker never caches game code or account/API traffic.
 
-A fullscreen Three.js arcade with 36 playable interpretations of Ghanaian street and childhood games. Its textured compound, rigged human players, natural sky lighting, gold lettering, woven trim and parchment menus take visual direction from Four Corners GH. No proprietary Four Corners code, custom models or artwork are included. The three football modes use independently converted Gameplay Football assets from the same licensed upstream family identified in the reference.
+A fullscreen Three.js arcade with 35 playable interpretations of Ghanaian street and childhood games. Its textured compound, rigged human players, natural sky lighting, gold lettering, woven trim and parchment menus take visual direction from Four Corners GH. No proprietary Four Corners code, custom models or artwork are included. The three football modes use independently converted Gameplay Football assets from the same licensed upstream family identified in the reference.
 
 ## Run and verify
 
@@ -56,7 +56,7 @@ The runtime and fonts are vendored in `dist`; the hosted game requires no extern
 
 ## Cultural accuracy and scope
 
-This is a growing collection of 36 games, not an exhaustive census of every Ghanaian children's game. Digital scoring, timers and several mechanics are original arcade adaptations. Research sources remain accessible in Rules & stories.
+This is a growing collection of 35 games, not an exhaustive census of every Ghanaian children's game. Digital scoring, timers and several mechanics are original arcade adaptations. Research sources remain accessible in Rules & stories.
 
 **Sulia for Beatings** now follows the nutmeg-and-score rule supplied by the user. The ball must cross between a rival’s legs; the nutmegged player receives a brief non-graphic chase-and-tag reaction. The five-player, five-point/two-minute preset is a digital adaptation. **Shooting/Pampanana**, One Pole, Laski and the rubber-band Tyre variant follow the local rules supplied by the user; published corroboration and selected digital presets are distinguished in the rules.  Sources document remembered and present-day practices; they do not establish nationwide current participation.
 
@@ -264,3 +264,7 @@ Ab3d3mu, Four Corners, Laski, Sulia and Stay now share Street Football's default
 Starting, restarting or returning to a match fills the visible browser window without requesting native fullscreen. This avoids triggering the browser-owned “drag from the top to exit fullscreen” notice automatically. Full screen and orientation-lock buttons still explicitly request native fullscreen, where the browser may display its own notice; site code cannot hide it. Installed PWA standalone mode remains supported. Source: https://developer.mozilla.org/en-US/docs/Web/API/Fullscreen_API/Guide.
 
 Verification: 542 automated tests, including shared field-camera angles, readable framing at phone/tablet/desktop sizes, independent friend-seat focus, preserved tactical views, and no native-fullscreen requests on repeated automatic launches. Landscape touch-emulated browser inspection confirmed Ab3d3mu's angled view, visible controls and full-window play with no native fullscreen active. Physical-device notification behavior was not tested.
+
+## 4.32.1 — catalogue update
+
+Removed Maame ne Paapa and the duplicate Shooting entry from the catalogue, rules and game leaderboards. New practice runs and friend rooms reject the retired games; existing rooms cannot restart them. Historical earned points are retained. The catalogue now contains 35 games.

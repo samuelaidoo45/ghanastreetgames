@@ -74,6 +74,7 @@ export class GameRoom{
   if(path.endsWith('/socket')){
    const ticket=new URL(request.url).searchParams.get('ticket');if(!/^[a-f0-9]{64}$/.test(ticket||''))return json({error:'Invalid ticket'},401);
    const key='ticket:'+await digest(ticket),auth=await this.ctx.storage.get(key);await this.ctx.storage.delete(key);
+   if(this.room&&!gameIds.has(this.room.game))return json({error:'This game is no longer available'},410);
    if(!auth||auth.expires<now()||!this.room?.players.some(p=>p.id===auth.id)||this.room.expiresAt<now())return json({error:'Ticket expired'},401);
    for(const ws of this.ctx.getWebSockets())if(ws.deserializeAttachment()?.id===auth.id)ws.close(4000,'Connected on another tab');
    if(this.ctx.getWebSockets().length>=12)return json({error:'Room connections full'},429);
@@ -85,7 +86,7 @@ export class GameRoom{
    this.room={code:d.code,game:d.game,type:multiplayerGame(d.game).type,players:[player],phase:'waiting',revision:0,matchId:uid(),state:initialGame(d.game),createdAt:now(),expiresAt:now()+3600000};await this.save();return json(this.public(),201);
   }
   if(!this.room||this.room.expiresAt<now())return json({error:'Room not found or expired'},404);
-  const r=this.room;if(r.type==='challenge'&&r.phase!=='finished'){r.phase='cancelled';r.state.over=true;await this.save();}
+  const r=this.room;if(!gameIds.has(r.game)&&path!=='/leave')return json({error:'This game is no longer available'},410);if(r.type==='challenge'&&r.phase!=='finished'){r.phase='cancelled';r.state.over=true;await this.save();}
   if(path==='/join'){
    if(!r.players.some(p=>p.id===player.id)){if(r.phase!=='waiting')throw Error('This round has already started');if(r.players.length>=multiplayerGame(r.game).max)throw Error('Room is full');r.players.push(player);r.revision++;await this.save();this.broadcast();}return json(this.public());
   }
@@ -110,7 +111,7 @@ export class GameRoom{
   if(typeof message!=='string'||message.length>100000)throw Error('Invalid message');
   const a=ws.deserializeAttachment();if(!a)throw Error('Not authenticated');const bucket=Math.floor(now()/1000);a.hits=a.bucket===bucket?a.hits+1:1;a.bucket=bucket;ws.serializeAttachment(a);if(a.hits>35){ws.close(1008,'Too many inputs');return;}
   const msg=JSON.parse(message);if(msg.type==='ping'){ws.send('{"type":"pong"}');return;}
-  const r=this.room,slot=r?.players.findIndex(p=>p.id===a.id);if(!r||slot<0||r.phase!=='playing'||r.expiresAt<now())throw Error('No active head-to-head round');
+  const r=this.room,slot=r?.players.findIndex(p=>p.id===a.id);if(!r||!gameIds.has(r.game)||slot<0||r.phase!=='playing'||r.expiresAt<now())throw Error('No active head-to-head round');
   if(r.type==='live'||r.type==='turns'){
    const event=applyLiveMessage(r,slot,msg,now());
    if(event.type==='input'){for(const peer of this.ctx.getWebSockets())if(peer.deserializeAttachment()?.id===r.players[0].id)peer.send(JSON.stringify(event));return;}
