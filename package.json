@@ -1,6 +1,6 @@
 {
   "name": "ghana-street-games",
-  "version": "4.32.1",
+  "version": "4.33.0",
   "private": true,
   "type": "module",
   "scripts": {
@@ -9,14 +9,24 @@
     "check": "node scripts/check.mjs",
     "vendor": "node scripts/vendor.mjs",
     "test:online": "node scripts/test-cloudflare.mjs",
-    "deploy:cloudflare": "wrangler deploy --config cloudflare/wrangler.jsonc"
+    "deploy:cloudflare": "wrangler deploy --config cloudflare/wrangler.jsonc",
+    "build:firebase": "node scripts/build-firebase.mjs",
+    "build": "npm run build:firebase && npm run check"
   },
   "dependencies": {
     "@fontsource/bungee": "5.2.7",
     "@fontsource/shantell-sans": "5.2.7",
+    "firebase": "13.2.0",
     "three": "0.187.0"
   },
   "devDependencies": {
+    "esbuild": "0.28.2",
     "wrangler": "^4.156.0"
+  },
+  "engines": {
+    "node": "24.x"
+  },
+  "overrides": {
+    "@grpc/grpc-js": "1.14.7"
   }
 }

@@ -268,3 +268,14 @@ Verification: 542 automated tests, including shared field-camera angles, readabl
 ## 4.32.1 — catalogue update
 
 Removed Maame ne Paapa and the duplicate Shooting entry from the catalogue, rules and game leaderboards. New practice runs and friend rooms reject the retired games; existing rooms cannot restart them. Historical earned points are retained. The catalogue now contains 35 games.
+
+
+## 4.33.0 — optional Firebase Analytics
+
+Firebase App and Analytics are bundled from pinned npm dependencies for project `ghanastreetgames`, measurement ID `G-TFT87BW5F7`. Run `npm ci` and `npm run build` with Node 24 (24.12 or later). Only App and Analytics enter the 44 KB browser bundle; Auth, Firestore and Storage are not initialized. The Google tag is loaded by Firebase once, not duplicated in HTML.
+
+Analytics is off by default. Settings → Share usage analytics opts in; turning it off disables collection and clears first-party analytics cookies. DNT and Global Privacy Control prevent startup. Localhost, HTTP and preview hosts do not send analytics. No SDK request is made until consent. Ads consent and Google signals are disabled. Page location is fixed to the public homepage, referrer is blank, and no player identity or room code is attached by game code. The SDK and Google may still use pseudonymous identifiers, device and network data; see `dist/privacy.html`.
+
+The supplied Firebase web key is a public project identifier, not an administrator credential. Cloudflare remains the room/score backend. This integration does not configure Firebase database/storage security rules or App Check. Console-side API restrictions, GA enhanced measurement and data retention need to be reviewed in the project owner's authenticated Google console; the available in-app session required sign-in. Keep this browser key restricted to required Firebase APIs and approved site referrers; never allow paid non-Firebase APIs with it. If adding Firestore or Storage later, deploy least-privilege security rules before enabling clients. Do not use open test-mode rules.
+
+Dependency audit: zero known vulnerabilities after pinning patched `@grpc/grpc-js` 1.14.7 (unused by the browser Analytics bundle). Tests cover consent defaults/revocation including asynchronous loads, browser privacy signals, production origin allowlist and SDK failures.
