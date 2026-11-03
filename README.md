@@ -279,3 +279,10 @@ Analytics is off by default. Settings → Share usage analytics opts in; turning
 The supplied Firebase web key is a public project identifier, not an administrator credential. Cloudflare remains the room/score backend. This integration does not configure Firebase database/storage security rules or App Check. Console-side API restrictions, GA enhanced measurement and data retention need to be reviewed in the project owner's authenticated Google console; the available in-app session required sign-in. Keep this browser key restricted to required Firebase APIs and approved site referrers; never allow paid non-Firebase APIs with it. If adding Firestore or Storage later, deploy least-privilege security rules before enabling clients. Do not use open test-mode rules.
 
 Dependency audit: zero known vulnerabilities after pinning patched `@grpc/grpc-js` 1.14.7 (unused by the browser Analytics bundle). Tests cover consent defaults/revocation including asynchronous loads, browser privacy signals, production origin allowlist and SDK failures.
+
+
+## 4.33.1 — desktop action keys
+
+All 35 games show high-contrast keyboard badges beside action labels on desktop and laptop, including touch-capable laptops. Badges come from each game's live action binding and identify held/charged inputs. Keyboard mode exposes the full action list, follows phase/context changes, and retains movement/pause hints. Touch-only phones keep compact pads; using an attached keyboard reveals the keys.
+
+Validation covers every catalogue game's action bindings across simulation, hybrid-laptop full controls, key-label formatting and existing touch interactions. Browser checks confirmed Four Corners badges and Ampe's E key advancing its action phase.

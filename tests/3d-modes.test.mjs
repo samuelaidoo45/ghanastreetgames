@@ -2,12 +2,13 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import {THREE,World} from '../dist/world.js';
 import {createMode} from '../dist/modes.js';
+import {actionKeyHint} from '../dist/keyboard-controls.js';
 import {catalogue} from '../dist/catalogue.js';
 // Browser rendering is a separate check when browser access is available. Here a canvas-text stub lets the real
 // Three.js scene graphs and game physics run deterministically without WebGL.
 const context={clearRect(){},strokeText(){},fillText(){}};
 globalThis.document={createElement:()=>({width:512,height:128,getContext:()=>context})};
-function harness(id){const world={stage:new THREE.Group(),canvas:{style:{}},setCamera(){},clear:World.prototype.clear,court:World.prototype.court,goal:World.prototype.goal};let actions=[],ends=[];const input={target:null,sprint:false,vector:()=>({x:0,z:0})};const ui={actions(a){actions=a;},status(){},note(){},sound(){},end(r){ends.push(r);}};const mode=createMode({world,input,ui,settings:{color:0xc05336},game:catalogue.find(g=>g.id===id)});return{world,input,mode,ends,get actions(){return actions;}};}
+function harness(id){const world={stage:new THREE.Group(),canvas:{style:{}},setCamera(){},clear:World.prototype.clear,court:World.prototype.court,goal:World.prototype.goal};let actions=[],ends=[];const input={target:null,sprint:false,vector:()=>({x:0,z:0})};const ui={actions(a){for(const action of a){assert.ok(action.key,`${id}: ${action.id} needs a keyboard binding`);assert.ok(actionKeyHint(action));}actions=a;},status(){},note(){},sound(){},end(r){ends.push(r);}};const mode=createMode({world,input,ui,settings:{color:0xc05336},game:catalogue.find(g=>g.id===id)});return{world,input,mode,ends,get actions(){return actions;}};}
 for(const game of catalogue)test(`${game.name}: scene, controls and simulation remain valid`,()=>{const h=harness(game.id);assert.ok(h.world.stage.children.length>0);assert.ok(h.actions.length>0);for(let frame=0;frame<4000&&!h.mode.done;frame++){if(frame%20===0){const available=h.actions.filter(a=>!a.disabled&&!a.hold);if(available.length)h.mode.action(available[Math.floor(frame/20)%available.length].id);}h.mode.tick(.05,frame*.05);}h.world.stage.traverse(o=>{assert.ok(Number.isFinite(o.position.x)&&Number.isFinite(o.position.y)&&Number.isFinite(o.position.z));});assert.ok(h.ends.length<=1);h.world.clear();});
 test('a football pass never counts as a goal',()=>{const h=harness('football'),m=h.mode,p=m.teams[0][0];m.pause=0;m.possessor=null;m.passTarget=p;m.passFrom=m.teams[0][1];m.b.position.copy(p.position);m.b.position.y=.33;m.cool=0;m.tick(.001,1);assert.equal(m.scores[0],0);assert.equal(m.passTarget,null);h.world.clear();});
 test('Sulia awards no point merely for kicking the ball',()=>{const h=harness('sulia'),m=h.mode;m.action('nutmeg');assert.equal(m.points[0],0);assert.equal(m.carrier,null);h.world.clear();});

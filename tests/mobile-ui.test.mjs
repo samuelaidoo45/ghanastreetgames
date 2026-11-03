@@ -1,3 +1,4 @@
+import {actionKeyHint,keyLabel,keyboardControlsAvailable} from '../dist/keyboard-controls.js';
 import {enterGameFullscreen,syncGameViewport,requestGameOrientation} from '../dist/display-mode.js';
 import {SoloChallenge} from '../dist/solo-challenge.js';
 import {difficultyHint} from '../dist/difficulty.js';
@@ -25,7 +26,7 @@ class Element extends EventTarget{
  setPointerCapture(){} focus(){} getAnimations(){return [];} animate(){return {};} showModal(){this.open=true;} close(){this.open=false;}
  getBoundingClientRect(){return this.bounds||{left:0,top:0,width:100,height:100,bottom:100};}
 }
-function setup(){
+function setup(hybrid=false){
  const nodes=new Map();for(const m of readFileSync('dist/index.html','utf8').matchAll(/<([a-z]+)[^>]*\bid="([^"]+)"[^>]*>/g))nodes.set('#'+m[2],new Element(m[1]));
  const extra=new Map();const $=selector=>nodes.get(selector)||extra.get(selector)||(()=>{const e=new Element();extra.set(selector,e);return e;})();
  $('.play-bottom').bounds={left:12,top:680,width:366,height:152,bottom:832};$('.match-header').bounds={left:12,top:12,width:366,height:80,bottom:92};$('#world').clientHeight=844;$('#world').clientWidth=390;
@@ -33,7 +34,7 @@ function setup(){
  const frames=[],window=new EventTarget();window.visualViewport=new EventTarget();
  class Sound{setScene(){}setEnabled(){}setVolume(){}setVisible(){}play(){}unlock(){return Promise.resolve();}}
  class Replay{supported(){return false;}finish(){return Promise.resolve();}pause(){}resume(){}}
- const ctx=vm.createContext({SoloChallenge,requestGameOrientation:mode=>requestGameOrientation(mode,doc,{}),enterGameFullscreen:()=>enterGameFullscreen(doc),syncGameViewport:()=>syncGameViewport(doc,{innerWidth:390,innerHeight:844}),difficultyHint,initialGraphics,actionLabel,actionIcon,padLayout,releaseQuickCharge,roomSettings,seeded,initClub:()=>({launchContext:null,attach(){},finishRound(){},leave(){},open(){}}),console,document:doc,window,navigator:{maxTouchPoints:5,hardwareConcurrency:4},matchMedia:()=>({matches:true}),innerWidth:390,innerHeight:844,performance,location:{search:''},localStorage:{getItem(){return null;},setItem(){}},requestAnimationFrame:f=>(frames.push(f),frames.length),setTimeout,clearTimeout,URLSearchParams,Soundscape:Sound,ReplayRecorder:Replay,clampVolume:Number,catalogue,categories,sources,formationFor,menuLayout,remapPage,menuOrder,mobileProfile,arrangeActions,joystickVector,RenderBudget,mobileMessage,bindChargeControl,bindTapControl,bindJoystick});
+ const ctx=vm.createContext({actionKeyHint,keyLabel,keyboardControlsAvailable,SoloChallenge,requestGameOrientation:mode=>requestGameOrientation(mode,doc,{}),enterGameFullscreen:()=>enterGameFullscreen(doc),syncGameViewport:()=>syncGameViewport(doc,{innerWidth:390,innerHeight:844}),difficultyHint,initialGraphics,actionLabel,actionIcon,padLayout,releaseQuickCharge,roomSettings,seeded,initClub:()=>({launchContext:null,attach(){},finishRound(){},leave(){},open(){}}),console,document:doc,window,navigator:{maxTouchPoints:5,hardwareConcurrency:4},matchMedia:query=>({matches:query.includes('hover')||query.includes('fine')?hybrid:true,addEventListener(){}}),innerWidth:390,innerHeight:844,performance,location:{search:''},localStorage:{getItem(){return null;},setItem(){}},requestAnimationFrame:f=>(frames.push(f),frames.length),setTimeout,clearTimeout,URLSearchParams,Soundscape:Sound,ReplayRecorder:Replay,clampVolume:Number,catalogue,categories,sources,formationFor,menuLayout,remapPage,menuOrder,mobileProfile,arrangeActions,joystickVector,RenderBudget,mobileMessage,bindChargeControl,bindTapControl,bindJoystick});
  const source=readFileSync('dist/arcade.js','utf8').replace(/^import .*?;\n/gm,'');vm.runInContext(source,ctx);
  return {ctx,$,frames,run:code=>vm.runInContext(code,ctx)};
 }
@@ -112,4 +113,14 @@ test('Full/Simple switch cancels held input, preserves contextual labels and res
  assert.deepEqual(h.$('#action-buttons').children.map(b=>b.dataset.action),['shoot','pass','switch']);
  assert.equal(h.$('#action-buttons').children[1].querySelector('strong').textContent,'Press');
  assert.equal(h.run('settings.controlStyle'),'simple');
+});
+
+
+test('touchscreen laptops expose every action and real keyboard badge',()=>{
+ const h=setup(true);
+ h.run("ui.actions([{id:'shoot',label:'Shoot',key:'Space',charge:true},{id:'pass',label:'Pass',key:'E'},{id:'switch',label:'Switch',key:'Q'},{id:'chip',label:'Chip',key:'R'},{id:'sprint',label:'Sprint',key:'Shift',hold:true}])");
+ const buttons=h.$('#action-buttons').children;
+ assert.equal(buttons.length,5);assert.equal(h.$('#action-buttons').dataset.controls,'full');
+ assert.deepEqual(buttons.map(b=>b.children.find(c=>c.tagName==='KBD').textContent),['Hold SPACE','E','Q','R','Hold SHIFT']);
+ assert.equal(buttons[0]['aria-keyshortcuts'],'Space');
 });
